@@ -1,480 +1,215 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-  <meta content="text/html; charset=utf-8" http-equiv="content-type">
   <title>Navigation Error Logging</title>
-<style type="text/css">
-   pre.idl { border:solid thin; background:#eee; color:#000; padding:0.5em }
-   pre.idl :link, pre.idl :visited { color:inherit; background:transparent }
-   pre code { color:inherit; background:transparent }
-   div.example { margin-left:1em; padding-left:1em; border-left:double; color:#222; background:#fcfcfc }
-   .note { margin-left:2em; font-weight:bold; font-style:italic; color:#008000 }
-   p.note::before { content:"Note: " }
-   .XXX { padding:.5em; border:solid #f00 }
-   p.XXX::before { content:"Issue: " }
-   dl.switch { padding-left:2em }
-   dl.switch > dt { text-indent:-1.5em }
-   dl.switch > dt:before { content:'\21AA'; padding:0 0.5em 0 0; display:inline-block; width:1em; text-align:right; line-height:0.5em }
-   dl.domintro { color: green; margin: 2em 0 2em 2em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
-   dl.domintro dt, dl.domintro dt * { color: black; text-decoration: none; }
-   dl.domintro dd { margin: 0.5em 0 1em 2em; padding: 0; }
-   dl.domintro dd p { margin: 0.5em 0; }
-   dl.domintro:before { display: table; margin: -1em -0.5em -0.5em auto; width: auto; content: 'This box is non-normative. Implementation requirements are given below this box.'; color: red; border: solid 2px; background: white; padding: 0 0.25em; }
-   em.ct { text-transform:lowercase; font-variant:small-caps; font-style:normal }
-   dfn { font-weight:bold; font-style:normal }
-   code { color:orangered }
-   code :link, code :visited { color:inherit }
-   hr:not(.top) { display:block; background:none; border:none; padding:0; margin:2em 0; height:auto }
-   table { border-collapse:collapse; border-style:hidden hidden none hidden }
-   table thead { border-bottom:solid }
-   table tbody th:first-child { border-left:solid }
-   table td, table th { border-left:solid; border-right:solid; border-bottom:solid thin; vertical-align:top; padding:0.2em }
-   div.parameters { display:block; margin-left: 25px;}
-   div.parameterDefinition { display:block; margin-left: 25px;}
-   div.methods { display:block; margin-top:30px; margin-left :25px;}
-   .ednote { border-top: 3px solid red; border-bottom: 3px solid red; margin: 1em 2em; padding: 0 1em 0 1em; background: #f8eeee }
-   .ednoteHeader { font-weight: bold; display: block; padding-top: 0.5em }
-  </style>
-  <link href="https://www.w3.org/StyleSheets/TR/W3C-ED.css" rel="stylesheet" type="text/css">
+  <meta charset='utf-8'>
+  <script src='//www.w3.org/Tools/respec/respec-w3c-common' async class='remove'></script>
+  <script class='remove'>
+  var respecConfig = {
+    shortName: "navigation-error-logging",
+    specStatus: "ED",
+    edDraftURI: "http://w3c.github.io/navigation-error-logging/",
+    editors: [{
+      name: "Ilya Grigorik",
+      url: "https://www.igvita.com/",
+      mailto: "igrigorik@gmail.com",
+      company: "Google",
+    }, {
+      name: "Arvind Jain",
+      mailto: "arvind@google.com",
+      company: "Google",
+      note: "Until January 2015"
+    }, {
+      name: "Jatinder Mann",
+      mailto: "jmann@microsoft.com",
+      company: "Microsoft",
+      note: "Until February 2014"
+    } ],
+    wg: "Web Performance Working Group",
+    wgURI: "http://www.w3.org/2010/webperf/",
+    wgPublicList: "public-web-perf",
+    format: "markdown",
+    noLegacyStyle: true,
+    otherLinks: [{
+      key: 'Repository',
+      data: [{
+        value: 'We are on Github.',
+        href: 'https://github.com/w3c/navigation-error-logging/'
+      }, {
+        value: 'File a bug.',
+        href: 'https://github.com/w3c/navigation-error-logging/issues'
+      }, {
+        value: 'Commit history.',
+        href: 'https://github.com/w3c/navigation-error-logging/commits/gh-pages/index.html'
+      }]
+    }]
+  };
+  </script>
 </head>
 
-<body class="draft">
-
-<div class="head">
-<h1>Navigation Error Logging</h1>
-<h2 class="no-num no-toc" id="editors-draft-february-12-2014">Editor's Draft February 12, 2014</h2>
-<dl>
-  <dt>This version:</dt>
-    <dd><a
-      href="https://w3c.github.io/navigation-error-logging/">https://w3c.github.io/navigation-error-logging/</a></dd>
-  <dt>Latest version:</dt>
-    <dd><a
-      href="https://w3c.github.io/navigation-error-logging/">https://w3c.github.io/navigation-error-logging/</a></dd>
-  <dt>Latest Editor's Draft:</dt>
-    <dd><a
-      href="https://w3c.github.io/navigation-error-logging/">https://w3c.github.io/navigation-error-logging/</a></dd>
-  <dt>Editors:</dt>
-  <dd class="vcard"><span class="fn">Arvind Jain</span>, <span
-      class="org">Google Inc.</span>, &lt;<a
-      class="email" href="mailto:arvind@google.com">arvind@google.com</a>&gt; </dd>
-    <dd class="vcard"><span class="fn">Jatinder Mann</span>, <span
-      class="org">Microsoft Corp.</span>, &lt;<a
-      class="email" href="mailto:jmann@microsoft.com">jmann@microsoft.com</a>&gt; <i>(Until February 2014)</i></dd>
-</dl>
-
- <p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
-   © 2014 <a href="http://www.w3.org/"><abbr title="World Wide
-   Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts
-   Institute of Technology">MIT</abbr></a>, <a href="http://www.ercim.eu/"><abbr title="European Research
-   Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C
-   <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
-   <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
-   and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document
-   use</a> rules apply.</p>
-
-   <hr class='top'>
-</div>
-
-<h2 class="no-num no-toc" id="abstract">Abstract</h2>
-
-<p>This specification defines an interface to store and retrieve error data
-related to the previous navigations of a document.</p>
-
-<h2 class="no-num no-toc" id="status-of-this-document">Status of this
-document</h2>
-
-  <p><em>This section describes the status of this document at the time of
-   its publication. Other documents may supersede this document. A list of
-   current W3C publications and the latest revision of this technical report
-   can be found in the <a href="http://www.w3.org/TR/">W3C technical reports
-   index</a> at http://www.w3.org/TR/.</em></p>
-
-<p>This is a <strong>work in progress</strong> and may change without any
-notices. </p>
-
-<p>Please send comments
-   to <a href="mailto:public-web-perf@w3.org?subject=%5BNavigationErrorLodging%5D%20">public-web-perf@w3.org</a>
-   (<a href="http://lists.w3.org/Archives/Public/public-web-perf/">archived</a>)
-   with <samp>[NavigationErrorLogging]</samp> at the start of the subject line.</p>
-
-<p>This document is produced by
-   the <a href="http://www.w3.org/2010/webperf/">Web Performance</a>
-   Working Group. The Web Performance Working Group is part of
-   the <a href="http://www.w3.org/2006/rwc/Activity">Rich Web Clients
-   Activity</a> in the
-   W3C <a href="http://www.w3.org/Interaction/">Interaction
-   Domain</a>.
-
-<p>Publication as a Working Draft does not imply endorsement by the
-W3C Membership. This is a draft document and may be updated, replaced
-or obsoleted by other documents at any time. It is inappropriate to
-cite this document as other than work in progress. </p>
-
-<p>This document was produced by a group operating under
-   the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5
-   February 2004 W3C Patent Policy</a>. W3C maintains
-   a <a href="http://www.w3.org/2004/01/pp-impl/45211/status"
-   rel="disclosure">public list of any patent disclosures</a> made in
-   connection with the deliverables of the group; that page also
-   includes instructions for disclosing a patent. An individual who
-   has actual knowledge of a patent which the individual believes
-   contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
-   Claim(s)</a> must disclose the information in accordance
-   with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
-   6 of the W3C Patent Policy</a>.</p>
-
-
-<h2 class="no-num no-toc" id="table-of-contents">Table of Contents</h2>
-<!--begin-toc-->
-<ol class="toc">
-  <li><a href="#introduction"><span class="secno">1
-  </span>Introduction</a></li>
-  <li><a href="#conformance-requirements"><span class="secno">2
-    </span>Conformance requirements</a></li>
-  <li><a href="#terminology"><span class="secno">3 </span>Terminology</a></li>
-  <li><a href="#sec-navigation-error-logging"><span class="secno">4 </span>Navigation Error Logging</a>
-    <ol class="toc">
-      <li><a href="#sec-Introduction"><span class="secno">4.1 </span> Introduction</a></li>
-      <li><a href="#sec-navigationerrorentry"><span class="secno">4.2 </span> The <code>NavigationErrorEntry</code> interface</a></li>
-      <li><a href="#extensions-performance-interface"><span class="secno">4.3 </span> Extensions to the <code>Performance</code> Interface</a></li>
-      <li><a href="#monotonic-clock"><span class="secno">4.4 </span>Monotonic Clock</a></li>
-    </ol>
-   </li>
-  <li><a href="#privacy-security"><span class="secno">5 </span>Privacy and Security</a>
-  </li>
-  <li><a href="#references"><span class="secno">6 </span>References</a>
-  </li>
-  <li><a class="no-num" href="#acknowledgements">Acknowledgements</a></li>
-</ol>
-<!--end-toc-->
-
-<h2 id="introduction"><span class="secno">1 </span>Introduction</h2>
-
-<p>
-    This section is non-normative.
-</p>
-
-<p>
-    Accurately measuring performance characteristics of web applications is an important aspect in helping
-    site developers understand how to make their web applications faster. Likewise, measuring and understanding
-    when web applications are not properly loading for end users due to network errors is an example of the worst case
-    web browsing performance.
-</p>
-
-<p>
-    Today, site developers do not have real time web application availability data from their end users.
-    Synthetic testing cannot truly provide global or near real-time availability data for real end users.
-</p>
-
-
-<div class="example">
-    <p>
-        For example, a user visits <a href="http://example.com">http://example.com</a>, causing the User Agent to
-        send a HTTP request to the server. The server has a memory bug that causes a random
-        set of responses to have a space in the middle of the HTTP response header, like so:
-    </p>
-    <pre>
-        HTTP/1. 1 200 OK
-        Date: Thu, 24 Jan 2015 05:46:54 GMT
-        Content-Length: 2291
-        Content-Type: text/html
-    </pre>
-    <p>
-        In this example, the seventh character of the first response, incorrectly has a space
-        (e.g., <code>HTTP/1. 1</code> should be <code>HTTP/1.1</code>). When the server sends this response, this causes
-        strict format validation issues at the CDN near the user to fail to process the
-        request. So while the server sees a 200 OK HTTP response, the end user actually sees
-        a 500 Server Error HTTP response.
-    </p>
-</div>
-
-<p>
-    The previous example described a case where the site developers may
-    not actually know that end users are hitting this problem for quite some time.
-    As the issue is random, it may not be caught by synthetic testing.
-</p>
-
-<p>
-    To address the need for detailed information on the errors resulting from
-    the navigation of the document, the <a href="http://www.w3.org/TR/navigation-error-logging/">Navigation Error Logging</a>
-    specification defines the <a href="#sec-navigationerrorentry">NavigationErrorEntry</a>
-    interface. This interface allows JavaScript mechanisms to provide client-side error data on the previous navigations of the document
-    within the applications. As it is typically impossible to obtain error data through JavaScript mechanisms
-    during an aborted navigation due to the error, this data is persisted across sessions. The interface also allows a web developer
-    to specify a error reporting url that the user agent can use to upload error data to in real time on a navigation error.
-</p>
-
-<p>
-    The following script shows how a developer can use the <a href="#sec-navigationerrorentry">NavigationErrorEntry</a> interface
-    to obtain accurate error timing data related to the previous navigations of the document.
-</p>
-
-<div class="example">
-<pre>
-&lt;!doctype html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-  &lt;/head&gt;
-  &lt;body onload="init()"&gt;
-    &lt;script&gt;
-       function init()
-       {
-           var p = window.performance.getNavigationErrors();
-           p.then(function (errorList) {
-              // this is the "resolve" side of the Promise
-              for (i = 0; i &lt; errorList.length; i++)
-              {
-                  if (window.console) console.log("Document: "                + errorList[i].name + "\n" +
-                                                  "Error Type: "              + errorList[i].errorType + "\n" +
-                                                  "Time of Error (UTC): "     + new Date(errorList[i].startTime) + "\n" +
-                                                  "Duration: "                + errorList[i].duration);
-              }
-           }, function (error) {
-                // there was some system error while fetching the list of nav errors
-                // i.e., this is the "reject" side of the Promise
-           });
-       }
-    &lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</pre>
-</div>
-
-<h2 id="conformance-requirements"><span class="secno">2 </span>Conformance
-requirements</h2>
-
-<p>All diagrams, examples, and notes in this specification are non-normative,
-as are all sections explicitly marked non-normative. Everything else in this
-specification is normative. </p>
-
-<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT",
-"RECOMMENDED", "MAY", and "OPTIONAL" in the normative parts of this document
-are to be interpreted as described in <a href="#rfc2119">RFC 2119</a>.
-For readability, these words do not appear in all uppercase letters in this specification.</p>
-
-<p>Requirements phrased in the imperative as part of algorithms (such as
-"strip any leading space characters" or "return false and abort these steps")
-are to be interpreted with the meaning of the key word ("must", "should",
-"may", etc) used in introducing the algorithm. </p>
-
-<p>Some conformance requirements are phrased as requirements on attributes,
-methods or objects. Such requirements are to be interpreted as requirements
-on user agents. </p>
-
-<p>Conformance requirements phrased as algorithms or specific steps may be
-implemented in any manner, so long as the end result is equivalent. (In
-particular, the algorithms defined in this specification are intended to be
-easy to follow, and not intended to be performant.) </p>
-
-    <p>The IDL fragments in this specification must be interpreted as
-    required for conforming IDL fragments, as described in the Web IDL
-    specification. <a href="#WebIDL">[Web IDL]</a></p>
-
-<h2 id="terminology"><span class="secno">3 </span>Terminology</h2>
-
-<p>The construction "a <code title="">Foo</code> object", where <code
-title="">Foo</code> is actually an interface, is sometimes used instead of
-the more accurate "an object implementing the interface <code
-title="">Foo</code>". </p>
-
-<p>The term "navigation" refers to the act of
-<a href="http://www.w3.org/TR/html5/browsers.html#navigate">navigating</a>.</p>
-
-<p>The term "JavaScript" is used to refer to
-<a href="#ECMA262">ECMA-262</a>,
-rather than the official term ECMAScript, since the term JavaScript is more widely known.</p>
-
-<h2 id="sec-navigation-error-logging"><span class="secno">4 </span>Navigation Error Logging</h2>
-
-<h3 id="sec-Introduction"><span class="secno">4.1 </span> Introduction</h3>
-<p>This section is non-normative.</p>
-
-<p>
-	This specification defines the <a href="#sec-navigationerrorentry">NavigationErrorEntry</a>
-    interface to store and retrieve error data related to previous navigations of a document.
-</p>
-
-<h3 id="sec-navigationerrorentry"><span class="secno">4.2 </span> The <code>NavigationErrorEntry</code> interface</h3>
-<pre class="idl">interface <dfn id="navigationerrorentry">NavigationErrorEntry</dfn> {
-  readonly attribute <a href='http://www.w3.org/TR/WebIDL/#idl-DOMString'>DOMString</a> <a href='#dom-navigationerrorentry-name' title='name'>name</a>;
-  readonly attribute DOMTimeStamp <a href='#dom-navigationerrorentry-starttime' title='startTime'>startTime</a>;
-  readonly attribute DOMTimeStamp <a href='#dom-navigationerrorentry-duration' title='duration'>duration</a>;
-  readonly attribute <a href="#NavigationErrorType" title="NavigationErrorType">NavigationErrorType</a> <a href="#dom-navigationerrorentry-errortype">errorType</a>;
-};
-
-enum <dfn id="NavigationErrorType">NavigationErrorType</dfn> { "dns", "tcp", "ssl", "http", "abandoned" };
-</pre>
-
-<h4><code><dfn id="dom-navigationerrorentry-name">name</dfn></code> attribute</h4>
-<p>
-    The <code id="name-attribute">name</code> attribute MUST return the <a href="http://www.w3.org/TR/2011/WD-html5-20110525/dom.html#the-document-s-current-address">current address</a>
-    of the document where the error occurred, as an <a href="http://www.w3.org/TR/2011/WD-html5-20110525/urls.html#absolute-url">absolute URL</a>.
-</p>
-
-<h4><code><dfn id="dom-navigationerrorentry-starttime">startTime</dfn></code> attribute</h4>
-<p>
-    The <code id="startTime-attribute">startTime</code> attribute MUST return a <a href="http://www.w3.org/TR/WebIDL/#common-DOMTimeStamp">DOMTimeStamp</a>
-	with the time immediately after the user agent finishes <a
-href="http://www.w3.org/TR/html5/browsers.html#prompt-to-unload-a-document">prompting
-to unload</a> the previous document while <a href="http://www.w3.org/TR/html5/browsers.html#navigate">navigating</a> to the document that resulted in an error.
-
-<h4><code><dfn id="dom-navigationerrorentry-duration">duration</dfn></code> attribute</h4>
-<p>
-    The <code id="duration-attribute">duration</code> attribute MUST return a <a href="http://www.w3.org/TR/WebIDL/#common-DOMTimeStamp">DOMTimeStamp</a>
-	equal to the difference between the time immediately after the User Agent logs the occurrence of the error and <a href="#dom-navigationerrorentry-starttime">startTime</a>.
-</p>
-
-<h4><code><dfn id="dom-navigationerrorentry-errortype">errorType</dfn></code> attribute</h4>
-<p>
-    This attribute MUST return one of the following strings describing the type of the error: <code>dns</code>, <code>tcp</code>, <code>ssl</code>,
-	<code>http</code>, and <code>abandoned</code>. The <code>abandoned</code> error type refers to the case where the user aborts the navigation before it is complete.
-</p>
-
-
-<h3 id="extensions-performance-interface"><span class="secno">4.3 </span>Extensions to the <code>Performance</code> Interface</h3>
-
-<pre class="idl">
-partial interface <a href="http://www.w3.org/TR/navigation-timing/#performance">Performance</a> {
-  void <a href='#dom-performance-enablenavigationerrorreporting' title='enableNavigationErrorReporting'>enableNavigationErrorReporting</a>(DOMString reportUrl);
-  void <a href='#dom-performance-disablenavigationerrorreporting' title='disableNavigationErrorReporting'>disableNavigationErrorReporting</a>();
-  void <a href='#dom-performance-enablenavigationerrorlogging' title='enableNavigationErrorLogging'>enableNavigationErrorLogging</a>(boolean enable);
-  Promise <a href='#dom-performance-getnavigationerrors' title='getnavigationerrors'>getNavigationErrors</a>();
-  void <a href='#dom-performance-clearnavigationerrors' title='clearnavigationerrors'>clearNavigationErrors</a>();
-
-  typedef sequence &lt;NavigationErrorEntry&gt; <b><dfn id='navigationerrorentrylist'>NavigationErrorEntryList</dfn></b>;
-};
-</pre>
-
-<div class="methods">
-	<h4 id="dom-performance-enablenavigationerrorreporting"><code>enableNavigationErrorReporting</code> method</h4>
-	<p>The <code>enableNavigationErrorReporting</code> method, when invoked, enables reporting of future navigation errors for the <a href="http://www.w3.org/TR/html51/browsers.html#origin">origin</a> of the current document to the resolved <a href="http://www.w3.org/TR/html51/infrastructure.html#resolve-a-url">URL</a> provided by the <code>reportUrl</code> parameter. This setting must be persisted across sessions.</p>
-
-        <p> When a navigation to a url in the given origin fails, the user agent MUST <a href="http://www.w3.org/TR/html5/infrastructure.html#fetch">fetch</a> <code>reportUrl</code>, with the synchronous flag not set, using HTTP method POST, with a Content-Type header field of application/json with an entity body consisting of the JSON stringification of the <a href="#sec-navigationerrorentry">NavigationErrorEntry</a> object corresponding to the failed navigation. The user agent MUST not follow redirects when fetching this and ignore the response. If the <a href="http://www.w3.org/TR/html5/infrastructure.html#fetch">fetch</a> of <code>reportUrl</code> itself fails, the user agent MUST not retry <a href="http://www.w3.org/TR/html5/infrastructure.html#fetch">fetching</a> <code>reportUrl</code>.</p>
-
-		<div class="parameters">
-			<p><b>Parameters</b></p>
-                        in <code>reportUrl</code> type of DOMString
-                        <p> The <code>reportUrl</code> parameter indicates the resolved <a href="http://www.w3.org/TR/html51/infrastructure.html#resolve-a-url">URL</a>
-                        where the error data is to be sent. The User Agent MUST throw the
-                        <a href="http://www.w3.org/TR/dom/#urlmismatcherror">URLMismatchError</a> exception
-                        if the <a href="http://www.w3.org/TR/html51/infrastructure.html#resolve-a-url">URL</a> cannot be resolved.
-                        </p>
-			<p><b>No return value</b></p>
-			<p><b>No additional exceptions</b></p>
-		</div>
-
-	<h4 id="dom-performance-disablenavigationerrorreporting"><code>disableNavigationErrorReporting</code> method</h4>
-	<p>The <code>disableNavigationErrorReporting</code> method, when invoked, disables reporting of navigation errors for the <a href="http://www.w3.org/TR/html51/browsers.html#origin">origin</a> of the current document. This setting must be persisted across sessions.</p>
-
-		<div class="parameters">
-			<p><b>No Parameters</b></p>
-			<p><b>No return value</b></p>
-			<p><b>No additional exceptions</b></p>
-		</div>
-
-	<h4 id="dom-performance-enablenavigationerrorlogging"><code>enableNavigationErrorLogging</code> method</h4>
-	<p>The <code>enableNavigationErrorLogging</code> method, when invoked, enables or disables logging of navigation errors, based on whether <code>enable</code> is <code>true</code>
-        or <code>false</code>, respectively, for the <a href="http://www.w3.org/TR/html51/browsers.html#origin">origin</a> of the current document. This setting must be persisted across sessions.</p>
-
-        <p>The user agent should limit the total number of <a href="#sec-navigationerrorentry">NavigationErrorEntry</a> objects stored for a given
-        <a href="http://www.w3.org/TR/html51/browsers.html#origin">origin</a>. A limit of 150 entries is recommended.</p>
-		<div class="parameters">
-			<p><b>Parameters</b></p>
-			in <code>enable</code> type of boolean
-			<p>The enable parameter enables or disables logging of navigation errors.</p>
-			<p><b>No return value</b></p>
-			<p><b>No additional exceptions</b></p>
-		</div>
-</div>
-
-<div class="methods">
-    <h4 id="dom-performance-getnavigationerrors"><code>getNavigationErrors</code> method</h4>
-      <ol>
-        <li>Let <i>promise</i> be a newly-created <code>Promise</code>.
-        <li>Let <i>errorList</i> be the <a href="#navigationerrorentrylist"><code>NavigationErrorEntryList</code></a> object that contains a copy of all <a href="#sec-navigationerrorentry"><code>NavigationErrorEntry</code></a> objects
-                for the <a href="http://www.w3.org/TR/html51/browsers.html#origin">origin</a> of the current document in chronological order.
-        <li>If <i>errorList</i> is created successfully, resolve <i>promise</i> with <i>errorList</i>.
-        <li>If <i>errorList</i> cannot be created, reject <i>promise</i> with an Error instance explaining the failure.
-        <li>Return <i>promise</i>.
-      </ol>
-		<div class="parameters">
-			<p><b>No Parameters</b></p>
-			<p><b>Return value</b></p>
-				A <code>Promise</code> object.
-			<p><b>No additional exceptions</b></p>
-		</div>
-</div>
-
-<div class="methods">
-    <h4 id="dom-performance-clearnavigationerrors"><code>clearNavigationErrors</code> method</h4>
-	<p>The <code>clearNavigationErrors</code> method clears the buffer used to store the
-    list of <a href="#sec-navigationerrorentry">NavigationErrorEntry</a> objects.
-    </p>
-		<div class="parameters">
-			<p><b>No parameters</b></p>
-			<p><b>No return value</b></p>
-			<p><b>No additional exceptions</b></p>
-		</div>
-</div>
-
-<h3 id="monotonic-clock"><span class="secno">4.4 </span>Monotonic Clock</h3>
-<p>The value of the timing attributes must monotonically increase to ensure timing attributes are not
-skewed by adjustments to the system clock while recording error data. The difference between any two chronologically
-recorded timing attributes must never be negative.
-</p>
-
-<h2 id="privacy-security"><span class="secno">5 </span>Privacy and Security</h2>
-
-<p>This section is non-normative.</p>
-
-<p>The <a href="#sec-navigationerrorentry">NavigationErrorEntry</a> interface
-exposes timing and other information for an error that has occurred in the previous navigations to the web page.
-Access to the <a href="#sec-navigationerrorentry">NavigationErrorEntry</a> interface is limited to the <a href="http://www.w3.org/TR/html51/browsers.html#origin">same origin</a>.
-</p>
-<p>The user agent mechanisms used to delete private data such as history or cookies for a given <a href="http://www.w3.org/TR/html51/browsers.html#origin">origin</a> or as a whole should also delete the corresponding <a href="#sec-navigationerrorentry">NavigationErrorEntry</a> objects.
-
-<p>The user agent should not log or report navigation errors and not provide access to past navigation errors in private browsing mode.
-
-<h2 id="references"><span class="secno">6 </span>References</h2>
-
-<h3 id="normative-references"><span class="secno">6.1 </span>Normative References</h3>
-
-<dl>
-<dt><a id="rfc2119">[IETF RFC 2119]</a></dt>
-<dd>
- <cite><a href="http://www.ietf.org/rfc/rfc2119.txt">Key words for use in RFCs to Indicate Requirement Levels</a></cite>, Scott Bradner, Author. Internet Engineering Task Force, March 1997. Available at <a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a>.
-</dd>
-<dt><a id="rfc2616">[IETF RFC 2616]</a></dt>
-<dd>
- <cite><a href="http://www.ietf.org/rfc/rfc2616.txt">Hypertext Transfer Protocol -- HTTP/1.1</a></cite>, R. Fielding et al., Authors. Internet Engineering Task Force, June 1999. Available at <a href="http://www.ietf.org/rfc/rfc2616.txt">http://www.ietf.org/rfc/rfc2616.txt</a>.
-</dd>
-<dt>[<a id="rfc6454">IETF RFC 6454</a>]</dt>
-<dd>
- <cite><a href="http://tools.ietf.org/html/rfc6454">The Web Origin Concept</a></cite>, Adam Barth, Author.  Internet Engineering Task Force, December 2011. Available at <a href="http://www.ietf.org/rfc/rfc6454.txt">http://www.ietf.org/rfc/rfc6454.txt</a>.
-</dd>
-<dt>[<a id="ECMA262">ECMA-262</a>]</dt><dd>
-	<cite><a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMAScript Language Specification</a></cite>, 5.1
-	Edition. ECMA International, Standard
-	ECMA-262, June 2011. This version of the ECMAScript
-	Language is available from <a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">http://www.ecma-international.org/publications/standards/Ecma-262.htm</a>.
-    </dd>
-    <dt>[<a id="DOM4">W3C DOM4</a>]</dt>
-    <dd>
-     <cite><a href="http://www.w3.org/TR/dom/">W3C DOM4</a></cite>, Anne van Kesteren, et al., Editors. World
-     Wide Web Consortium, 4 February 2014. This version of the W3C DOM4 is
-     http://www.w3.org/TR/dom/. The <a class="normative" href="http://www.w3.org/TR/dom/">latest version of
-     W3C DOM4</a> is available at
-     http://www.w3.org/TR/dom/.
-    </dd>
-    <dt>[<a id="HTML5">HTML5</a>]</dt>
-    <dd><cite><a href='http://www.w3.org/TR/html51/'>HTML 5.1</a></cite>, Robin Berjon et al., Editors. World Wide Web Consortium, February 2014. This version of the HTML5 is available from <a href='http://www.w3.org/TR/html51/'>http://www.w3.org/TR/html51/</a>. The <a href='http://www.w3.org/html/wg/drafts/html/master/'>latest editor's draft</a> of HTML 5.1 is available at http://www.w3.org/html/wg/drafts/html/master/.</dd>
-   <dt>[<a id="WebIDL">Web IDL</a>]</dt>
-   <dd><cite><a href="http://www.w3.org/TR/2012/CR-WebIDL-20120419/">Web IDL</a></cite>, Cameron McCormack, Editor. World Wide Web Consortium, April 2012. This version of the Web IDL specification is available from http://www.w3.org/TR/2012/CR-WebIDL-20120419/. The <a href="http://www.w3.org/TR/WebIDL/">latest version of Web IDL</a> is available at http://www.w3.org/TR/WebIDL/.</dd>
-</dl>
-
-<h2 class="no-num" id="acknowledgements">Acknowledgements</h2>
-
-<p>We would like to offer our sincere thanks to Aaron Heady, Daniel Austin, James Simonsen, Philippe Le Hegaret, and Jason Weber for their contributions to this work.</p>
+<body>
+  <section id='abstract'>
+    <p>This document defines a mechanism enabling web sites to declare a reporting policy that can be used by the user agent to report user navigation errors for a given site, the format of the error report, and the transmission mechanism.</p>
+  </section>
+
+  <section id='sotd'>
+    <p></p>
+  </section>
+
+  <section>
+    <h2>Introduction</h2>
+
+    <p>Accurately measuring performance characteristics of web applications is an important aspect in helping site developers understand how to make their web applications faster. Likewise, measuring and understanding when web applications are not accessible for end users due to network errors is an example of the worst case web browsing performance.</p>
+
+    <p>Today, application developers do not have real-time web application availability data from their end users. For example, if the user fails to load the page due to a network error, such as a failed DNS lookup, a connection timeout, a reset connection, or other reasons, the site developer is unable to detect and address this issue. Existing methods, such as synthetic monitoring provide a partial solution by placing monitoring nodes in predetermined geographic locations, but cannot provide truly global, fine grained, and near real-time availability data for real end users.</p>
+
+    <p>Navigation Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report user navigation errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>Navigation-Error-Logging</code> HTTP response header field, and/or an equivalent <code>meta</code> element with <code>http-equiv</code> attribute.</p>
+
+    <p>If the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully navigate to the destination page on that origin, the user agent logs the error report and should attempt to deliver it to the reporting URI defined by the policy - the delivery is done on a best effort basis and may be delayed due to connectivity issues or other reasons.</p>
+
+    <p><a>NEL</a> applies to navigation requests only: a fetch resulting from a click on a link, user input via a navigation bar, actions such as refresh, back, forward, or any other conditions that require a new page context. Subresource requests, such as resource fetches initiated as a result of the navigation request are not subject to <a>NEL</a>: if the parent resource has successfully loaded, the web application can implement own subresource instrumentation and error logging policies. <a>NEL</a> is only concerned with cases where no such instrumentation is possible because the application is unable to instrument the original navigation request.</p>
+  </section>
+
+  <section>
+    <h2>Navigation Error Logging</h2>
+
+    <section>
+      <h2>Policy Delivery and Processing</h2>
+      <p>The server delivers the NEL policy to the user agent via an HTTP response header field or an HTML <code>meta</code> element. The policy MUST be delivered over a secure transport.</p>
+
+      <p>If the policy is delivered over a secure transport with no underlying secure transport errors or warnings, and its format conforms to the grammar specified in <a href="#policy-grammar"></a>, the user agent MUST either:</p>
+
+      <ul>
+        <li>Register the host as a Known NEL Host if it is not already registered (see TODO).</li>
+        <li>Update the registered policy for the Known NEL Host if the provided policy is different than that already stored by the user agent.</li>
+      </ul>
+
+      <p>Otherwise, if the policy is received over an insecure transport then the user agent MUST ignore it. Similarly, if the policy does not conform to the specified grammar, then the user agent MUST ignore it.</p>
+
+      <section>
+        <h2>`Navigation-Error-Logging` Header Field</h2>
+        <p>The <dfn>Navigation-Error-Logging</dfn> header field (NEL header field) is the preferred mechanism for delivery a policy. The ABNF (Augmented Backus-Naur Form) syntax for the NEL header field is as follows:</p>
+
+        <pre>
+Navigation-Error-Logging = "Navigation-Error-Logging" ":" [ directive ]  *( ";" [ directive ] )
+
+directive                 = directive-name [ "=" directive-value ]
+directive-name            = token
+directive-value           = token | quoted-string
+        </pre>
+
+        <p>See [[!RFC7230]] section 3.2.6 for definitions of `token` and `quoted-string`, and <a href="#policy-grammar"></a> for policy directives defined by this specification.</p>
+      </section>
+
+      <section>
+        <h2>HTML `meta` Element</h2>
+        <p>The application MAY supply an NEL policy in an HTML `meta` element with an <a href="http://www.w3.org/html/wg/drafts/html/CR/document-metadata.html#attr-meta-http-equiv">http-equiv</a> attribute that is a case insensitive match for the string "`Navigation Error Logging`". The user agent MUST add the following entry to the pragma directives for the `meta` element:<p>
+
+        <p><strong>Navigation error logging (http-equiv="navigation-error-logging")</strong></p>
+        <ol>
+          <li>If the Document's `head` element is not an ancestor of the `meta element`, abort these steps.</li>
+          <li>If the `meta` element lacks a `content` attribute, abort these steps.
+          <li>Let NEL policy be the value of the `content` attribute of the `meta` element.</li>
+        </ol>
+
+        <p>Modifications to the `content` attribute of a `meta` element after the element has been parsed MUST be ignored by the user agent.</p>
+      </section>
+    </section>
+
+    <section>
+      <h2>Policy Grammar</h2>
+      <p>This specification defines three NEL directives: <a>report-uri</a>, <a>max-age</a>, and <a>includeSubDomains</a>. The overall requirements for directives are:</p>
+
+      <ul>
+        <li>The order of appearance of directives is not significant.</li>
+        <li>All directives MUST appear only once in an NEL header field. Directives are either optional or required, as stipulated in their definitions.</li>
+        <li>Directive names are case-insensitive.</li>
+        <li>User agents MUST ignore any NEL header field containing directives, or other header field value data, that does not conform to the syntax defined in this specification.</li>
+        <li>If an NEL header field contains directive(s) not recognized by
+       the user agent, the user agent MUST ignore the unrecognized directives, and if the NEL header field otherwise satisfies the above requirements
+       (1 through 4), the user agent MUST process the recognized directives.</li>
+      </ul>
+
+      <p>Additional directives extending the semantic functionality of the NEL header field can be defined in other specifications, with a registry (having an IANA policy definition of IETF Review [[!RFC5226]]) defined for them at such time.</p>
+
+      <section>
+        <h2>The `report-uri` Directive</h2>
+        <p>The REQUIRED <dfn>report-uri</dfn> directive specifies a URI to which the user agent sends reports about navigation errors. The ABNF grammar for the name and value of the directive is:
+
+        <pre>
+directive-name    = "report-uri"
+directive-value   = uri-reference
+        </pre>
+
+        <p>See [[!RFC3986]] section 4.1 for definitions of `uri-reference`. The provided reporting URI MUST use a secure transport to receive the NEL reports. If the provided reporting URI does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the URL specified in this directive's value is defined in this documents <a href="reporting"></a> section.
+
+        <p class="issue">CSP ignores report-uri in meta element... Because we don't have a way to verify if the origin server provided it? If so, then we shouldn't support it either.</p>
+      </section>
+
+      <section>
+        <h2>The `max-age` Directive</h2>
+        <p>The REQUIRED <dfn>max-age</dfn> directive specifies the number of seconds, after the reception of the NEL header field, during which the UA regards the host (from whom the policy was received) as a Known NEL Host - see TODO. The ABNF grammar for the name and value of the directive is:</p>
+
+        <pre>
+directive-name    = "max-age"
+directive-value   = delta-seconds
+        </pre>
+
+        <p>See [[!RFC7234]] section 1.2.1 for definition of `delta-seconds`. A <a>max-age</a> value of zero (i.e. "max-age=0") signals the user agent to cease regarding the host as a Known NEL Host, including the <a>includeSubDomains</a> directive (if provided for that NEL Host).</p>
+      </section>
+
+      <section>
+        <h2>The `includeSubDomains` Directive</h2>
+        <p>The OPTIONAL <dfn>includeSubDomains</dfn> directive is a valueless directive which, if present signals the UA that the NEL policy applies to this NEL Host as well as any subdomains of the host's domain name.</p>
+      </section>
+    </section>
+
+    <section>
+      <h2>Reporting</h2>
+      <p>... TODO ...</p>
+    </section>
+
+    <section>
+      <h2>Examples</h2>
+
+      <section>
+        <h2>Sample Policy Definitions</h2>
+        <pre class="example">
+           Navigation-Error-Logging: report-uri="https://example.com/errors"; max-age=2592000
+        </pre>
+
+        <p>The above heard field specifies that the user agent should report navigation errors to "https://example.com/errors" URI, and that the policy applies for 2592000 seconds (30 days).</p>
+
+        <pre class="example">
+           Navigation-Error-Logging: report-uri="https://example.com/errors"; max-age=2592000; includeSubDomains
+        </pre>
+
+        <p>The above heard field applies similar policy as previous example but also extends it to all of the subdomains of the issuing NEL host.</p>
+
+        <pre class="example">
+           Navigation-Error-Logging: report-uri="https://example.com/errors"; max-age=0
+        </pre>
+
+        <p>The above heard field with a <a>max-age</a> of zero indicates that the UA must delete the currently registered NEL policy associated with the NEL Host and all of its subdomains - i.e. <a>includeSubDomains</a> is ignored when <a>max-age</a> is zero.</p>
+      </section>
+
+      <section>
+        <h2>Sample Navigation Error Report</h2>
+        <p>... TODO ...</p>
+      </section>
+    </section>
+
+    <section>
+      <h2>IANA Considerations</h2>
+      <p>... TODO ...</p>
+    </section>
+  </section>
+
+  <section class="appendix">
+    <h2>Acknowledgments</h2>
+    <p>This document reuses text from the [[CSP]] and [[RFC6797]] specification, as permitted by the licenses of those specifications.</p>
+  </section>
 
 </body>
 </html>
