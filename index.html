@@ -64,7 +64,7 @@
 
     <p>Today, application developers do not have real-time web application availability data from their end users. For example, if the user fails to load the page due to a network error, such as a failed DNS lookup, a connection timeout, a reset connection, or other reasons, the site developer is unable to detect and address this issue. Existing methods, such as synthetic monitoring provide a partial solution by placing monitoring nodes in predetermined geographic locations, but require additional infrastructure investments, and cannot provide truly global and near real-time availability data for real end users.</p>
 
-    <p>Navigation Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report user navigation errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>Navigation-Error-Logging</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully navigate to a destination on that origin, the user agent logs the navigation error report and attempts to deliver it to the reporting URI defined by the policy - the delivery is done on a best effort basis and may be delayed due to connectivity issues or other reasons.</p>
+    <p>Navigation Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report user navigation errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully navigate to a destination on that origin, the user agent logs the navigation error report and attempts to deliver it to the reporting URI defined by the policy - the delivery is done on a best effort basis and may be delayed due to connectivity issues or other reasons.</p>
 
     <p><a>NEL</a> applies to navigation requests only: a fetch resulting from a link navigation, direct user input, actions such as refresh, back, forward, or any other actions that result in a new page context. Subresource requests, such as resource fetches initiated as a result of the navigation request are not subject to <a>NEL</a>: if the parent resource has successfully loaded, the web application can implement own subresource instrumentation and error logging policies. <a>NEL</a> is only concerned with cases where no such instrumentation is possible because the application code is not yet instantiated or available and hence is unable to instrument the request.</p>
   </section>
@@ -74,7 +74,7 @@
 
     <section>
       <h2>Policy Delivery and Processing</h2>
-      <p>The server delivers the <a>NEL policy</a> to the user agent via an HTTP response header field. The policy MUST be delivered over a secure transport. If the policy is delivered over a secure transport with no underlying secure transport errors or warnings, and its format conforms to the specified grammar, the user agent MUST either:</p>
+      <p>The server delivers the <a>NEL policy</a> to the user agent via an HTTP response header field (<a>NEL header field</a>). The policy MUST be delivered over a secure transport. If the policy is delivered over a secure transport with no underlying secure transport errors or warnings, and its format conforms to the specified grammar, the user agent MUST either:</p>
 
       <ul>
         <li>Register the host as a <a>Known NEL Host</a> if it is not already registered.</li>
@@ -84,11 +84,11 @@
       <p>Otherwise, if the policy is received over an insecure transport, or if the policy does not conform to the specified grammar, then the user agent MUST ignore it.</p>
 
       <section>
-        <h2>`Navigation-Error-Logging` Header Field</h2>
-        <p>The <dfn>Navigation-Error-Logging</dfn> header field (NEL header field) is used to communicate the <dfn>NEL policy</dfn> to the user agent. The ABNF (Augmented Backus-Naur Form) syntax for the NEL header field is as follows:</p>
+        <h2>`NEL` Header Field</h2>
+        <p>The <dfn>NEL header field</dfn> is used to communicate the <dfn>NEL policy</dfn> to the user agent. The ABNF (Augmented Backus-Naur Form) syntax for the <a>NEL header field</a> is as follows:</p>
 
         <pre>
-Navigation-Error-Logging = "Navigation-Error-Logging" ":" [ directive ]  *( ";" [ directive ] )
+NEL = "NEL" ":" [ directive ]  *( ";" [ directive ] )
 
 directive                 = directive-name [ "=" directive-value ]
 directive-name            = token
@@ -99,16 +99,15 @@ directive-value           = token | quoted-string
 
         <ul>
           <li>The order of appearance of directives is not significant.</li>
-          <li>All directives MUST appear only once in an NEL header field. Directives are either optional or required, as stipulated in their definitions.</li>
+          <li>All directives MUST appear only once in an <a>NEL header field</a>. Directives are either optional or required, as stipulated in their definitions.</li>
           <li>Directive names are case-insensitive.</li>
-          <li>User agents MUST ignore any NEL header field containing directives, or other header field value data, that does not conform to the syntax defined in this specification.</li>
-          <li>If an NEL header field contains directive(s) not recognized by
-         the user agent, the user agent MUST ignore the unrecognized directives, and if the NEL header field otherwise satisfies the above requirements, the user agent MUST process the recognized directives.</li>
+          <li>User agents MUST ignore any <a>NEL header field</a> containing directives, or other header field value data, that does not conform to the syntax defined in this specification.</li>
+          <li>If an <a>NEL header field</a> contains directive(s) not recognized by the user agent, the user agent MUST ignore the unrecognized directives, and if the <a>NEL header field</a> otherwise satisfies the above requirements, the user agent MUST process the recognized directives.</li>
         </ul>
 
-        <p>Additional directives extending the semantic functionality of the NEL header field can be defined in other specifications, with a registry (having an IANA policy definition of IETF Review [[!RFC5226]]) defined for them at such time.</p>
+        <p>Additional directives extending the semantic functionality of the <a>NEL header field</a> can be defined in other specifications, with a registry (having an IANA policy definition of IETF Review [[!RFC5226]]) defined for them at such time.</p>
 
-        <p>The <a>Navigation-Error-Logging</a> header is not supported inside a <code>meta</code> element to mitigate hijacking of error reporting via scripting attacks. The <a>NEL policy</a> MUST be delivered via the NEL header field.</p>
+        <p>The user agent MUST ignore the NEL header specified via a <code>meta</code> element to mitigate hijacking of error reporting via scripting attacks. The <a>NEL policy</a> MUST be delivered via the <a>NEL header field</a>.</p>
 
         <p class="note">The restriction on <code>meta</code> element is consistent with [[CSP]] specification, which restricts reporting registration to HTTP header fields only for same reasons.</p>
 
@@ -144,11 +143,11 @@ directive-value   = delta-seconds
     <section>
       <h2>Policy Storage and Maintenance</h2>
 
-      <p>An HTTP host declares iself an <dfn>NEL Host</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>Navigation-Error-Logging</a> HTTP response header field over secure transport (e.g., TLS). Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>Known NEL Host</dfn>.</p>
+      <p>An HTTP host declares iself an <dfn>NEL Host</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> over secure transport (e.g., TLS). Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>Known NEL Host</dfn>.</p>
 
       <p>The user agent MUST store and index NEL policies based strictly upon the domain names of the issuing <a title="NEL Host">NEL Hosts</a>. An <a>NEL policy</a> may contain an optional <a>includeSubDomains</a> directive specifying that this policy also applies to any hosts whose domain names are subdomains of the <a title="Known NEL Host">Known NEL Host's</a> domain name.</p>
 
-      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL Host</a> separately from any NEL policies issued by any other <a title="NEL Host">NEL Hosts</a> whose domain names are superdomains or subdomains of the given <a title="NEL Host">NEL Host's</a> domain name. Only the given <a>NEL Host</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>Navigation-Error-Logging</a> HTTP response header field to the user agent with new values for the policy reporting URI, time duration, and subdomain applicability. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL Host</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>includeSubDomains</a> directive) for that <a>NEL Host</a>.</p>
+      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL Host</a> separately from any NEL policies issued by any other <a title="NEL Host">NEL Hosts</a> whose domain names are superdomains or subdomains of the given <a title="NEL Host">NEL Host's</a> domain name. Only the given <a>NEL Host</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy reporting URI, time duration, and subdomain applicability. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL Host</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>includeSubDomains</a> directive) for that <a>NEL Host</a>.</p>
     </section>
 
     <section>
@@ -162,19 +161,19 @@ directive-value   = delta-seconds
       <section>
         <h2>Sample Policy Definitions</h2>
         <pre class="example">
-           Navigation-Error-Logging: report-uri="https://example.com/errors"; max-age=2592000
+           NEL: report-uri="https://example.com/errors"; max-age=2592000
         </pre>
 
         <p>The above heard field specifies that the user agent should report navigation errors to "https://example.com/errors" URI, and that the policy applies for 2592000 seconds (30 days).</p>
 
         <pre class="example">
-           Navigation-Error-Logging: report-uri="https://example.com/errors"; max-age=2592000; includeSubDomains
+           NEL: report-uri="https://example.com/errors"; max-age=2592000; includeSubDomains
         </pre>
 
         <p>The above heard field applies similar policy as previous example but also extends it to all of the subdomains of the issuing NEL host.</p>
 
         <pre class="example">
-           Navigation-Error-Logging: report-uri="https://example.com/errors"; max-age=0
+           NEL: report-uri="https://example.com/errors"; max-age=0
         </pre>
 
         <p>The above heard field with a <a>max-age</a> of zero indicates that the user agent must delete the currently registered <a>NEL policy</a> associated with the NEL Host and all of its subdomains - i.e. <a>includeSubDomains</a> is ignored when <a>max-age</a> is zero.</p>
