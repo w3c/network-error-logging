@@ -64,11 +64,9 @@
 
     <p>Today, application developers do not have real-time web application availability data from their end users. For example, if the user fails to load the page due to a network error, such as a failed DNS lookup, a connection timeout, a reset connection, or other reasons, the site developer is unable to detect and address this issue. Existing methods, such as synthetic monitoring provide a partial solution by placing monitoring nodes in predetermined geographic locations, but cannot provide truly global, fine grained, and near real-time availability data for real end users.</p>
 
-    <p>Navigation Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report user navigation errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>Navigation-Error-Logging</code> HTTP response header field, and/or an equivalent <code>meta</code> element with <code>http-equiv</code> attribute.</p>
+    <p>Navigation Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report user navigation errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>Navigation-Error-Logging</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully navigate to a destination on that origin, the user agent logs the navigation error report and attempts to deliver it to the reporting URI defined by the policy - the delivery is done on a best effort basis and may be delayed due to connectivity issues or other reasons.</p>
 
-    <p>If the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully navigate to the destination page on that origin, the user agent logs the error report and should attempt to deliver it to the reporting URI defined by the policy - the delivery is done on a best effort basis and may be delayed due to connectivity issues or other reasons.</p>
-
-    <p><a>NEL</a> applies to navigation requests only: a fetch resulting from a click on a link, user input via a navigation bar, actions such as refresh, back, forward, or any other conditions that require a new page context. Subresource requests, such as resource fetches initiated as a result of the navigation request are not subject to <a>NEL</a>: if the parent resource has successfully loaded, the web application can implement own subresource instrumentation and error logging policies. <a>NEL</a> is only concerned with cases where no such instrumentation is possible because the application is unable to instrument the original navigation request.</p>
+    <p><a>NEL</a> applies to navigation requests only: a fetch resulting from a click on a link, user input via a navigation bar, actions such as refresh, back, forward, or any other conditions that require a new page context. Subresource requests, such as resource fetches initiated as a result of the navigation request are not subject to <a>NEL</a>: if the parent resource has successfully loaded, the web application can implement own subresource instrumentation and error logging policies. <a>NEL</a> is only concerned with cases where no such instrumentation is possible because the application code is not yet instantiated or available and hence is unable to instrument the navigation request.</p>
   </section>
 
   <section>
@@ -76,20 +74,18 @@
 
     <section>
       <h2>Policy Delivery and Processing</h2>
-      <p>The server delivers the NEL policy to the user agent via an HTTP response header field or an HTML <code>meta</code> element. The policy MUST be delivered over a secure transport.</p>
-
-      <p>If the policy is delivered over a secure transport with no underlying secure transport errors or warnings, and its format conforms to the grammar specified in <a href="#policy-grammar"></a>, the user agent MUST either:</p>
+      <p>The server delivers the NEL policy to the user agent via an HTTP response header field. The policy MUST be delivered over a secure transport. If the policy is delivered over a secure transport with no underlying secure transport errors or warnings, and its format conforms to the specified grammar, the user agent MUST either:</p>
 
       <ul>
         <li>Register the host as a Known NEL Host if it is not already registered (see TODO).</li>
         <li>Update the registered policy for the Known NEL Host if the provided policy is different than that already stored by the user agent.</li>
       </ul>
 
-      <p>Otherwise, if the policy is received over an insecure transport then the user agent MUST ignore it. Similarly, if the policy does not conform to the specified grammar, then the user agent MUST ignore it.</p>
+      <p>Otherwise, if the policy is received over an insecure transport, or if the policy does not conform to the specified grammar, then the user agent MUST ignore it.</p>
 
       <section>
         <h2>`Navigation-Error-Logging` Header Field</h2>
-        <p>The <dfn>Navigation-Error-Logging</dfn> header field (NEL header field) is the preferred mechanism for delivery a policy. The ABNF (Augmented Backus-Naur Form) syntax for the NEL header field is as follows:</p>
+        <p>The <dfn>Navigation-Error-Logging</dfn> header field (NEL header field) is used to communicate the reporting policy to the user agent. The ABNF (Augmented Backus-Naur Form) syntax for the NEL header field is as follows:</p>
 
         <pre>
 Navigation-Error-Logging = "Navigation-Error-Logging" ":" [ directive ]  *( ";" [ directive ] )
@@ -99,69 +95,50 @@ directive-name            = token
 directive-value           = token | quoted-string
         </pre>
 
-        <p>See [[!RFC7230]] section 3.2.6 for definitions of `token` and `quoted-string`, and <a href="#policy-grammar"></a> for policy directives defined by this specification.</p>
-      </section>
+        <p>See [[!RFC7230]] section 3.2.6 for definitions of `token` and `quoted-string`. This specification defines three NEL directives: <a>report-uri</a>, <a>max-age</a>, and <a>includeSubDomains</a>. The overall requirements for directives are:</p>
 
-      <section>
-        <h2>HTML `meta` Element</h2>
-        <p>The application MAY supply an NEL policy in an HTML `meta` element with an <a href="http://www.w3.org/html/wg/drafts/html/CR/document-metadata.html#attr-meta-http-equiv">http-equiv</a> attribute that is a case insensitive match for the string "`Navigation Error Logging`". The user agent MUST add the following entry to the pragma directives for the `meta` element:<p>
+        <ul>
+          <li>The order of appearance of directives is not significant.</li>
+          <li>All directives MUST appear only once in an NEL header field. Directives are either optional or required, as stipulated in their definitions.</li>
+          <li>Directive names are case-insensitive.</li>
+          <li>User agents MUST ignore any NEL header field containing directives, or other header field value data, that does not conform to the syntax defined in this specification.</li>
+          <li>If an NEL header field contains directive(s) not recognized by
+         the user agent, the user agent MUST ignore the unrecognized directives, and if the NEL header field otherwise satisfies the above requirements
+         (1 through 4), the user agent MUST process the recognized directives.</li>
+        </ul>
 
-        <p><strong>Navigation error logging (http-equiv="navigation-error-logging")</strong></p>
-        <ol>
-          <li>If the Document's `head` element is not an ancestor of the `meta element`, abort these steps.</li>
-          <li>If the `meta` element lacks a `content` attribute, abort these steps.
-          <li>Let NEL policy be the value of the `content` attribute of the `meta` element.</li>
-        </ol>
+        <p>Additional directives extending the semantic functionality of the NEL header field can be defined in other specifications, with a registry (having an IANA policy definition of IETF Review [[!RFC5226]]) defined for them at such time.</p>
 
-        <p>Modifications to the `content` attribute of a `meta` element after the element has been parsed MUST be ignored by the user agent.</p>
-      </section>
-    </section>
+        <p>The <a>Navigation-Error-Logging</a> header is not supported inside a <code>meta</code> element to mitigate hijacking of error reporting via scripting attacks. The NEL policy MUST be delivered via the NEL header field.</p>
 
-    <section>
-      <h2>Policy Grammar</h2>
-      <p>This specification defines three NEL directives: <a>report-uri</a>, <a>max-age</a>, and <a>includeSubDomains</a>. The overall requirements for directives are:</p>
+        <p class="note">The restriction on <code>meta</code> element is consistent with [[CSP]] specification, which restricts reporting registration to HTTP header fields only for same reasons.</p>
 
-      <ul>
-        <li>The order of appearance of directives is not significant.</li>
-        <li>All directives MUST appear only once in an NEL header field. Directives are either optional or required, as stipulated in their definitions.</li>
-        <li>Directive names are case-insensitive.</li>
-        <li>User agents MUST ignore any NEL header field containing directives, or other header field value data, that does not conform to the syntax defined in this specification.</li>
-        <li>If an NEL header field contains directive(s) not recognized by
-       the user agent, the user agent MUST ignore the unrecognized directives, and if the NEL header field otherwise satisfies the above requirements
-       (1 through 4), the user agent MUST process the recognized directives.</li>
-      </ul>
+        <section>
+          <h2>The `report-uri` Directive</h2>
+          <p>The REQUIRED <dfn>report-uri</dfn> directive specifies a URI to which the user agent sends reports about navigation errors. The ABNF grammar for the name and value of the directive is:</p>
 
-      <p>Additional directives extending the semantic functionality of the NEL header field can be defined in other specifications, with a registry (having an IANA policy definition of IETF Review [[!RFC5226]]) defined for them at such time.</p>
-
-      <section>
-        <h2>The `report-uri` Directive</h2>
-        <p>The REQUIRED <dfn>report-uri</dfn> directive specifies a URI to which the user agent sends reports about navigation errors. The ABNF grammar for the name and value of the directive is:
-
-        <pre>
+          <pre>
 directive-name    = "report-uri"
 directive-value   = uri-reference
-        </pre>
+          </pre>
 
-        <p>See [[!RFC3986]] section 4.1 for definitions of `uri-reference`. The provided reporting URI MUST use a secure transport to receive the NEL reports. If the provided reporting URI does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the URL specified in this directive's value is defined in this documents <a href="reporting"></a> section.
+          <p>See [[!RFC3986]] section 4.1 for definitions of `uri-reference`. The provided reporting URI MUST use a secure transport to receive the NEL reports. If the provided reporting URI does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the URL specified in this directive's value is defined in this documents <a href="reporting"></a> section.</p>
+        </section>
+        <section>
+          <h2>The `max-age` Directive</h2>
+          <p>The REQUIRED <dfn>max-age</dfn> directive specifies the number of seconds, after the reception of the NEL header field, during which the UA regards the host (from whom the policy was received) as a Known NEL Host - see TODO. The ABNF grammar for the name and value of the directive is:</p>
 
-        <p class="issue">CSP ignores report-uri in meta element... Because we don't have a way to verify if the origin server provided it? If so, then we shouldn't support it either.</p>
-      </section>
-
-      <section>
-        <h2>The `max-age` Directive</h2>
-        <p>The REQUIRED <dfn>max-age</dfn> directive specifies the number of seconds, after the reception of the NEL header field, during which the UA regards the host (from whom the policy was received) as a Known NEL Host - see TODO. The ABNF grammar for the name and value of the directive is:</p>
-
-        <pre>
+          <pre>
 directive-name    = "max-age"
 directive-value   = delta-seconds
-        </pre>
+          </pre>
 
-        <p>See [[!RFC7234]] section 1.2.1 for definition of `delta-seconds`. A <a>max-age</a> value of zero (i.e. "max-age=0") signals the user agent to cease regarding the host as a Known NEL Host, including the <a>includeSubDomains</a> directive (if provided for that NEL Host).</p>
-      </section>
-
-      <section>
-        <h2>The `includeSubDomains` Directive</h2>
-        <p>The OPTIONAL <dfn>includeSubDomains</dfn> directive is a valueless directive which, if present signals the UA that the NEL policy applies to this NEL Host as well as any subdomains of the host's domain name.</p>
+          <p>See [[!RFC7234]] section 1.2.1 for definition of `delta-seconds`. A <a>max-age</a> value of zero (i.e. "max-age=0") signals the user agent to cease regarding the host as a Known NEL Host, including the <a>includeSubDomains</a> directive (if provided for that NEL Host).</p>
+        </section>
+        <section>
+          <h2>The `includeSubDomains` Directive</h2>
+          <p>The OPTIONAL <dfn>includeSubDomains</dfn> directive is a valueless directive which, if present signals the UA that the NEL policy applies to this NEL Host as well as any subdomains of the host's domain name.</p>
+        </section>
       </section>
     </section>
 
