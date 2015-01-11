@@ -121,6 +121,8 @@ directive-value   = uri-reference
           </pre>
 
           <p>See [[!RFC3986]] section 4.1 for definitions of `uri-reference`. The provided <a title="report-uri">report URI</a> MUST use a secure transport to receive the NEL reports. If the provided <a title="report-uri">report URI</a> does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the URL specified in this directive's value is defined in this documents <a href="reporting"></a> section.</p>
+
+          <p class="note">To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin that is being accessed.</p>
         </section>
         <section>
           <h2>The `max-age` Directive</h2>
