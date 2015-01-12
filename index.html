@@ -88,7 +88,7 @@
         <p>The <dfn>NEL header field</dfn> is used to communicate the <dfn>NEL policy</dfn> to the user agent. The ABNF (Augmented Backus-Naur Form) syntax for the <a>NEL header field</a> is as follows:</p>
 
         <pre>
-NEL = "NEL" ":" [ directive ]  *( ";" [ directive ] )
+NEL = "NEL" ":" [ directive ]  \\\*( ";" [ directive ] )
 
 directive                 = directive-name [ "=" directive-value ]
 directive-name            = token
@@ -117,12 +117,14 @@ directive-value           = token | quoted-string
 
           <pre>
 directive-name    = "report-uri"
-directive-value   = uri-reference
+directive-value   = 1\\\*uri-reference
           </pre>
 
-          <p>See [[!RFC3986]] section 4.1 for definitions of `uri-reference`. The provided <a title="report-uri">report URI</a> MUST use a secure transport to receive the NEL reports. If the provided <a title="report-uri">report URI</a> does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the URL specified in this directive's value is defined in this documents <a href="reporting"></a> section.</p>
+          <p>The <dfn>set of report URIs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `uri-reference`'s, each resolved relative to the navigation URL - see [[!RFC3986]] section 4 and appendix C for definition of `uri-reference` and delimiting recommendations.</p>
 
-          <p class="note">To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin that is being accessed.</p>
+          <p>Each <a title="report-uri">report URI</a> in the provided <a>set of report URIs</a>  MUST use a secure transport to receive the NEL reports. If any of the provided <a title="report-uri">report URI's</a> does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the specified URI's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
+
+          <p class="note">To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin that is being accessed, and provide multiple URIs to provide fallback alternatives if the preceding `report-uri` is unreachable.</p>
         </section>
         <section>
           <h2>The `max-age` Directive</h2>
@@ -301,33 +303,38 @@ directive-value   = delta-seconds
 
         <li>Let <dfn>report body</dfn> be the JSON stringification of the <a>report object</a>.</li>
 
-        <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URI</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URI</a> is not the same as the origin of the <a>NEL host</a> for which the report is generated, the block cookies flag MUST also be set. The user agent MUST NOT follow redirects when fetching this resource and ignore the fetched response if one is provided. The task source for these tasks is the Navigation Error Logging task source.</li>
+        <li>For each <a title="report-uri">report URI</a> in the <a>set of report URIs</a>:
+
+        <ol>
+          <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URI</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URI</a> is not the same as the origin of the <a>NEL host</a> for which the report is generated, the block cookies flag MUST also be set. The user agent MUST NOT follow redirects when fetching this resource and ignore the fetched response if one is provided. The task source for these tasks is the Navigation Error Logging task source.</li>
+          <li>If the fetch is successful, the user agent MAY abort these steps. Otherwise, the user agent MUST attempt delivery to the next URI in the <a>set of report URIs</a>.</li>
+        </ol>
       </ol>
     </section>
 
     <section>
       <h2>Examples</h2>
-
       <section>
         <h2>Sample Policy Definitions</h2>
         <pre class="example">
-           NEL: report-uri="https://example.com/errors"; max-age=2592000
+           NEL: report-uri="/errors"; max-age=2592000
         </pre>
 
-        <p>The above header field specifies that the user agent should report navigation errors to "https://example.com/errors" URI, and that the policy applies for 2592000 seconds (30 days).</p>
+        <p>The above header field specifies that the user agent should report navigation errors to <code>"/errors"</code> URI resolved relative to the origin of the <a>NEL host</a>, and that the policy applies for 2592000 seconds (30 days).</p>
 
         <pre class="example">
-           NEL: report-uri="https://example.com/errors"; max-age=2592000; includeSubDomains
+           NEL: report-uri="/errors" "https://example.com/report"; max-age=2592000; includeSubDomains
         </pre>
 
-        <p>The above header field applies similar policy as previous example but also extends it to all of the subdomains of the issuing NEL host.</p>
+        <p>The above header field specifies that the user agent should report navigation errors to <code>"/errors"</code> URI resolved relative to the origin of the <a>NEL host</a>, or <code>"https://example.com/report"</code> if <code>"/errors"</code> is unreachable. Further, the policy is extended to all of the subdomains of the issuing <a>NEL host</a>.</p>
 
         <pre class="example">
-           NEL: report-uri="https://example.com/errors"; max-age=0
+           NEL: report-uri="/errors"; max-age=0
         </pre>
 
         <p>The above header field with a <a>max-age</a> of zero indicates that the user agent must delete the currently registered <a>NEL policy</a> associated with the NEL Host and all of its subdomains - i.e. <a>includeSubDomains</a> is ignored when <a>max-age</a> is zero.</p>
       </section>
+
       <section>
         <h2>Sample Navigation Error Report</h2>
         <p>This section contains an example navigation error report the user agent might send when a navigation error is encountered for a <a>known NEL host</a>.</p>
