@@ -291,8 +291,7 @@ directive-value   = delta-seconds
               <dd>error type is unknown</dd>
             </dl>
 
-            <p>The user agent MAY extend the above error type list with custom values - e.g. new error types to accommodate new protocols, or more detailed error descriptions of existing ones.</p>
-
+            <p>The user agent MAY extend the above error type list with custom values - e.g. new error types to accommodate new protocols, or more detailed error descriptions of existing ones. When doing so, the user agent SHOULD follow the dot-delimited pattern (`[group].[optional-subgroup].[error-name]`) to facilitate simple and consistent processing of the error reports - e.g. the collector may provide aggregation by category and/or one or multiple subgroups.</p>
             </dd>
           </dl>
         </li>
