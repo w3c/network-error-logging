@@ -124,7 +124,17 @@ directive-value   = 1\\\*uri-reference
 
           <p>Each <a title="report-uri">report URI</a> in the provided <a>set of report URIs</a>  MUST use a secure transport to receive the NEL reports. If any of the provided <a title="report-uri">report URI's</a> does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the specified URI's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
 
-          <p class="note">To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin that is being accessed, and provide multiple URIs to provide fallback alternatives if the preceding `report-uri` is unreachable.</p>
+          <div class="note">
+            <p>The application does not need to be HTTPS-only to take advantage of NEL. To enable NEL reporting for an HTTP site the application can fetch a single "NEL registration resource" (e.g fetch an empty pixel) from the same host but over a secure transport - e.g. `http://example.com` can fetch `https://example.com/registerNEL`. Once registered, the NEL policy applies to both HTTPS and HTTP navigations for that host - i.e. an NEL registration for `https://example.com` also applies to `http://example.com` navigations.</p>
+
+            <p>However, note that accepting delivery of NEL reports does require a secure transport. To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin that is being accessed &mdash; otherwise navigation errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple `report-uri`'s to provide fallback alternatives if the preceding `report-uri` is unreachable.</p>
+
+            <p>Hence, to enable NEL:</p>
+            <ul>
+              <li>An HTTPS application should serve the NEL registration in its response, and for best results, specify an alternative `report-uri` origin that is HTTPS-enabled.</li>
+              <li>An HTTP application should provide a same host "NEL registration resource" over a secure transport, and specify an alternative `report-uri` origin that is HTTPS-enabled.</li>
+            </ul>
+          </div>
         </section>
         <section>
           <h2>The `max-age` Directive</h2>
