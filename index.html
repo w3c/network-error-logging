@@ -64,7 +64,7 @@
 
     <p>Today, application developers do not have real-time web application availability data from their end users. For example, if the user fails to load the page due to a network error, such as a failed DNS lookup, a connection timeout, a reset connection, or other reasons, the site developer is unable to detect and address this issue. Existing methods, such as synthetic monitoring provide a partial solution by placing monitoring nodes in predetermined geographic locations, but require additional infrastructure investments, and cannot provide truly global and near real-time availability data for real end users.</p>
 
-    <p>Navigation Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report user navigation errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully navigate to a destination on that origin, the user agent logs the navigation error report and attempts to deliver it to the report URI defined by the policy - the delivery is done on a best effort basis and may be delayed due to connectivity issues or other reasons.</p>
+    <p>Navigation Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report user navigation errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully navigate to a destination on that origin, the user agent logs the navigation error report and attempts to deliver it to the report URL defined by the policy - the delivery is done on a best effort basis and may be delayed due to connectivity issues or other reasons.</p>
 
     <p><a>NEL</a> applies to navigation requests only: a fetch resulting from a link navigation, direct user input, actions such as refresh, back, forward, or any other actions that result in a new page context. Subresource requests, such as resource fetches initiated as a result of the navigation request are not subject to <a>NEL</a>: if the parent resource has successfully loaded, the web application can implement own subresource instrumentation and error logging policies. <a>NEL</a> is only concerned with cases where no such instrumentation is possible because the application code is not yet instantiated or available and hence is unable to instrument the request.</p>
   </section>
@@ -128,16 +128,16 @@ directive-value           = token | quoted-string
 
         <section>
           <h2>The `report-uri` Directive</h2>
-          <p>The REQUIRED <dfn>report-uri</dfn> directive specifies a URI to which the user agent sends reports about navigation errors. The ABNF grammar for the name and value of the directive is:</p>
+          <p>The REQUIRED <dfn>report-uri</dfn> directive specifies a URL to which the user agent sends reports about navigation errors. The ABNF grammar for the name and value of the directive is:</p>
 
           <pre>
 directive-name    = "report-uri"
 directive-value   = 1\\\*uri-reference
           </pre>
 
-          <p>The <dfn>set of report URIs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `uri-reference`'s, each resolved relative to the navigation URL - see [[!RFC3986]] section 4 and appendix C for definition of `uri-reference` and delimiting recommendations.</p>
+          <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `uri-reference`'s, each resolved relative to the navigation URL - see [[!RFC3986]] section 4 and appendix C for definition of `uri-reference` and delimiting recommendations.</p>
 
-          <p>Each <a title="report-uri">report URI</a> in the provided <a>set of report URIs</a>  MUST use a secure transport to receive the NEL reports. If any of the provided <a title="report-uri">report URI's</a> does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the specified URI's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
+          <p>Each <a title="report-uri">report URL</a> in the provided <a>set of report URLs</a>  MUST use a secure transport to receive the NEL reports. If any of the provided <a title="report-uri">report URL's</a> does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the specified URL's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
 
           <div class="note">
             <p>The application does not need to be HTTPS-only to take advantage of NEL. To enable NEL reporting for an HTTP site the application can fetch a single "NEL registration resource" (e.g fetch an empty pixel) from the same host but over a secure transport - e.g. `http://example.com` can fetch `https://example.com/registerNEL`. Once registered, the NEL policy applies to both HTTPS and HTTP navigations for that host - i.e. an NEL registration for `https://example.com` also applies to `http://example.com` navigations.</p>
@@ -176,18 +176,18 @@ directive-value   = delta-seconds
 
       <p>The user agent MUST store and index NEL policies based strictly upon the domain names of the issuing <a title="NEL host">NEL hosts</a>. An <a>NEL policy</a> may contain an optional <a>includeSubDomains</a> directive specifying that this policy also applies to any hosts whose domain names are subdomains of the <a title="known NEL host">known NEL host's</a> domain name.</p>
 
-      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL host</a> separately from any NEL policies issued by any other <a title="NEL host">NEL hosts</a> whose domain names are superdomains or subdomains of the given <a title="NEL host">NEL host's</a> domain name. Only the given <a>NEL host</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a title="report-uri">report URI</a>, <a title="max-age">time duration</a>, and <a title="includeSubDomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL host</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>includeSubDomains</a> directive) for that <a>NEL host</a>.</p>
+      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL host</a> separately from any NEL policies issued by any other <a title="NEL host">NEL hosts</a> whose domain names are superdomains or subdomains of the given <a title="NEL host">NEL host's</a> domain name. Only the given <a>NEL host</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a title="report-uri">report URL</a>, <a title="max-age">time duration</a>, and <a title="includeSubDomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL host</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>includeSubDomains</a> directive) for that <a>NEL host</a>.</p>
     </section>
 
     <section>
       <h2>Reporting</h2>
 
-      <p>When a navigation error occurs for a URI that belongs to a <a>known NEL host</a> the user agent MUST log the error and attempt to deliver it to the <a title="report-uri">report URI</a> defined by the <a>NEL policy</a> of the associated <a>NEL host</a>:</p>
+      <p>When a navigation error occurs for a URL that belongs to a <a>known NEL host</a> the user agent MUST log the error and attempt to deliver it to the <a title="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL host</a>:</p>
 
       <ul>
         <li>The user agent SHOULD make best effort to deliver the error report as soon as possible to provide the necessary real-time feedback.</li>
         <li>The user agent MAY delay delivery of the report to account for poor or missing connectivity (e.g. temporarily offline due to poor service).</li>
-        <li>The user agent MAY abandon delivery of the report if the time of error exceeds 24 hours, or if the <a title="report-uri">report URI</a> is not responding or returns an error.</li>
+        <li>The user agent MAY abandon delivery of the report if the time of error exceeds 24 hours, or if the <a title="report-uri">report URL</a> is not responding or returns an error.</li>
         <li>The user agent MAY aggregate multiple error reports for the same <a>NEL host</a> and deliver them in a single report.</li>
       </ul>
 
@@ -327,11 +327,11 @@ directive-value   = delta-seconds
 
         <li>Let <dfn>report body</dfn> be the JSON stringification of the <a>report object</a>.</li>
 
-        <li>For each <a title="report-uri">report URI</a> in the <a>set of report URIs</a>:
+        <li>For each <a title="report-uri">report URL</a> in the <a>set of report URLs</a>:
 
         <ol>
-          <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URI</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URI</a> is not the same as the origin of the <a>NEL host</a> for which the report is generated, the block cookies flag MUST also be set. The user agent MUST NOT follow redirects when fetching this resource and ignore the fetched response if one is provided. The task source for these tasks is the Navigation Error Logging task source.</li>
-          <li>If the fetch is successful, the user agent MAY abort these steps. Otherwise, the user agent MUST attempt delivery to the next URI in the <a>set of report URIs</a>.</li>
+          <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URL</a> is not the same as the origin of the <a>NEL host</a> for which the report is generated, the block cookies flag MUST also be set. The user agent MUST NOT follow redirects when fetching this resource and ignore the fetched response if one is provided. The task source for these tasks is the Navigation Error Logging task source.</li>
+          <li>If the fetch is successful, the user agent MAY abort these steps. Otherwise, the user agent MUST attempt delivery to the next URL in the <a>set of report URLs</a>.</li>
         </ol>
       </ol>
     </section>
@@ -344,13 +344,13 @@ directive-value   = delta-seconds
            NEL: report-uri="/errors"; max-age=2592000
         </pre>
 
-        <p>The above header field specifies that the user agent should report navigation errors to <code>"/errors"</code> URI resolved relative to the origin of the <a>NEL host</a>, and that the policy applies for 2592000 seconds (30 days).</p>
+        <p>The above header field specifies that the user agent should report navigation errors to <code>"/errors"</code> URL resolved relative to the origin of the <a>NEL host</a>, and that the policy applies for 2592000 seconds (30 days).</p>
 
         <pre class="example">
            NEL: report-uri="/errors" "https://example.com/report"; max-age=2592000; includeSubDomains
         </pre>
 
-        <p>The above header field specifies that the user agent should report navigation errors to <code>"/errors"</code> URI resolved relative to the origin of the <a>NEL host</a>, or <code>"https://example.com/report"</code> if <code>"/errors"</code> is unreachable. Further, the policy is extended to all of the subdomains of the issuing <a>NEL host</a>.</p>
+        <p>The above header field specifies that the user agent should report navigation errors to <code>"/errors"</code> URL resolved relative to the origin of the <a>NEL host</a>, or <code>"https://example.com/report"</code> if <code>"/errors"</code> is unreachable. Further, the policy is extended to all of the subdomains of the issuing <a>NEL host</a>.</p>
 
         <pre class="example">
            NEL: report-uri="/errors"; max-age=0
