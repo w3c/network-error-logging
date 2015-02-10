@@ -204,7 +204,12 @@ directive-value   = delta-seconds
             <dd>The <a href="http://www.w3.org/html/wg/drafts/html/CR/dom.html#dom-document-referrer">referrer</a> attribute of the protected resource, or the empty string if the protected resource has no referrer.</dd>
 
             <dt id="report-server-ip"><a href="#report-server-ip"></a>server-ip</dt>
-            <dd>The IP address of the server where the user agent sent the request, if available. Otherwise, an empty string.</dd>
+            <dd>The IP address of the host to which the user agent sent the request, if available. Otherwise, an empty string.
+              <ul>
+              <li>A host identified by an IPv4 address is represented in dotted-decimal notation (a sequence of four decimal numbers in the range 0 to 255, separated by "."). [[RFC1123]]</li>
+              <li>A host identified by an IPv6 address is represented as an ordered list of eight 16-bit pieces (a sequence of `x:x:x:x:x:x:x:x`, where the 'x's are one to four hexadecimal digits of the eight 16-bit pieces of the address). [[RFC4291]] </li>
+              </ul>
+            </dd>
 
             <dt id="report-protocol"><a href="#report-protocol"></a>protocol</dt>
             <dd>The <a href="https://w3c.github.io/navigation-timing/#widl-PerformanceNavigationTiming-nextHopProtocol">network protocol</a>  used to fetch the resource as identified by the ALPN Protocol ID, if available. Otherwise, an empty string.</dd>
