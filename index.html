@@ -213,10 +213,10 @@ directive-value   = delta-seconds
             <dd>The <a href="http://tools.ietf.org/html/rfc7230#section-3.1.2">status-code</a> of the HTTP response, if available. Otherwise, the number 0.</dd>
 
             <dt id="report-elapsed-time"><a href="#report-elapsed-time"></a>elapsed-time</dt>
-            <dd>The elapsed number of milliseconds between the time when the navigation was initiated and when the user agent marked the navigation as failed.</dd>
+            <dd>The elapsed number of milliseconds between the start of navigation and when the user agent aborted the navigation.</dd>
 
             <dt id="report-age"><a href="#report-age"></a>age</dt>
-            <dd>The elapsed number of milliseconds between the time when the user agent marked the navigation as failed and when the report is being delivered.</dd>
+            <dd>The elapsed number of milliseconds between the time when the user agent aborted the navigation and when the report is being delivered.</dd>
 
             <dt id="report-type"><a href="#report-type"></a>type</dt>
             <dd>The description of the error type, which may be one the following strings:
@@ -380,7 +380,7 @@ directive-value   = delta-seconds
         }
         </pre>
 
-        <p>The above report indicates that the user agent attempted to navigate from "example.com" to "www.example.com" (<a>known NEL host</a>), which successfully resolved to the "123.122.121.120" IP address. However, while the user agent received a "200" response from the server via the "h2-15" protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. 823 milliseconds elapsed between the start of the navigation and when it was abandoned by the user agent, and the user agent sent this report immediately after the navigation error was encountered - i.e. the report age is 0.</p>
+        <p>The above report indicates that the user agent attempted to navigate from "example.com" to "www.example.com" (<a>known NEL host</a>), which successfully resolved to the "123.122.121.120" IP address. However, while the user agent received a "200" response from the server via the "h2-15" protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. 823 milliseconds elapsed between the start of navigation and when the user agent aborted the navigation. Finally, the user agent sent this report immediately after the navigation error was encountered - i.e. the report age is 0.</p>
       </section>
     </section>
 
