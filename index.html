@@ -98,6 +98,8 @@
 
       <p>Otherwise, if the policy is received over an insecure transport, or if the policy does not conform to the specified grammar, then the user agent MUST ignore it.</p>
 
+      <p class="note">The application does not need to be HTTPS-only to take advantage of NEL. To enable NEL reporting for an HTTP site the application can fetch a single "NEL registration resource" (e.g fetch an empty pixel) from the same domain name but over a secure transport - e.g. `http://example.com` can fetch `https://example.com/registerNEL`. Once registered, the NEL policy applies to both HTTPS and HTTP navigations for that <a>NEL host</a> - i.e. an NEL registration for `https://example.com` also applies to `http://example.com` navigations.</p>
+
       <section>
         <h2>`NEL` Header Field</h2>
         <p>The <dfn>NEL header field</dfn> is used to communicate the <dfn>NEL policy</dfn> to the user agent. The ABNF (Augmented Backus-Naur Form) syntax for the <a>NEL header field</a> is as follows:</p>
@@ -139,17 +141,8 @@ directive-value   = 1\\\*uri-reference
 
           <p>Each <a title="report-uri">report URL</a> in the provided <a>set of report URLs</a>  MUST use a secure transport to receive the NEL reports. If any of the provided <a title="report-uri">report URL's</a> does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the specified URL's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
 
-          <div class="note">
-            <p>The application does not need to be HTTPS-only to take advantage of NEL. To enable NEL reporting for an HTTP site the application can fetch a single "NEL registration resource" (e.g fetch an empty pixel) from the same host but over a secure transport - e.g. `http://example.com` can fetch `https://example.com/registerNEL`. Once registered, the NEL policy applies to both HTTPS and HTTP navigations for that host - i.e. an NEL registration for `https://example.com` also applies to `http://example.com` navigations.</p>
+          <p class="note">To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin that is being accessed &mdash; otherwise navigation errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple `report-uri`'s to provide fallback alternatives if the preceding `report-uri` is unreachable.</p>
 
-            <p>However, note that accepting delivery of NEL reports does require a secure transport. To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin that is being accessed &mdash; otherwise navigation errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple `report-uri`'s to provide fallback alternatives if the preceding `report-uri` is unreachable.</p>
-
-            <p>Hence, to enable NEL:</p>
-            <ul>
-              <li>An HTTPS application should serve the NEL registration in its response, and for best results, specify an alternative `report-uri` origin that is HTTPS-enabled.</li>
-              <li>An HTTP application should provide a same host "NEL registration resource" over a secure transport, and specify an alternative `report-uri` origin that is HTTPS-enabled.</li>
-            </ul>
-          </div>
         </section>
         <section>
           <h2>The `max-age` Directive</h2>
@@ -346,22 +339,56 @@ directive-value   = delta-seconds
       <section>
         <h2>Sample Policy Definitions</h2>
         <pre class="example">
-           NEL: report-uri="/errors"; max-age=2592000
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
+
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; NEL: report-uri="/report"; max-age=2592000
         </pre>
 
-        <p>The above header field specifies that the user agent should report navigation errors to <code>"/errors"</code> URL resolved relative to the origin of the <a>NEL host</a>, and that the policy applies for 2592000 seconds (30 days).</p>
+        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL host</a>: the user agent should report navigation errors to `/report` URL resolved relative to the origin of the <a>NEL host</a>, and that the policy applies for 2592000 seconds (30 days).</p>
+
+        <p>Note that above registration will only succeed if the response is delivered over a secure transport - see <a href="#policy-delivery-and-processing"></a>. To register an NEL policy:</p>
+
+        <ul>
+          <li>An HTTPS application can respond with the <a>NEL policy</a> in its response.</li>
+          <li>An HTTP application can provide a single "NEL registration resource" on the same domain but over a secure transport.</li>
+        </ul>
 
         <pre class="example">
-           NEL: report-uri="/errors" "https://example.com/report"; max-age=2592000; includeSubDomains
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
+
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; NEL: report-uri="https://other-origin.com/report"; max-age=2592000
         </pre>
 
-        <p>The above header field specifies that the user agent should report navigation errors to <code>"/errors"</code> URL resolved relative to the origin of the <a>NEL host</a>, or <code>"https://example.com/report"</code> if <code>"/errors"</code> is unreachable. Further, the policy is extended to all of the subdomains of the issuing <a>NEL host</a>.</p>
+        <p>The above <a>NEL policy</a> provided in the server response is similar to the previous example but tells the user agent to report navigation errors to `https://other-origin.com/report`. The use of an alternative origin that is not coupled with the origin that is being accessed is **strongly encouraged** to enable real-time reporting and improved report delivery - see <a href="#the-report-uri-directive"></a>.</p>
+
 
         <pre class="example">
-           NEL: report-uri="/errors"; max-age=0
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
+
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; NEL: report-uri="/report" "https://other-origin.com/report"; max-age=2592000; includeSubDomains
         </pre>
 
-        <p>The above header field with a <a>max-age</a> of zero indicates that the user agent must delete the currently registered <a>NEL policy</a> associated with the NEL Host and all of its subdomains - i.e. <a>includeSubDomains</a> is ignored when <a>max-age</a> is zero.</p>
+        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report navigation errors to `/report` URL resolved relative to the origin of the <a>NEL host</a>, or `https://other-origin.com/report` if `/errors` is unreachable. Further, the policy is extended to all of the subdomains of the issuing <a>NEL host</a> - see <a href="#the-includesubdomains-directive"></a>.</p>
+
+        <pre class="example">
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
+
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; NEL: report-uri="/report"; max-age=0
+        </pre>
+
+        <p>The above <a>NEL policy</a> provided in the server response contains <a>max-age</a> set to zero, which indicates that the user agent must delete the current registered <a>NEL policy</a> associated with the `example.com` <a>NEL Host</a> and all of its subdomains - i.e. <a>includeSubDomains</a> is implicit when <a>max-age</a> is zero.</p>
       </section>
 
       <section>
