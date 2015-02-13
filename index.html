@@ -126,7 +126,7 @@ directive-value           = token | quoted-string
 
         <section>
           <h2>The `report-uri` Directive</h2>
-          <p>The REQUIRED <dfn>report-uri</dfn> directive specifies a URL to which the user agent sends reports about network errors. The ABNF grammar for the name and value of the directive is:</p>
+          <p>The <dfn>report-uri</dfn> directive specifies a URL to which the user agent sends reports about network errors. The <a>report-uri</a> directive is a REQUIRED field to register an <a>NEL policy</a>, and OPTIONAL if the intent is to remove a previous registration - see <a>max-age</a>. The ABNF grammar for the name and value of the directive is:</p>
 
           <pre>
 directive-name    = "report-uri"
@@ -380,10 +380,14 @@ directive-value   = delta-seconds
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; NEL: report-uri="/report"; max-age=0
+&lt; NEL: max-age=0
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response contains <a>max-age</a> set to zero, which indicates that the user agent must delete the current registered <a>NEL policy</a> associated with the `example.com` <a>NEL Host</a> and all of its subdomains - i.e. <a>includeSubDomains</a> is implicit when <a>max-age</a> is zero.</p>
+        <p>The above <a>NEL policy</a> provided in the server response contains <a>max-age</a> set to zero, which indicates that the user agent must delete the current registered <a>NEL policy</a> associated with the `example.com` <a>NEL Host</a> and all of its subdomains:</p>
+        <ul>
+          <li><a>includeSubDomains</a> is implicit when <a>max-age</a> is zero</li>
+          <li><a>report-uri</a> is optional when removing a previously registered policy</li>
+        </ul>
       </section>
 
       <section>
