@@ -2,14 +2,14 @@
 <html>
 
 <head>
-  <title>Navigation Error Logging</title>
+  <title>Network Error Logging</title>
   <meta charset='utf-8'>
   <script src='//www.w3.org/Tools/respec/respec-w3c-common' async class='remove'></script>
   <script class='remove'>
   var respecConfig = {
-    shortName: "navigation-error-logging",
+    shortName: "network-error-logging",
     specStatus: "ED",
-    edDraftURI: "http://w3c.github.io/navigation-error-logging/",
+    edDraftURI: "http://w3c.github.io/network-error-logging/",
     editors: [{
       name: "Ilya Grigorik",
       url: "https://www.igvita.com/",
@@ -35,13 +35,13 @@
       key: 'Repository',
       data: [{
         value: 'We are on Github.',
-        href: 'https://github.com/w3c/navigation-error-logging/'
+        href: 'https://github.com/w3c/network-error-logging/'
       }, {
         value: 'File a bug.',
-        href: 'https://github.com/w3c/navigation-error-logging/issues'
+        href: 'https://github.com/w3c/network-error-logging/issues'
       }, {
         value: 'Commit history.',
-        href: 'https://github.com/w3c/navigation-error-logging/commits/gh-pages/index.html'
+        href: 'https://github.com/w3c/network-error-logging/commits/gh-pages/index.html'
       }]
     }]
   };
@@ -50,7 +50,7 @@
 
 <body>
   <section id='abstract'>
-    <p>This document defines a mechanism enabling web sites to declare a reporting policy that can be used by the user agent to report user navigation errors for a given site, the format of the error report, and the transmission mechanism.</p>
+    <p>This document defines a mechanism enabling web sites to declare a reporting policy that can be used by the user agent to report encountered network errors that prevented it from successfully loading the requested resource, the format of the error reports, and their transmission mechanism.</p>
   </section>
 
   <section id='sotd'>
@@ -60,23 +60,19 @@
   <section>
     <h2>Introduction</h2>
 
-    <p>Accurately measuring performance characteristics of web applications is an important aspect in helping site developers understand how to make their web applications faster. Likewise, measuring and understanding when web applications are not accessible for end users due to network errors is an example of the worst case web browsing performance.</p>
+    <p>Accurately measuring performance characteristics of web applications is an important aspect in helping site developers understand how to improve their web applications. The worst case scenario is the failure to load the application, or a particular resource, due to a network error, and to address such failures the developer requires assistance from the user agent to identify when, where, and why such failures are occurring.</p>
 
     <p>Today, application developers do not have real-time web application availability data from their end users. For example, if the user fails to load the page due to a network error, such as a failed DNS lookup, a connection timeout, a reset connection, or other reasons, the site developer is unable to detect and address this issue. Existing methods, such as synthetic monitoring provide a partial solution by placing monitoring nodes in predetermined geographic locations, but require additional infrastructure investments, and cannot provide truly global and near real-time availability data for real end users.</p>
 
-    <p>Navigation Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report user navigation errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully navigate to a destination on that origin, the user agent logs the navigation error report and attempts to deliver it to the report URL defined by the policy - the delivery is done on a best effort basis and may be delayed due to connectivity issues or other reasons.</p>
-
-    <p><a>NEL</a> applies to navigation requests only: a fetch resulting from a link navigation, direct user input, actions such as refresh, back, forward, or any other actions that result in a new page context. Subresource requests, such as resource fetches initiated as a result of the navigation request are not subject to <a>NEL</a>: if the parent resource has successfully loaded, the web application can implement own subresource instrumentation and error logging policies. <a>NEL</a> is only concerned with cases where no such instrumentation is possible because the application code is not yet instantiated or available and hence is unable to instrument the request.</p>
+    <p>Network Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report network errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully fetch a resource from that origin, the user agent logs the network error report and attempts to deliver it to the report URL defined by the policy - the delivery is done on a best effort basis and may be delayed due to connectivity issues or other reasons.</p>
   </section>
 
   <section>
-    <h2>Navigation Error Logging</h2>
+    <h2>Network Error Logging</h2>
 
     <section>
       <h2>Key Concepts and Terminology</h2>
       <dl>
-        <dt><dfn>navigation</dfn></dt>
-        <dd>Refers to the act of <a href="http://www.w3.org/TR/html5/browsers.html#navigate">navigating</a>. [[HTML5]]</dd>
         <dt><dfn>origin</dfn></dt>
         <dd>Defined by the Origin specification. [[RFC6454]]</dd>
         <dt><dfn>JSON object</dfn></dt>
@@ -98,7 +94,7 @@
 
       <p>Otherwise, if the policy is received over an insecure transport, or if the policy does not conform to the specified grammar, then the user agent MUST ignore it.</p>
 
-      <p class="note">The application does not need to be HTTPS-only to take advantage of NEL. To enable NEL reporting for an HTTP site the application can fetch a single "NEL registration resource" (e.g fetch an empty pixel) from the same domain name but over a secure transport - e.g. `http://example.com` can fetch `https://example.com/registerNEL`. Once registered, the NEL policy applies to both HTTPS and HTTP navigations for that <a>NEL host</a> - i.e. an NEL registration for `https://example.com` also applies to `http://example.com` navigations.</p>
+      <p class="note">The application does not need to be HTTPS-only to take advantage of NEL. To enable NEL reporting for an HTTP site the application can fetch a single "NEL registration resource" (e.g fetch an empty pixel) from the same domain name but over a secure transport - e.g. `http://example.com` can fetch `https://example.com/registerNEL`. Once registered, the NEL policy applies to both HTTPS and HTTP fetches for that <a>NEL host</a> - i.e. an NEL registration for `https://example.com` also applies to `http://example.com` fetches.</p>
 
       <section>
         <h2>`NEL` Header Field</h2>
@@ -130,18 +126,18 @@ directive-value           = token | quoted-string
 
         <section>
           <h2>The `report-uri` Directive</h2>
-          <p>The REQUIRED <dfn>report-uri</dfn> directive specifies a URL to which the user agent sends reports about navigation errors. The ABNF grammar for the name and value of the directive is:</p>
+          <p>The REQUIRED <dfn>report-uri</dfn> directive specifies a URL to which the user agent sends reports about network errors. The ABNF grammar for the name and value of the directive is:</p>
 
           <pre>
 directive-name    = "report-uri"
 directive-value   = 1\\\*uri-reference
           </pre>
 
-          <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `uri-reference`'s, each resolved relative to the navigation URL - see [[!RFC3986]] section 4 and appendix C for definition of `uri-reference` and delimiting recommendations.</p>
+          <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `uri-reference`'s, each resolved relative to the URL of the fetched resource that specified the policy - see [[!RFC3986]] section 4 and appendix C for definition of `uri-reference` and delimiting recommendations.</p>
 
-          <p>Each <a title="report-uri">report URL</a> in the provided <a>set of report URLs</a>  MUST use a secure transport to receive the NEL reports. If any of the provided <a title="report-uri">report URL's</a> does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending navigation error reports to the specified URL's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
+          <p>Each <a title="report-uri">report URL</a> in the provided <a>set of report URLs</a>  MUST use a secure transport to receive the NEL reports. If any of the provided <a title="report-uri">report URL's</a> does not use a secure transport, the user agent MUST ignore the provided policy. The process of sending network error reports to the specified URL's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
 
-          <p class="note">To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin that is being accessed &mdash; otherwise navigation errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple `report-uri`'s to provide fallback alternatives if the preceding `report-uri` is unreachable.</p>
+          <p class="note">To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin from which the resource is being fetched &mdash; otherwise network errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple `report-uri`'s to provide fallback alternatives if the preceding `report-uri` is unreachable.</p>
 
         </section>
         <section>
@@ -165,7 +161,7 @@ directive-value   = delta-seconds
     <section>
       <h2>Policy Storage and Maintenance</h2>
 
-      <p>An HTTP host declares iself an <dfn>NEL host</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> over secure transport (e.g., TLS). Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>known NEL host</dfn>.</p>
+      <p>An HTTP host declares itself an <dfn>NEL host</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> over secure transport (e.g., TLS). Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>known NEL host</dfn>.</p>
 
       <p>The user agent MUST store and index NEL policies based strictly upon the domain names of the issuing <a title="NEL host">NEL hosts</a>. An <a>NEL policy</a> may contain an optional <a>includeSubDomains</a> directive specifying that this policy also applies to any hosts whose domain names are subdomains of the <a title="known NEL host">known NEL host's</a> domain name.</p>
 
@@ -175,7 +171,7 @@ directive-value   = delta-seconds
     <section>
       <h2>Reporting</h2>
 
-      <p>When a navigation error occurs for a URL that belongs to a <a>known NEL host</a> the user agent MUST log the error and attempt to deliver it to the <a title="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL host</a>:</p>
+      <p>When a network error occurs for a URL that belongs to a <a>known NEL host</a> the user agent MUST log the error and attempt to deliver it to the <a title="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL host</a>:</p>
 
       <ul>
         <li>The user agent SHOULD make best effort to deliver the error report as soon as possible to provide the necessary real-time feedback.</li>
@@ -184,17 +180,17 @@ directive-value   = delta-seconds
         <li>The user agent MAY aggregate multiple error reports for the same <a>NEL host</a> and deliver them in a single report.</li>
       </ul>
 
-      <p>To generate a <dfn>navigation error object</dfn>, the user agent MUST use an algorithm equivalent to the following:</p>
+      <p>To generate a <dfn>network error object</dfn>, the user agent MUST use an algorithm equivalent to the following:</p>
 
       <ol>
-        <li>Prepare a JSON object <i>naverror</i> with the following keys and values:
+        <li>Prepare a JSON object <i>neterror</i> with the following keys and values:
 
           <dl>
-            <dt id="report-navigation-uri"><a href="#report-navigation-uri"></a>navigation-uri</dt>
-            <dd>The navigation URL that failed to load, with any <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#concept-url-fragment">fragment</a> component removed.</dd>
+            <dt id="report-uri"><a href="#report-uri"></a>uri</dt>
+            <dd>The URL that encountered the network error, with any <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#concept-url-fragment">fragment</a> component removed.</dd>
 
             <dt id="report-referrer"><a href="#report-referrer"></a>referrer</dt>
-            <dd>The <a href="http://www.w3.org/html/wg/drafts/html/CR/dom.html#dom-document-referrer">referrer</a> attribute of the protected resource, or the empty string if the protected resource has no referrer.</dd>
+            <dd>The <a href="http://www.w3.org/html/wg/drafts/html/CR/dom.html#dom-document-referrer">referrer</a> attribute of the resource, or the empty string if the resource has no referrer.</dd>
 
             <dt id="report-server-ip"><a href="#report-server-ip"></a>server-ip</dt>
             <dd>The IP address of the host to which the user agent sent the request, if available. Otherwise, an empty string.
@@ -211,10 +207,10 @@ directive-value   = delta-seconds
             <dd>The <a href="http://tools.ietf.org/html/rfc7230#section-3.1.2">status-code</a> of the HTTP response, if available. Otherwise, the number 0.</dd>
 
             <dt id="report-elapsed-time"><a href="#report-elapsed-time"></a>elapsed-time</dt>
-            <dd>The elapsed number of milliseconds between the start of navigation and when the user agent aborted the navigation.</dd>
+            <dd>The elapsed number of milliseconds between the start of the resource fetch and when it was aborted by the user agent.</dd>
 
             <dt id="report-age"><a href="#report-age"></a>age</dt>
-            <dd>The elapsed number of milliseconds between the time when the user agent aborted the navigation and when the report is being delivered.</dd>
+            <dd>The elapsed number of milliseconds between the time when the user agent aborted the request and when the error report is being delivered.</dd>
 
             <dt id="report-type"><a href="#report-type"></a>type</dt>
             <dd>The description of the error type, which may be one the following strings:
@@ -298,7 +294,7 @@ directive-value   = delta-seconds
 
               <hr/>
               <dt>abandoned</dt>
-              <dd>User aborted the navigation before it is complete</dd>
+              <dd>User aborted the resource fetch before it is complete</dd>
 
               <dt>unknown</dt>
               <dd>error type is unknown</dd>
@@ -309,17 +305,17 @@ directive-value   = delta-seconds
           </dl>
         </li>
 
-        <li>Return <i>naverror</i>.</li>
+        <li>Return <i>neterror</i>.</li>
       </ol>
 
-      <p>To send navigation error reports, the user agent MUST use an algorithm equivalent to the following:</p>
+      <p>To send network error reports, the user agent MUST use an algorithm equivalent to the following:</p>
 
       <ol>
         <li>Prepare a JSON object <dfn>report object</dfn> with the following keys and values:
 
           <dl>
             <dt>nel-report</dt>
-            <dd>An array object containing one or more <a title="navigation error object">navigation error objects</a>.</dd>
+            <dd>An array object containing one or more <a title="network error object">network error objects</a>.</dd>
           </dl>
         </li>
 
@@ -328,7 +324,7 @@ directive-value   = delta-seconds
         <li>For each <a title="report-uri">report URL</a> in the <a>set of report URLs</a>:
 
         <ol>
-          <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URL</a> is not the same as the origin of the <a>NEL host</a> for which the report is generated, the block cookies flag MUST also be set. The user agent MUST NOT follow redirects when fetching this resource and ignore the fetched response if one is provided. The task source for these tasks is the Navigation Error Logging task source.</li>
+          <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URL</a> is not the same as the origin of the <a>NEL host</a> for which the report is generated, the block cookies flag MUST also be set. The user agent MUST NOT follow redirects when fetching this resource and ignore the fetched response if one is provided. The task source for these tasks is the Network Error Logging task source.</li>
           <li>If the fetch is successful, the user agent MAY abort these steps. Otherwise, the user agent MUST attempt delivery to the next URL in the <a>set of report URLs</a>.</li>
         </ol>
       </ol>
@@ -347,7 +343,7 @@ directive-value   = delta-seconds
 &lt; NEL: report-uri="/report"; max-age=2592000
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL host</a>: the user agent should report navigation errors to `/report` URL resolved relative to the origin of the <a>NEL host</a>, and that the policy applies for 2592000 seconds (30 days).</p>
+        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL host</a>: the user agent should report network errors to `/report` URL resolved relative to the origin of the <a>NEL host</a>, and that the policy applies for 2592000 seconds (30 days).</p>
 
         <p>Note that above registration will only succeed if the response is delivered over a secure transport - see <a href="#policy-delivery-and-processing"></a>. To register an NEL policy:</p>
 
@@ -365,8 +361,7 @@ directive-value   = delta-seconds
 &lt; NEL: report-uri="https://other-origin.com/report"; max-age=2592000
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response is similar to the previous example but tells the user agent to report navigation errors to `https://other-origin.com/report`. The use of an alternative origin that is not coupled with the origin that is being accessed is **strongly encouraged** to enable real-time reporting and improved report delivery - see <a href="#the-report-uri-directive"></a>.</p>
-
+        <p>The above <a>NEL policy</a> provided in the server response is similar to the previous example but tells the user agent to report network errors to `https://other-origin.com/report`. The use of an alternative origin that is not coupled with the origin that is being accessed is **strongly encouraged** to enable real-time reporting and improved report delivery - see <a href="#the-report-uri-directive"></a>.</p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
@@ -377,7 +372,7 @@ directive-value   = delta-seconds
 &lt; NEL: report-uri="/report" "https://other-origin.com/report"; max-age=2592000; includeSubDomains
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report navigation errors to `/report` URL resolved relative to the origin of the <a>NEL host</a>, or `https://other-origin.com/report` if `/errors` is unreachable. Further, the policy is extended to all of the subdomains of the issuing <a>NEL host</a> - see <a href="#the-includesubdomains-directive"></a>.</p>
+        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to `/report` URL resolved relative to the origin of the <a>NEL host</a>, or `https://other-origin.com/report` if `/errors` is unreachable. Further, the policy is extended to all of the subdomains of the issuing <a>NEL host</a> - see <a href="#the-includesubdomains-directive"></a>.</p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
@@ -392,14 +387,14 @@ directive-value   = delta-seconds
       </section>
 
       <section>
-        <h2>Sample Navigation Error Report</h2>
-        <p>This section contains an example navigation error report the user agent might send when a navigation error is encountered for a <a>known NEL host</a>.</p>
+        <h2>Sample Network Error Reports</h2>
+        <p>This section contains an example network error report the user agent might send when a network error is encountered for a <a>known NEL host</a>.</p>
 
         <pre class="highlight">
 {
         "nel-report": [
             {
-              "navigation-uri": "https://www.example.com/",
+              "uri": "https://www.example.com/",
               "referrer": "http://example.com/",
               "server-ip": "123.122.121.120",
               "protocol": "h2-15",
@@ -412,7 +407,26 @@ directive-value   = delta-seconds
         }
         </pre>
 
-        <p>The above report indicates that the user agent attempted to navigate from "example.com" to "www.example.com" (<a>known NEL host</a>), which successfully resolved to the "123.122.121.120" IP address. However, while the user agent received a "200" response from the server via the "h2-15" protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. 823 milliseconds elapsed between the start of navigation and when the user agent aborted the navigation. Finally, the user agent sent this report immediately after the navigation error was encountered - i.e. the report age is 0.</p>
+        <p>The above report indicates that the user agent attempted to navigate from "example.com" to "www.example.com" (<a>known NEL host</a>), which successfully resolved to the "123.122.121.120" IP address. However, while the user agent received a "200" response from the server via the "h2-15" protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. 823 milliseconds elapsed between the start of navigation and when the user agent aborted the navigation. Finally, the user agent sent this report immediately after the network error was encountered - i.e. the report age is 0.</p>
+
+        <pre class="highlight">
+{
+        "nel-report": [
+            {
+              "uri": "https://widget.com/thing.js",
+              "referrer": "https://www.example.com/",
+              "server-ip": "234.233.232.231",
+              "protocol": "",
+              "status-code": 0,
+              "elapsed-time": 143,
+              "age": 0,
+              "type": "http.dns.name_not_resolved"
+            }
+          ]
+        }
+        </pre>
+
+        <p>The above report indicates that the user agent attempted to fetch  "https://widget.com/thing.js", which belongs to a previously registered <a>NEL host</a>, from "www.example.com" origin. However, the user agent was unable to resolve the DNS name and the request was aborted by the user agent after 143 milliseconds. Because "widget.com" is a known NEL host, a network error report was logged and sent to the report URL specified by the NEL policy of that host immediately after the network error was encountered - i.e. the report age is 0.</p>
       </section>
     </section>
 
