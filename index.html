@@ -435,6 +435,34 @@ directive-value   = delta-seconds
     </section>
 
     <section>
+      <h2>Use cases</h2>
+
+      <section>
+        <h2>Reporting of Navigation Failures</h2>
+
+        <p>A navigation request initiated by the user (e.g. via a click on a link, direct input via the location bar, script-initiated due to user interaction, etc.) may fail due any number of connectivity reasons: DNS failure, TCP error, TLS protocol violation, and so on. These errors may be caused by network misconfiguration, transient routing issues, server downtime, malware or other attacks against the user, etc.</p>
+
+        <p>In such cases the destination host is often left unaware of the failed navigation since, by definition, it cannot see the request reach its infrastructure and it is unable to investigate the problem. To address this, the host can register an <a>NEL policy</a> with the user agent, which specifies where reports of such failures should be delivered such that they can be investigated.</p>
+      </section>
+
+      <section>
+        <h2>Reporting of First-party Subresource Fetch Failures</h2>
+
+        <p>A typical application requires dozens of resources, the fetching of which is typically initiated via HTML, CSS, or JavaScript. The application requesting such resources can observe failures of most such fetches (e.g. via `onerror` callbacks), but it does not have access to the detailed network error report of why the failure has occurred - e.g. DNS failure, TCP error, TLS protocol violation, etc.</p>
+
+        <p>To address this, the application can register relevant NEL policies with the user agent for the first-party hosts from which the subresources are being fetched. Then, if such a policy is present and a network error is encountered for a resource associated with a registered <a>NEL host</a>, the user agent will report the detailed network error report and enable the application developers to investigate the error.</p>
+      </section>
+
+      <section>
+        <h2>Reporting of Third-party Subresource Fetch Failures</h2>
+
+        <p>In the case where a resource is embedded by a third party, the provider of the resource is often unable to instrument and observe the failure. For example, if `example.com` embeds a `widget.com/thing.js` resource on its site, and the user visiting `example.com` fails to fetch such resource due to a network error, the `widget.com` host is both unaware of the failure and unable to detect it.</p>
+
+        <p>To address this, `widget.com` can register an NEL policy for its host. Then, if such policy is present and a network error is encountered while fetching a resource &mdash; regardless of whether it is being requested from a first-party or third-party origin &mdash; from the registered <a>NEL host</a>, the user agent will report the network error and enable the provider to investigate the error.</p>
+      </section>
+    </section>
+
+    <section>
       <h2>IANA Considerations</h2>
       <p>... TODO ...</p>
     </section>
