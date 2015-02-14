@@ -171,7 +171,23 @@ directive-value   = delta-seconds
     <section>
       <h2>Reporting</h2>
 
-      <p>When a network error occurs for a URL that belongs to a <a>known NEL host</a> the user agent MUST log the error and attempt to deliver it to the <a title="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL host</a>:</p>
+      <p>A <dfn>network error</dfn> is any condition where a connection, protocol, or request/response processing error prevents the user agent from receiving and successfully processing the server response. This may include, but is not limited to DNS, TCP, TLS, and HTTP errors. For example, a <a>network error</a> is triggered when the user agent:</p>
+
+      <ul>
+        <li>Fails to resolve the DNS name</li>
+        <li>Fails to establish a TCP connection</li>
+        <li>Fails to establish a secure TLS tunnel</li>
+        <li>Fails to fetch the resource due to a TLS protocol error</li>
+        <li>Fails to fetch the resource due to a HTTP protocol error</li>
+        <li>Fails to fetch the resource due to a socket timeout or error</li>
+        <li>Fails to fetch the resource due to a redirect loop</li>
+      </ul>
+
+      <p>The failure to fetch a resource when the user agent is known to be offline (when <a href="https://html.spec.whatwg.org/#navigator.online">`navigator.onLine`</a> returns `false`) MUST NOT be considered to be a <a>network error</a>. Similarly, the receipt of a 4XX/5XX, or any other valid HTTP response, MUST NOT be considered to be a <a>network error</a> as long as there are no HTTP protocol errors within the exchange.</p>
+
+      <p class="note">Note that the above definition of "network error" is different from definition in [[Fetch]]. The definition of <a>network error</a> in this specification is a subset of Fetch definition - i.e. all of the above conditions would trigger a "network error" in Fetch processing, but conditions such as blocked requests due to mixed content, CORS failures, etc., would not.</p>
+
+      <p>When a <a>network error</a> occurs for a URL that belongs to a <a>known NEL host</a> the user agent MUST log the error and attempt to deliver it to the <a title="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL host</a>:</p>
 
       <ul>
         <li>The user agent SHOULD make best effort to deliver the error report as soon as possible to provide the necessary real-time feedback.</li>
@@ -187,7 +203,7 @@ directive-value   = delta-seconds
 
           <dl>
             <dt id="report-uri"><a href="#report-uri"></a>uri</dt>
-            <dd>The URL that encountered the network error, with any <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#concept-url-fragment">fragment</a> component removed.</dd>
+            <dd>The URL that encountered the <a>network error</a>, with any <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#concept-url-fragment">fragment</a> component removed.</dd>
 
             <dt id="report-referrer"><a href="#report-referrer"></a>referrer</dt>
             <dd>The <a href="http://www.w3.org/html/wg/drafts/html/CR/dom.html#dom-document-referrer">referrer</a> attribute of the resource, or the empty string if the resource has no referrer.</dd>
@@ -288,6 +304,9 @@ directive-value   = delta-seconds
 
               <dt>http.response.invalid</dt>
               <dd>Response is empty, has a content-length mismatch, has improper encoding, and/or other conditions that prevent user agent from processing the response</dd>
+
+              <dt>http.response.redirect_loop</dt>
+              <dd>The request was aborted due to a detected redirect loop</dd>
 
               <dt>http.failed</dt>
               <dd>The connection failed due to errors in HTTP protocol not covered by previous errors</dd>
