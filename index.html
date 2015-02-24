@@ -171,7 +171,7 @@ directive-value   = delta-seconds
     <section>
       <h2>Reporting</h2>
 
-      <p>A <dfn>network error</dfn> is any condition where a connection, protocol, or request/response processing error prevents the user agent from receiving and successfully processing the server response. This may include, but is not limited to DNS, TCP, TLS, and HTTP errors. For example, a <a>network error</a> is triggered when the user agent:</p>
+      <p>A <dfn>network error</dfn> is any condition where a connection, protocol, or server error (<a href="http://tools.ietf.org/html/rfc7231#section-6.6">5xx status code</a>, [[RFC7231]]) is encountered by the user agent. This may include, but is not limited to DNS, TCP, TLS, HTTP protocol and server errors. For example, a <a>network error</a> is triggered when the user agent:</p>
 
       <ul>
         <li>Fails to resolve the DNS name</li>
@@ -181,9 +181,10 @@ directive-value   = delta-seconds
         <li>Fails to fetch the resource due to a HTTP protocol error</li>
         <li>Fails to fetch the resource due to a socket timeout or error</li>
         <li>Fails to fetch the resource due to a redirect loop</li>
+        <li>Fails to fetch the resource due to a 5xx response</li>
       </ul>
 
-      <p>The failure to fetch a resource when the user agent is known to be offline (when <a href="https://html.spec.whatwg.org/#navigator.online">`navigator.onLine`</a> returns `false`) MUST NOT be considered to be a <a>network error</a>. Similarly, the receipt of a 4XX/5XX, or any other valid HTTP response, MUST NOT be considered to be a <a>network error</a> as long as there are no HTTP protocol errors within the exchange.</p>
+      <p>The failure to fetch a resource when the user agent is known to be offline (when <a href="https://html.spec.whatwg.org/#navigator.online">`navigator.onLine`</a> returns `false`) MUST NOT be considered to be a <a>network error</a>.</p>
 
       <p class="note">Note that the above definition of "network error" is different from definition in [[Fetch]]. The definition of <a>network error</a> in this specification is a subset of Fetch definition - i.e. all of the above conditions would trigger a "network error" in Fetch processing, but conditions such as blocked requests due to mixed content, CORS failures, etc., would not.</p>
 
