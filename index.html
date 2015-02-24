@@ -328,11 +328,12 @@ directive-value   = delta-seconds
 
           <li>If the fetch is successful (2XX HTTP response code), the user agent MUST abort the remaining steps.</li>
 
-          <li>If the fetch failed, then the user agent MUST update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a> if:</li>
-            <ul>
-              <li>The fetch returns a <a href="http://tools.ietf.org/html/rfc7231#section-6.5.9">410 Gone</a> HTTP response code ([[RFC7231]]).</li>
-              <li>The number of consecutive delivery failures for the current <a title="report-uri">report URL</a> exceeds 3 attempts.</li>
-            </ul>
+          <li>If the fetch failed with a <a href="http://tools.ietf.org/html/rfc7231#section-6.5.9">410 Gone</a> HTTP response code ([[RFC7231]]), the user agent MUST update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.</li>
+
+          <li>If the fetch failed after multiple failed delivery attempts, due to networking or application errors (i.e. 3XX+ HTTP response code), the user agent MAY update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.
+
+          <p class="note">The user-agent is allowed to garbage collect report-uri's that are no longer functional, but it should account for common failure cases such as captive portals, which may temporarily prevent it from delivering the error reports. The exact implementation logic is deferred to the user-agent.</p>
+          </li>
 
           <li>If the <a>NEL policy</a> was updated and the new <a>NEL policy</a> contains an empty <a>set of report URLs</a> the user agent MUST remove the <a>NEL policy</a> and abort the remaining steps.</li>
 
