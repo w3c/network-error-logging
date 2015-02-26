@@ -9,7 +9,7 @@
   var respecConfig = {
     shortName: "network-error-logging",
     specStatus: "ED",
-    edDraftURI: "http://w3c.github.io/network-error-logging/",
+    edDraftURI: "https://w3c.github.io/network-error-logging/",
     editors: [{
       name: "Ilya Grigorik",
       url: "https://www.igvita.com/",
@@ -183,7 +183,7 @@ directive-value   = delta-seconds
         <li>Fails to fetch the resource due to a redirect loop</li>
       </ul>
 
-      <p>The user agent MAY classify and report server error responses (<a href="http://tools.ietf.org/html/rfc7231#section-6.6">5xx status code</a>, [[RFC7231]]) as network errors. For example, a network error report may be triggered when a fetch fails due to proxy or gateway errors, service downtime, and other types of server errors.</p>
+      <p>The user agent MAY classify and report server error responses (<a href="https://tools.ietf.org/html/rfc7231#section-6.6">5xx status code</a>, [[RFC7231]]) as network errors. For example, a network error report may be triggered when a fetch fails due to proxy or gateway errors, service downtime, and other types of server errors.</p>
 
       <p>The failure to fetch a resource when the user agent is known to be offline (when <a href="https://html.spec.whatwg.org/#navigator.online">`navigator.onLine`</a> returns `false`) MUST NOT be considered to be a <a>network error</a>.</p>
 
@@ -222,7 +222,7 @@ directive-value   = delta-seconds
             <dd>The <a href="https://w3c.github.io/navigation-timing/#widl-PerformanceNavigationTiming-nextHopProtocol">network protocol</a>  used to fetch the resource as identified by the ALPN Protocol ID, if available. Otherwise, an empty string.</dd>
 
             <dt id="report-status-code"><a href="#report-status-code"></a>status-code</dt>
-            <dd>The <a href="http://tools.ietf.org/html/rfc7230#section-3.1.2">status-code</a> of the HTTP response, if available. Otherwise, the number 0.</dd>
+            <dd>The <a href="https://tools.ietf.org/html/rfc7230#section-3.1.2">status-code</a> of the HTTP response, if available. Otherwise, the number 0.</dd>
 
             <dt id="report-elapsed-time"><a href="#report-elapsed-time"></a>elapsed-time</dt>
             <dd>The elapsed number of milliseconds between the start of the resource fetch and when it was aborted by the user agent.</dd>
@@ -349,7 +349,7 @@ directive-value   = delta-seconds
 
           <li>If the fetch is successful (2xx HTTP response code), the user agent MUST abort the remaining steps.</li>
 
-          <li>If the fetch failed with a <a href="http://tools.ietf.org/html/rfc7231#section-6.5.9">410 Gone</a> HTTP response code ([[RFC7231]]), the user agent MUST update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.</li>
+          <li>If the fetch failed with a <a href="https://tools.ietf.org/html/rfc7231#section-6.5.9">410 Gone</a> HTTP response code ([[RFC7231]]), the user agent MUST update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.</li>
 
           <li>If the fetch failed after multiple delivery attempts the user agent MAY update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.
 
