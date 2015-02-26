@@ -326,13 +326,13 @@ directive-value   = delta-seconds
         <ol>
           <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URL</a> is not the same as the origin of the <a>NEL host</a> for which the report is generated, the block cookies flag MUST also be set. The user agent MUST NOT follow redirects when fetching this resource and ignore the fetched response if one is provided. The task source for these tasks is the "Network Error Logging" task source.</li>
 
-          <li>If the fetch is successful (2XX HTTP response code), the user agent MUST abort the remaining steps.</li>
+          <li>If the fetch is successful (2xx HTTP response code), the user agent MUST abort the remaining steps.</li>
 
           <li>If the fetch failed with a <a href="http://tools.ietf.org/html/rfc7231#section-6.5.9">410 Gone</a> HTTP response code ([[RFC7231]]), the user agent MUST update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.</li>
 
-          <li>If the fetch failed after multiple failed delivery attempts, due to networking or application errors (i.e. 3XX+ HTTP response code), the user agent MAY update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.
+          <li>If the fetch failed after multiple delivery attempts the user agent MAY update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.
 
-          <p class="note">The user-agent is allowed to garbage collect report-uri's that are no longer functional, but it should account for common failure cases such as captive portals, which may temporarily prevent it from delivering the error reports. The exact implementation logic is deferred to the user-agent.</p>
+          <p class="note">The user agent is allowed to garbage collect report-uri's that are no longer functional, but it should account for common failure cases such as captive portals, which may temporarily prevent it from delivering the error reports. The exact implementation logic is deferred to the user-agent, which may use own mechanisms and heuristics to detect such cases.</p>
           </li>
 
           <li>If the <a>NEL policy</a> was updated and the new <a>NEL policy</a> contains an empty <a>set of report URLs</a> the user agent MUST remove the <a>NEL policy</a> and abort the remaining steps.</li>
