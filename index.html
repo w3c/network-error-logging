@@ -171,7 +171,7 @@ directive-value   = delta-seconds
     <section>
       <h2>Reporting</h2>
 
-      <p>A <dfn>network error</dfn> is any condition where a connection, protocol, or server error (<a href="http://tools.ietf.org/html/rfc7231#section-6.6">5xx status code</a>, [[RFC7231]]) is encountered by the user agent. This may include, but is not limited to DNS, TCP, TLS, HTTP protocol and server errors. For example, a <a>network error</a> is triggered when the user agent:</p>
+      <p>A <dfn>network error</dfn> is any condition where a connection or a  protocol error is encountered by the user agent, thus preventing it from successfully completing the request-response exchange. This may include, but is not limited to DNS, TCP, TLS, and HTTP connection and protocol errors. For example, a <a>network error</a> is triggered when the user agent:</p>
 
       <ul>
         <li>Fails to resolve the DNS name</li>
@@ -181,12 +181,13 @@ directive-value   = delta-seconds
         <li>Fails to fetch the resource due to a HTTP protocol error</li>
         <li>Fails to fetch the resource due to a socket timeout or error</li>
         <li>Fails to fetch the resource due to a redirect loop</li>
-        <li>Fails to fetch the resource due to a 5xx response</li>
       </ul>
+
+      <p>The user agent MAY classify and report server error responses (<a href="http://tools.ietf.org/html/rfc7231#section-6.6">5xx status code</a>, [[RFC7231]]) as network errors. For example, a network error report may be triggered when a fetch fails due to proxy or gateway errors, service downtime, and other types of server errors.</p>
 
       <p>The failure to fetch a resource when the user agent is known to be offline (when <a href="https://html.spec.whatwg.org/#navigator.online">`navigator.onLine`</a> returns `false`) MUST NOT be considered to be a <a>network error</a>.</p>
 
-      <p class="note">Note that the above definition of "network error" is different from definition in [[Fetch]]. The definition of <a>network error</a> in this specification is a subset of Fetch definition - i.e. all of the above conditions would trigger a "network error" in Fetch processing, but conditions such as blocked requests due to mixed content, CORS failures, etc., would not.</p>
+      <p class="note">Note that the above definition of "network error" is different from definition in [[Fetch]]. The definition of <a>network error</a> in this specification is a subset of [[Fetch]] definition - i.e. all of the above conditions would trigger a "network error" in [[Fetch]] processing, but conditions such as blocked requests due to mixed content, CORS failures, etc., would not.</p>
 
       <p>When a <a>network error</a> occurs for a URL that belongs to a <a>known NEL host</a> the user agent MUST log the error and attempt to deliver it to the <a title="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL host</a>:</p>
 
