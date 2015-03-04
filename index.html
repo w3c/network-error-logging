@@ -47,6 +47,12 @@
     wgPatentURI:  "http://www.w3.org/2004/01/pp-impl/45211/status"
   };
   </script>
+  <style>
+.reportTypeGroup {
+  margin-top: 1em; padding-top: 1ex;
+  border-top: 1px solid black;
+}
+  </style>
 </head>
 
 <body>
@@ -234,8 +240,7 @@ directive-value   = delta-seconds
             <dt id="report-type"><a href="#report-type"></a>type</dt>
             <dd>The description of the error type, which may be one the following strings:
 
-            <dl>
-              <hr/>
+            <dl class='reportTypeGroup'>
               <dt>dns.unreachable</dt>
               <dd>DNS server is unreachable</dd>
 
@@ -244,7 +249,8 @@ directive-value   = delta-seconds
               <dt>dns.failed</dt>
               <dd>Request to the DNS server failed due to reasons not covered by previous errors</dd>
 
-              <hr/>
+            </dl>
+            <dl class='reportTypeGroup'>
               <dt>tcp.timed_out</dt>
               <dd>TCP connection to the server timed out</dd>
 
@@ -270,7 +276,8 @@ directive-value   = delta-seconds
               <dd>The TCP connection failed due to reasons not covered by previous errors</dd>
 
 
-              <hr />
+            </dl>
+            <dl class='reportTypeGroup'>
               <dt>tls.version_or_cipher_mismatch</dt>
               <dd>The TLS connection was aborted due to version or cipher mismatch</dd>
 
@@ -301,7 +308,8 @@ directive-value   = delta-seconds
               <dt>tls.failed</dt>
               <dd>The TLS connection failed due to reasons not covered by previous errors</dd>
 
-              <hr />
+            </dl>
+            <dl class='reportTypeGroup'>
               <dt>http.protocol.error</dt>
               <dd>The connection was aborted due to an HTTP protocol error</dd>
 
@@ -314,7 +322,8 @@ directive-value   = delta-seconds
               <dt>http.failed</dt>
               <dd>The connection failed due to errors in HTTP protocol not covered by previous errors</dd>
 
-              <hr/>
+            </dl>
+            <dl class='reportTypeGroup'>
               <dt>abandoned</dt>
               <dd>User aborted the resource fetch before it is complete</dd>
 
