@@ -196,7 +196,7 @@ directive-value   = delta-seconds
 
       <p class="note">Note that the above definition of "network error" is different from definition in [[Fetch]]. The definition of <a>network error</a> in this specification is a subset of [[Fetch]] definition - i.e. all of the above conditions would trigger a "network error" in [[Fetch]] processing, but conditions such as blocked requests due to mixed content, CORS failures, etc., would not.</p>
 
-      <p>When a <a>network error</a> occurs for a URL that belongs to a <a>known NEL host</a> the user agent MUST log the error and attempt to deliver it to the <a title="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL host</a>:</p>
+      <p>When a <a>network error</a> occurs for a URL that belongs to a <a>known NEL host</a> the user agent SHOULD log the error and attempt to deliver it to the <a title="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL host</a>:</p>
 
       <ul>
         <li>The user agent SHOULD make best effort to deliver the error report as soon as possible to provide the necessary real-time feedback.</li>
