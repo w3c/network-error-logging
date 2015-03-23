@@ -215,7 +215,7 @@ directive-value   = delta-seconds
             <dd>The URL that encountered the <a>network error</a>, with any <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#concept-url-fragment">fragment</a> component removed.</dd>
 
             <dt id="report-referrer"><a href="#report-referrer"></a>referrer</dt>
-            <dd>The <a href="http://www.w3.org/html/wg/drafts/html/CR/dom.html#dom-document-referrer">referrer</a> attribute of the resource, or the empty string if the resource has no referrer.</dd>
+            <dd>The referrer information of the request, as <a href="https://w3c.github.io/webappsec/specs/referrer-policy/#determine-requests-referrer">determined by the Referrer policy</a> ([[!REFERRER-POLICY]]) associated with its <a href="https://fetch.spec.whatwg.org/#concept-request-client">client</a>.</dd>
 
             <dt id="report-server-ip"><a href="#report-server-ip"></a>server-ip</dt>
             <dd>The IP address of the host to which the user agent sent the request, if available. Otherwise, an empty string.
