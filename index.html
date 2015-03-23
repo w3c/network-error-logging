@@ -137,10 +137,10 @@ directive-value           = token | quoted-string
 
           <pre>
 directive-name    = "report-uri"
-directive-value   = 1\\\*uri-reference
+directive-value   = 1\\\*absolute-URI
           </pre>
 
-          <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `uri-reference`'s, each resolved relative to the URL of the fetched resource that specified the policy - see [[!RFC3986]] section 4 and appendix C for definition of `uri-reference` and delimiting recommendations.</p>
+          <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `absolute-URI`'s - see [[!RFC3986]] section 4.3 and appendix C for definition of `absolute-URI` and delimiting recommendations.</p>
 
           <p>The result of executing the <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">is-origin-trustworthy</a> algorithm on origin of each <a title="report-uri">report URL</a> in the provided <a>set of report URLs</a> MUST return `Potentially Trustworthy`. <a title="report-uri">Report URL's</a> that fail this criteria MUST be ignored by the user agent. The process of sending network error reports to the specified URL's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
 
@@ -383,10 +383,10 @@ directive-value   = delta-seconds
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; NEL: report-uri="/report"; max-age=2592000
+&lt; NEL: report-uri="https://example.com/report"; max-age=2592000
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL host</a>: the user agent should report network errors to `/report` URL resolved relative to the origin of the <a>NEL host</a>, and that the policy applies for 2592000 seconds (30 days).</p>
+        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL host</a>: the user agent should report network errors to `https://example.com/report` and the policy applies for 2592000 seconds (30 days).</p>
 
         <p>Note that above registration will only succeed if the response is communicated from a `Potentially Trustworthy` origin - see <a href="#policy-delivery-and-processing"></a>. To register an NEL policy:</p>
 
@@ -412,10 +412,10 @@ directive-value   = delta-seconds
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; NEL: report-uri="/report" "https://other-origin.com/report"; max-age=2592000; includeSubDomains
+&lt; NEL: report-uri="https://example.com/report" "https://other-origin.com/report"; max-age=2592000; includeSubDomains
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to `/report` URL resolved relative to the origin of the <a>NEL host</a>, or `https://other-origin.com/report` if `/errors` is unreachable. Further, the policy is extended to all of the subdomains of the issuing <a>NEL host</a> - see <a href="#the-includesubdomains-directive"></a>.</p>
+        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to `https://example.com/report`, or `https://other-origin.com/report` if the former is unreachable. Further, the policy is extended to all of the subdomains of the issuing <a>NEL host</a> - see <a href="#the-includesubdomains-directive"></a>.</p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
