@@ -160,7 +160,7 @@ directive-value   = delta-seconds
         </section>
         <section>
           <h2>The `includeSubDomains` Directive</h2>
-          <p>The OPTIONAL <dfn>includeSubDomains</dfn> directive is a valueless directive that, if present, signals the user agent that the <a>NEL policy</a> applies to this <a>NEL host</a> as well as any subdomains of the host's domain name.</p>
+          <p>The OPTIONAL <dfn>includeSubDomains</dfn> directive is a valueless directive that, if present, signals the user agent that the <a>NEL policy</a> applies not only to the <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> that served the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>, but also to any <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> whose <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component is a subdomain of the <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component of the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>’s <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a>.</p>
         </section>
       </section>
     </section>
