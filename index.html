@@ -131,8 +131,6 @@ directive-value           = token | quoted-string
           <li>If an <a>NEL header field</a> contains directive(s) not recognized by the user agent, the user agent MUST ignore the unrecognized directives, and if the <a>NEL header field</a> otherwise satisfies the above requirements, the user agent MUST process the recognized directives.</li>
         </ul>
 
-        <p>Additional directives extending the semantic functionality of the <a>NEL header field</a> can be defined in other specifications, with a registry (having an IANA policy definition of IETF Review [[!RFC5226]]) defined for them at such time.</p>
-
         <p>The user agent MUST ignore the NEL header specified via a <code>meta</code> element to mitigate hijacking of error reporting via scripting attacks. The <a>NEL policy</a> MUST be delivered via the <a>NEL header field</a>.</p>
 
         <p class="note">The restriction on <code>meta</code> element is consistent with [[CSP]] specification, which restricts reporting registration to HTTP header fields only for same reasons.</p>
