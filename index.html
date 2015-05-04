@@ -360,7 +360,7 @@ directive-value   = delta-seconds
 
         <li>Let <dfn>report body</dfn> be the JSON stringification of the <a>report object</a>.</li>
 
-        <li>For each <a title="report-uri">report URL</a> in the <a>set of report URLs</a>:
+        <li>For each <a title="report-uri">report URL</a> in the <a>set of report URLs</a>:</li>
 
         <ol>
           <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URL</a> is not the same as the origin of the <a>NEL origin</a> for which the report is generated, the block cookies flag MUST also be set. The <a href="https://www.w3.org/TR/html5/webappapis.html#task-source">task source</a> for these <a href="https://www.w3.org/TR/html5/webappapis.html#concept-task">tasks</a> is the <dfn>Network Error Logging task source</dfn>.</li>
@@ -396,7 +396,7 @@ directive-value   = delta-seconds
 
         <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL origin</a>: the user agent should report network errors to `https://example.com/report` and the policy applies for 2592000 seconds (30 days).</p>
 
-        <p>Note that above registration will only succeed if the response is communicated from a `Potentially Trustworthy` origin - see <a href="#policy-delivery-and-processing"></a>.
+        <p>Note that above registration will only succeed if the response is communicated from a `Potentially Trustworthy` origin - see <a href="#policy-delivery-and-processing"></a>.</p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
@@ -515,7 +515,7 @@ directive-value   = delta-seconds
 
       <p>To mitigate some of the above risks, NEL registration is restricted to <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">trustworthy origins</a>, and delivery of network error reports is similarly restricted to <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">trustworthy origins</a>. This disallows a transient HTTP MITM from trivially abusing NEL as a persistent tracker.</p>
 
-      <p>In addition to above restrictions, the user agents MUST:<p>
+      <p>In addition to above restrictions, the user agents MUST:</p>
 
       <ul>
         <li>Clear the stored NEL policies when the user clears their browsing data (cookies, site data, history, etc).</li>
