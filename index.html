@@ -150,7 +150,7 @@ directive-name    = "report-uri"
 directive-value   = 1\\\*absolute-URI
           </pre>
 
-          <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `absolute-URI`'s - see [[!RFC3986]] section 4.3 and appendix C for definition of `absolute-URI` and delimiting recommendations.</p>
+          <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `absolute-URI`'s - see [[!RFC3986]] section 4.3. Each `absolute-URI` value SHOULD be delimited within double-quotes.</p>
 
           <p>The result of executing the <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">is-origin-trustworthy</a> algorithm on origin of each <a title="report-uri">report URL</a> in the provided <a>set of report URLs</a> MUST return `Potentially Trustworthy`. <a title="report-uri">Report URL's</a> that fail this criteria MUST be ignored by the user agent. The process of sending network error reports to the specified URL's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
 
