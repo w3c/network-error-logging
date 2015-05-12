@@ -124,14 +124,18 @@ directive-value           = token | quoted-string
         <p>See [[!RFC7230]] section 3.2.6 for definitions of `token` and `quoted-string`. This specification defines three NEL directives: <a>report-uri</a>, <a>max-age</a>, and <a>includeSubDomains</a>. The overall requirements for directives are:</p>
 
         <ul>
-          <li>The order of appearance of directives is not significant.</li>
-          <li>All directives MUST appear only once in an <a>NEL header field</a>. Directives are either optional or required, as stipulated in their definitions.</li>
+          <li>Directive may be optional or required.</li>
           <li>Directive names are case-insensitive.</li>
-          <li>User agents MUST ignore any <a>NEL header field</a> containing directives, or other header field value data, that does not conform to the syntax defined in this specification.</li>
-          <li>If an <a>NEL header field</a> contains directive(s) not recognized by the user agent, the user agent MUST ignore the unrecognized directives, and if the <a>NEL header field</a> otherwise satisfies the above requirements, the user agent MUST process the recognized directives.</li>
+          <li>Directive order is not significant.</li>
+          <li>Directive should be specified once.</li>
         </ul>
 
-        <p>Additional directives extending the semantic functionality of the <a>NEL header field</a> can be defined in other specifications, with a registry (having an IANA policy definition of IETF Review [[!RFC5226]]) defined for them at such time.</p>
+        <p>User agents MUST ignore any unknown or invalid directive(s), or other header field value data, that does not conform to the syntax defined in this specification. A valid <a>NEL header field</a> MUST, at a minimum, contain all of the "REQUIRED" directives defined in this specification.</p>
+
+        <ul>
+          <li>If a directive is specified multiple times within the same <a>NEL header field</a>, the user agent MUST process the first declaration and ignore the rest.</li>
+          <li>If multiple valid <a>NEL header field</a>'s are present, the user agent MUST process the first valid header field and ignore the rest.</li>
+        </ul>
 
         <p>The user agent MUST ignore the NEL header specified via a <code>meta</code> element to mitigate hijacking of error reporting via scripting attacks. The <a>NEL policy</a> MUST be delivered via the <a>NEL header field</a>.</p>
 
@@ -146,7 +150,7 @@ directive-name    = "report-uri"
 directive-value   = 1\\\*absolute-URI
           </pre>
 
-          <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `absolute-URI`'s - see [[!RFC3986]] section 4.3 and appendix C for definition of `absolute-URI` and delimiting recommendations.</p>
+          <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `absolute-URI`'s - see [[!RFC3986]] section 4.3. Each `absolute-URI` value SHOULD be delimited within double-quotes.</p>
 
           <p>The result of executing the <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">is-origin-trustworthy</a> algorithm on origin of each <a title="report-uri">report URL</a> in the provided <a>set of report URLs</a> MUST return `Potentially Trustworthy`. <a title="report-uri">Report URL's</a> that fail this criteria MUST be ignored by the user agent. The process of sending network error reports to the specified URL's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
 
@@ -356,7 +360,7 @@ directive-value   = delta-seconds
 
         <li>Let <dfn>report body</dfn> be the JSON stringification of the <a>report object</a>.</li>
 
-        <li>For each <a title="report-uri">report URL</a> in the <a>set of report URLs</a>:
+        <li>For each <a title="report-uri">report URL</a> in the <a>set of report URLs</a>:</li>
 
         <ol>
           <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URL</a> is not the same as the origin of the <a>NEL origin</a> for which the report is generated, the block cookies flag MUST also be set. The <a href="https://www.w3.org/TR/html5/webappapis.html#task-source">task source</a> for these <a href="https://www.w3.org/TR/html5/webappapis.html#concept-task">tasks</a> is the <dfn>Network Error Logging task source</dfn>.</li>
@@ -392,7 +396,7 @@ directive-value   = delta-seconds
 
         <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL origin</a>: the user agent should report network errors to `https://example.com/report` and the policy applies for 2592000 seconds (30 days).</p>
 
-        <p>Note that above registration will only succeed if the response is communicated from a `Potentially Trustworthy` origin - see <a href="#policy-delivery-and-processing"></a>.
+        <p>Note that above registration will only succeed if the response is communicated from a `Potentially Trustworthy` origin - see <a href="#policy-delivery-and-processing"></a>.</p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
@@ -511,7 +515,7 @@ directive-value   = delta-seconds
 
       <p>To mitigate some of the above risks, NEL registration is restricted to <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">trustworthy origins</a>, and delivery of network error reports is similarly restricted to <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">trustworthy origins</a>. This disallows a transient HTTP MITM from trivially abusing NEL as a persistent tracker.</p>
 
-      <p>In addition to above restrictions, the user agents MUST:<p>
+      <p>In addition to above restrictions, the user agents MUST:</p>
 
       <ul>
         <li>Clear the stored NEL policies when the user clears their browsing data (cookies, site data, history, etc).</li>
@@ -521,13 +525,29 @@ directive-value   = delta-seconds
 
     <section>
       <h2>IANA Considerations</h2>
-      <p>... TODO ...</p>
+      <p>The permanent message header field registry  should be updated with the following registrations ([[RFC3864]]):</p>
+
+      <section>
+        <h2>NEL</h2>
+        <dl>
+          <dt>Header field name</dt>
+          <dd>NEL</dd>
+          <dt>Applicable protocol</dt>
+          <dd>http</dd>
+          <dt>Status</dt>
+          <dd>standard</dd>
+          <dt>Author/Change controller</dt>
+          <dd>W3C</dd>
+          <dt>Specification document</dt>
+          <dd>This specification (see <a>NEL Header Field</a>)</dd>
+        </dl>
+      </section>
     </section>
   </section>
 
   <section class="appendix">
     <h2>Acknowledgments</h2>
-    <p>This document reuses text from the [[CSP]] and [[RFC6797]] specification, as permitted by the licenses of those specifications. Additionally, sincere thanks to Thomas Tuttle, Chris Bentzel, Todd Reifsteck, and Aaron Heady for their helpful comments and contributions to this work.</p>
+    <p>This document reuses text from the [[CSP]] and [[RFC6797]] specification, as permitted by the licenses of those specifications. Additionally, sincere thanks to Thomas Tuttle, Chris Bentzel, Todd Reifsteck, Aaron Heady, and Mark Nottingham for their helpful comments and contributions to this work.</p>
   </section>
 
 </body>
