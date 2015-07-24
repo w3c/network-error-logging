@@ -447,7 +447,7 @@ directive-value   = delta-seconds
               "uri": "https://www.example.com/",
               "referrer": "http://example.com/",
               "server-ip": "123.122.121.120",
-              "protocol": "h2-15",
+              "protocol": "h2",
               "status-code": 200,
               "elapsed-time": 823,
               "age": 0,
@@ -457,7 +457,7 @@ directive-value   = delta-seconds
         }
         </pre>
 
-        <p>The above report indicates that the user agent attempted to navigate from "example.com" to "www.example.com" (<a>known NEL origin</a>), which successfully resolved to the "123.122.121.120" IP address. However, while the user agent received a "200" response from the server via the "h2-15" protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. 823 milliseconds elapsed between the start of navigation and when the user agent aborted the navigation. Finally, the user agent sent this report immediately after the network error was encountered - i.e. the report age is 0.</p>
+        <p>The above report indicates that the user agent attempted to navigate from "example.com" to "www.example.com" (<a>known NEL origin</a>), which successfully resolved to the "123.122.121.120" IP address. However, while the user agent received a "200" response from the server via the "h2" protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. 823 milliseconds elapsed between the start of navigation and when the user agent aborted the navigation. Finally, the user agent sent this report immediately after the network error was encountered - i.e. the report age is 0.</p>
 
         <pre class="highlight">
 {
