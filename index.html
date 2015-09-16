@@ -379,7 +379,7 @@ directive-value   = delta-seconds
 
         <li>Let <dfn>report body</dfn> be the JSON stringification of the <a>report object</a>.</li>
 
-        <li>For each <a title="report-uri">report URL</a> in the <a>set of report URLs</a>:</li>
+        <li>For each <a title="report-uri">report URL</a> in the <a>set of report URLs</a>:
 
         <ol>
           <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URL</a> is not the same as the origin of the <a>NEL origin</a> for which the report is generated, the block cookies flag MUST also be set. The <a href="https://www.w3.org/TR/html5/webappapis.html#task-source">task source</a> for these <a href="https://www.w3.org/TR/html5/webappapis.html#concept-task">tasks</a> is the <dfn>Network Error Logging task source</dfn>.</li>
@@ -397,6 +397,7 @@ directive-value   = delta-seconds
 
           <li>If the user agent has reached the end of the set of <a title="report-uri">report URLs</a>, the user agent MUST sleep before returning to the beginning of the set and reattempting delivery - e.g. use exponential backoff. Otherwise, the user agent MUST attempt immediate delivery of the error report to the next <a title="report-uri">report URL</a> in the <a>set of report URLs</a>.</li>
         </ol>
+        </li>
       </ol>
     </section>
 
