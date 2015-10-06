@@ -382,13 +382,27 @@ directive-value   = delta-seconds
         <li>For each <a title="report-uri">report URL</a> in the <a>set of report URLs</a>:
 
         <ol>
-          <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URL</a> is not the same as the origin of the <a>NEL origin</a> for which the report is generated, the block cookies flag MUST also be set. The <a href="https://www.w3.org/TR/html5/webappapis.html#task-source">task source</a> for these <a href="https://www.w3.org/TR/html5/webappapis.html#concept-task">tasks</a> is the <dfn>Network Error Logging task source</dfn>.</li>
+          <li>Let <dfn>req</dfn> be a new <a href="https://fetch.spec.whatwg.org/#concept-request">request</a>, initialized as follows:</li>
 
-          <li>If the fetch is successful (2xx HTTP response code), the user agent MUST abort the remaining steps.</li>
+          <ul>
+            <li>Set <a href="https://fetch.spec.whatwg.org/#concept-request-url">url</a> to <a title="report-uri">report URL</a></li>
+            <li>Set <a href="https://fetch.spec.whatwg.org/#concept-request-method">method</a> to <code>POST</code></li>
+            <li>Set <a href="https://fetch.spec.whatwg.org/#concept-request-header-list">header list</a> <code>Content-Type</code> value to <code>application/nel-report</code></li>
+            <li>Set <a href="https://fetch.spec.whatwg.org/#concept-request-body">request body</a> to <a>report body</a></li>
+            <li>Set <a href="https://fetch.spec.whatwg.org/#concept-request-referrer-policy">referrer policy</a> to <code>origin-only</code></li>
+            <li>Set <a href="https://fetch.spec.whatwg.org/#concept-request-credentials-mode">credentials mode</a> to <code>same-origin</code></li>
+            <li>Set <a href="https://fetch.spec.whatwg.org/#concept-request-context">context</a> to <code>nelreport</code></li>
+            <li>Set <a href="https://fetch.spec.whatwg.org/#concept-request-cache-mode">cache mode</a> to <code>no-store</code></li>
+            <li>Set <a href="https://fetch.spec.whatwg.org/#concept-request-redirect-mode">redirect mode</a> to <code>error</code></li>
+          </ul>
 
-          <li>If the fetch failed with a <a href="https://tools.ietf.org/html/rfc7231#section-6.5.9">410 Gone</a> HTTP response code ([[RFC7231]]), the user agent MUST update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.</li>
+          <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="https://fetch.spec.whatwg.org/#concept-fetch">Fetch</a> <a>req</a>. Let the <a href="https://www.w3.org/TR/html5/webappapis.html#task-source">task source</a> for these <a href="https://www.w3.org/TR/html5/webappapis.html#concept-task">tasks</a> to be the <dfn data-dfn-type="dfn" id="dfn-network-error-logging-task-source">Network Error Logging task source.</dfn></li>
 
-          <li>If the fetch failed after multiple delivery attempts the user agent MAY update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.
+          <li>If the <a href="https://fetch.spec.whatwg.org/#concept-response-status">response status</a> is a 2xx response code, the user agent MUST abort the remaining steps.</li>
+
+          <li>If the <a href="https://fetch.spec.whatwg.org/#concept-response-status">response status</a> is a 410 response code (<a href="https://tools.ietf.org/html/rfc7231#section-6.5.9">410 Gone</a>, [[RFC7231]]), the user agent MUST update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.</li>
+
+          <li>If the <a href="https://fetch.spec.whatwg.org/#concept-response-status">response status</a> is set to any other value across multiple fetch attempts the user agent MAY update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.
 
           <p class="note">The user agent is allowed to garbage collect report-uri's that are no longer functional, but it should account for common failure cases such as captive portals, which may temporarily prevent it from delivering the error reports. The exact implementation logic is deferred to the user-agent, which may use own mechanisms and heuristics to detect such cases.</p>
           </li>
