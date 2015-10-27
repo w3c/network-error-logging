@@ -171,7 +171,7 @@ directive-value   = 1\\\*absolute-URI
 
           <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `absolute-URI`'s - see [[!RFC3986]] section 4.3. Each `absolute-URI` value SHOULD be delimited within double-quotes.</p>
 
-          <p>The result of executing the <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">is-origin-trustworthy</a> algorithm on origin of each <a title="report-uri">report URL</a> in the provided <a>set of report URLs</a> MUST return `Potentially Trustworthy`. <a title="report-uri">Report URL's</a> that fail this criteria MUST be ignored by the user agent. The process of sending network error reports to the specified URL's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
+          <p>The result of executing the <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">is-origin-trustworthy</a> algorithm on origin of each <a data-lt="report-uri">report URL</a> in the provided <a>set of report URLs</a> MUST return `Potentially Trustworthy`. <a data-lt="report-uri">Report URL's</a> that fail this criteria MUST be ignored by the user agent. The process of sending network error reports to the specified URL's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
 
           <p class="note">To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin from which the resource is being fetched &mdash; otherwise network errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple `report-uri`'s to provide fallback alternatives if the preceding `report-uri` is unreachable.</p>
 
@@ -199,7 +199,7 @@ directive-value   = delta-seconds
 
       <p>An HTTP host declares itself an <dfn>NEL origin</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> from a <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">`Potentially Trustworthy` origin</a>. Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>known NEL origin</dfn>.</p>
 
-      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL origin</a> separately from any NEL policies issued by any other <a title="NEL origin">NEL origins</a>. Only the given <a>NEL origin</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a title="report-uri">report URL</a>, <a title="max-age">time duration</a>, and <a title="includeSubDomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL origin</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>includeSubDomains</a> directive) for that <a>NEL origin</a>.</p>
+      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL origin</a> separately from any NEL policies issued by any other <a data-lt="NEL origin">NEL origins</a>. Only the given <a>NEL origin</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a data-lt="report-uri">report URL</a>, <a data-lt="max-age">time duration</a>, and <a data-lt="includeSubDomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL origin</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>includeSubDomains</a> directive) for that <a>NEL origin</a>.</p>
     </section>
 
     <section>
@@ -223,12 +223,12 @@ directive-value   = delta-seconds
 
       <p class="note">Note that the above definition of "network error" is different from definition in [[Fetch]]. The definition of <a>network error</a> in this specification is a subset of [[Fetch]] definition - i.e. all of the above conditions would trigger a "network error" in [[Fetch]] processing, but conditions such as blocked requests due to mixed content, CORS failures, etc., would not.</p>
 
-      <p>When a <a>network error</a> occurs for a URL that belongs to a <a>known NEL origin</a> the user agent SHOULD log the error and attempt to deliver it to the <a title="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL origin</a>:</p>
+      <p>When a <a>network error</a> occurs for a URL that belongs to a <a>known NEL origin</a> the user agent SHOULD log the error and attempt to deliver it to the <a data-lt="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL origin</a>:</p>
 
       <ul>
         <li>The user agent SHOULD make best effort to deliver the error report as soon as possible to provide the necessary real-time feedback.</li>
         <li>The user agent MAY delay delivery of the report to account for poor or missing connectivity (e.g. temporarily offline due to poor service).</li>
-        <li>The user agent MAY abandon delivery of the report if the time of error exceeds 24 hours, or if the <a title="report-uri">report URL</a> is not responding or returns an error.</li>
+        <li>The user agent MAY abandon delivery of the report if the time of error exceeds 24 hours, or if the <a data-lt="report-uri">report URL</a> is not responding or returns an error.</li>
         <li>The user agent MAY aggregate multiple error reports for the same <a>NEL origin</a> and deliver them in a single report.</li>
       </ul>
 
@@ -373,29 +373,29 @@ directive-value   = delta-seconds
 
           <dl>
             <dt>nel-report</dt>
-            <dd>An array object containing one or more <a title="network error object">network error objects</a>.</dd>
+            <dd>An array object containing one or more <a data-lt="network error object">network error objects</a>.</dd>
           </dl>
         </li>
 
         <li>Let <dfn>report body</dfn> be the JSON stringification of the <a>report object</a>.</li>
 
-        <li>For each <a title="report-uri">report URL</a> in the <a>set of report URLs</a>:
+        <li>For each <a data-lt="report-uri">report URL</a> in the <a>set of report URLs</a>:
 
         <ol>
-          <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a title="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a title="report-uri">report URL</a> is not the same as the origin of the <a>NEL origin</a> for which the report is generated, the block cookies flag MUST also be set. The <a href="https://www.w3.org/TR/html5/webappapis.html#task-source">task source</a> for these <a href="https://www.w3.org/TR/html5/webappapis.html#concept-task">tasks</a> is the <dfn>Network Error Logging task source</dfn>.</li>
+          <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a data-lt="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a data-lt="report-uri">report URL</a> is not the same as the origin of the <a>NEL origin</a> for which the report is generated, the block cookies flag MUST also be set. The <a href="https://www.w3.org/TR/html5/webappapis.html#task-source">task source</a> for these <a href="https://www.w3.org/TR/html5/webappapis.html#concept-task">tasks</a> is the <dfn>Network Error Logging task source</dfn>.</li>
 
           <li>If the fetch is successful (2xx HTTP response code), the user agent MUST abort the remaining steps.</li>
 
-          <li>If the fetch failed with a <a href="https://tools.ietf.org/html/rfc7231#section-6.5.9">410 Gone</a> HTTP response code ([[RFC7231]]), the user agent MUST update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.</li>
+          <li>If the fetch failed with a <a href="https://tools.ietf.org/html/rfc7231#section-6.5.9">410 Gone</a> HTTP response code ([[RFC7231]]), the user agent MUST update the <a>NEL policy</a> by removing the current <a data-lt="report-uri">report URL</a> from the <a>set of report URLs</a>.</li>
 
-          <li>If the fetch failed after multiple delivery attempts the user agent MAY update the <a>NEL policy</a> by removing the current <a title="report-uri">report URL</a> from the <a>set of report URLs</a>.
+          <li>If the fetch failed after multiple delivery attempts the user agent MAY update the <a>NEL policy</a> by removing the current <a data-lt="report-uri">report URL</a> from the <a>set of report URLs</a>.
 
           <p class="note">The user agent is allowed to garbage collect report-uri's that are no longer functional, but it should account for common failure cases such as captive portals, which may temporarily prevent it from delivering the error reports. The exact implementation logic is deferred to the user-agent, which may use own mechanisms and heuristics to detect such cases.</p>
           </li>
 
           <li>If the <a>NEL policy</a> was updated and the new <a>NEL policy</a> contains an empty <a>set of report URLs</a> the user agent MUST remove the <a>NEL policy</a> and abort the remaining steps.</li>
 
-          <li>If the user agent has reached the end of the set of <a title="report-uri">report URLs</a>, the user agent MUST sleep before returning to the beginning of the set and reattempting delivery - e.g. use exponential backoff. Otherwise, the user agent MUST attempt immediate delivery of the error report to the next <a title="report-uri">report URL</a> in the <a>set of report URLs</a>.</li>
+          <li>If the user agent has reached the end of the set of <a data-lt="report-uri">report URLs</a>, the user agent MUST sleep before returning to the beginning of the set and reattempting delivery - e.g. use exponential backoff. Otherwise, the user agent MUST attempt immediate delivery of the error report to the next <a data-lt="report-uri">report URL</a> in the <a>set of report URLs</a>.</li>
         </ol>
         </li>
       </ol>
