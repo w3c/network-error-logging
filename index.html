@@ -461,14 +461,14 @@ directive-value   = delta-seconds
           <li><a>includeSubDomains</a> is implicit when <a>max-age</a> is zero</li>
           <li><a>report-uri</a> is optional when removing a previously registered policy</li>
         </ul>
+       <p>...</p>
       </section>
-
       <section>
         <h2>Sample Network Error Reports</h2>
 
         <p>This section contains an example network error report the user agent might send when a network error is encountered for a <a>known NEL origin</a>.</p>
 
-        <pre class="highlight">
+        <pre class="example">
 {
         "nel-report": [
             {
@@ -487,7 +487,7 @@ directive-value   = delta-seconds
 
         <p>The above report indicates that the user agent attempted to navigate from "example.com" to "www.example.com" (<a>known NEL origin</a>), which successfully resolved to the "123.122.121.120" IP address. However, while the user agent received a "200" response from the server via the "h2" protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. 823 milliseconds elapsed between the start of navigation and when the user agent aborted the navigation. Finally, the user agent sent this report immediately after the network error was encountered - i.e. the report age is 0.</p>
 
-        <pre class="highlight">
+        <pre class="example">
 {
         "nel-report": [
             {
