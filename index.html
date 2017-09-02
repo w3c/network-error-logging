@@ -4,7 +4,7 @@
 <head>
   <title>Network Error Logging</title>
   <meta charset='utf-8'>
-  <script src='//www.w3.org/Tools/respec/respec-w3c-common' async class='remove'></script>
+  <script src='https://www.w3.org/Tools/respec/respec-w3c-common' async class='remove'></script>
   <script class='remove'>
   var respecConfig = {
     shortName: "network-error-logging",
@@ -22,6 +22,11 @@
       company: "Compuware Corp.",
       w3cid: "48276"
     }, {
+      name: "Julia Tuttle",
+      mailto: "juliatuttle@chromium.org",
+      company: "Google",
+      w3cid: "97131"
+    }, {
       name: "Arvind Jain",
       company: "Google",
       note: "Until January 2015",
@@ -32,7 +37,7 @@
       company: "Microsoft",
       note: "Until February 2014",
       w3cid: "44357"
-    } ],
+    }],
     noLegacyStyle: true,
     otherLinks: [{
       key: 'Repository',
@@ -73,24 +78,28 @@
 
     <p>Today, application developers do not have real-time web application availability data from their end users. For example, if the user fails to load the page due to a network error, such as a failed DNS lookup, a connection timeout, a reset connection, or other reasons, the site developer is unable to detect and address this issue. Existing methods, such as synthetic monitoring provide a partial solution by placing monitoring nodes in predetermined geographic locations, but require additional infrastructure investments, and cannot provide truly global and near real-time availability data for real end users.</p>
 
-    <p>Network Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report network errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully fetch a resource from that origin, the user agent logs the network error report and attempts to deliver it to the report URL defined by the policy - the delivery is done on a best effort basis and might be delayed due to connectivity issues or other reasons.</p>
+    <p>Network Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report network errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully fetch a resource from that origin, the user agent logs the network error report and attempts to deliver it to a group of endpoints previously configured using the <a href="https://wicg.github.io/reporting/">Reporting API</a>.</p>
 
-    <p>For example, if the user agent fails to fetch a resource from <code>https://www.example.com</code> due to an aborted TCP connection, the user agent would notify the report URL defined by the NEL policy associated with that origin, by delivering the following report:</p>
+    <p>For example, if the user agent fails to fetch a resource from <code>https://www.example.com</code> due to an aborted TCP connection, the user agent would queue the following report via the Reporting API:</p>
 
-    <pre class="highlight">
+    <dl>
+      <dt>type</dt>
+      <dd><code>"network-error"</code></dd>
+      <dt>endpoint group</dt>
+      <dd>the endpoint group configured by <a href="#the-report-to-field">the <code>report-to</code> field</a></dd>
+      <dt>settings</dt>
+      <dd>TODO</dd>
+      <dt>data</dt>
+      <dd><pre class="highlight">
 {
-      "nel-report": [
-          {
-            "uri": "https://www.example.com/resource",
-            "referrer": "https://referrer.com/",
-            "server-ip": "123.122.121.120",
-            "elapsed-time": 321,
-            "age": 0,
-            "type": "tcp.aborted"
-          }
-        ]
-    }
-    </pre>
+  "uri": "https://www.example.com/resource",
+  "referrer": "https://referrer.com/",
+  "server-ip": "123.122.121.120",
+  "elapsed-time": 321,
+  "type": "tcp.aborted"
+}
+      </pre></dd>
+    </dl>
 
     <p>See <a href="#reporting">reporting</a> for explanation of the communicated fields and format of the report, and <a href="#examples">examples</a> for more hands-on examples of NEL registration and reporting process.</p>
   </section>
@@ -104,10 +113,13 @@
         <dt><dfn>origin</dfn></dt>
         <dd>Defined by the Origin specification. [[RFC6454]]</dd>
         <dt><dfn>JSON object</dfn></dt>
-        <dt><dfn>JSON stringification</dfn></dt>
         <dd>Defined in the JSON specification. [[RFC7159]]</dd>
         <dt><dfn>URL</dfn></dt>
         <dd>Defined by [[URL]].</dd>
+        <dt><dfn>endpoint group</dfn></dt>
+        <dd>Defined in the <a href="https://wicg.github.io/reporting/#id-member">Reporting API specification</a>.</dd>
+        <dt><dfn>json-field-value</dfn></dt>
+        <dd>Defined in the <a href="https://greenbytes.de/tech/webdav/draft-reschke-http-jfv-02.html#rfc.section.2">JSON Field Values specification</a>.</dd>
       </dl>
     </section>
 
@@ -120,70 +132,48 @@
         <li>Update the registered policy for the <a>known NEL origin</a> if the provided policy is different than that already stored by the user agent.</li>
       </ul>
 
-      <p>Otherwise, if the result of the algorithm is **not** `Potentionally Trustworthy`, then the user MUST ignore the provided <a>NEL policy</a>.</p>
+      <p>Otherwise, if the result of the algorithm is <strong>not</strong> <a>Potentionally Trustworthy</a>, then the user MUST ignore the provided <a>NEL policy</a>.</p>
 
       <section>
         <h2>`NEL` Header Field</h2>
         <p>The <dfn>NEL header field</dfn> is used to communicate the <dfn>NEL policy</dfn> to the user agent. The ABNF (Augmented Backus-Naur Form) syntax for the <a>NEL header field</a> is as follows:</p>
 
         <pre>
-NEL = "NEL" ":" [ directive ]  \\\*( ";" [ directive ] )
-
-directive                 = directive-name [ "=" directive-value ]
-directive-name            = token
-directive-value           = token | quoted-string
+NEL = <a>json-field-value</a>
         </pre>
 
-        <p>See [[!RFC7230]] section 3.2.6 for definitions of `token` and `quoted-string`. This specification defines three NEL directives: <a>report-uri</a>, <a>max-age</a>, and <a>includeSubDomains</a>. The overall requirements for directives are:</p>
+        <p>The header's value is interpreted as an array of JSON objects, as
+        described in Section 4 of [[HTTP-JFV]].</p>
 
-        <ul>
-          <li>Directive may be optional or required.</li>
-          <li>Directive names are case-insensitive.</li>
-          <li>Directive order is not significant.</li>
-          <li>Directive should be specified once.</li>
-        </ul>
+        <p>Each object in the array defines an <a>NEL policy</a> for the origin.
+        The user agent MUST process the first valid policy in the array.</p>
 
-        <p>User agents MUST ignore any unknown or invalid directive(s), or other header field value data, that does not conform to the syntax defined in this specification. A valid <a>NEL header field</a> MUST, at a minimum, contain all of the "REQUIRED" directives defined in this specification.</p>
-
-        <ul>
-          <li>If a directive is specified multiple times within the same <a>NEL header field</a>, the user agent MUST process the first declaration and ignore the rest.</li>
-          <li>If multiple valid <a>NEL header field</a>'s are present, the user agent MUST process the first valid header field and ignore the rest.</li>
-        </ul>
+        <p>User agents MUST ignore any unknown or invalid field(s) or value(s) that do not conform to the syntax defined in this specification. A valid <a>NEL header field</a> MUST, at a minimum, contain one object with all of the "REQUIRED" fields defined in this specification.</p>
 
         <p>The user agent MUST ignore the NEL header specified via a <code>meta</code> element to mitigate hijacking of error reporting via scripting attacks. The <a>NEL policy</a> MUST be delivered via the <a>NEL header field</a>.</p>
 
         <p class="note">The restriction on <code>meta</code> element is consistent with [[CSP]] specification, which restricts reporting registration to HTTP header fields only for same reasons.</p>
 
         <section>
-          <h2>The `report-uri` Directive</h2>
-          <p>The <dfn>report-uri</dfn> directive specifies a URL to which the user agent sends reports about network errors. The <a>report-uri</a> directive is a REQUIRED field to register an <a>NEL policy</a>, and OPTIONAL if the intent is to remove a previous registration - see <a>max-age</a>. The ABNF grammar for the name and value of the directive is:</p>
+          <h2>The `report-to` Field</h2>
+          <p>The <dfn>report-to</dfn> field specifies the <a>endpoint group</a> to which the user agent sends reports about network errors. The <a>report-to</a> field is a REQUIRED field to register an <a>NEL policy</a>, and OPTIONAL if the intent is to remove a previous registration - see <a>max-age</a>. The value of the field MUST be a string containing the <a>endpoint group</a> to which reports will be sent.</p>
 
-          <pre>
-directive-name    = "report-uri"
-directive-value   = 1\\\*absolute-URI
-          </pre>
-
-          <p>The <dfn>set of report URLs</dfn> is the value of the <a>report-uri</a> directive, which contains one or more `absolute-URI`'s - see [[!RFC3986]] section 4.3. Each `absolute-URI` value SHOULD be delimited within double-quotes.</p>
-
-          <p>The result of executing the <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">is-origin-trustworthy</a> algorithm on origin of each <a data-lt="report-uri">report URL</a> in the provided <a>set of report URLs</a> MUST return `Potentially Trustworthy`. <a data-lt="report-uri">Report URL's</a> that fail this criteria MUST be ignored by the user agent. The process of sending network error reports to the specified URL's in this directive's value is defined in this documents <a href="#reporting"></a> section.</p>
-
-          <p class="note">To improve delivery of NEL reports the application should set `report-uri` to an alternative origin whose infrastructure is not coupled with the origin from which the resource is being fetched &mdash; otherwise network errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple `report-uri`'s to provide fallback alternatives if the preceding `report-uri` is unreachable.</p>
+          <p class="note">To improve delivery of NEL reports, the application should set `report-to` to an endpoint group containing at least one endpoint in an alternative origin whose infrastructure is not coupled with the origin from which the resource is being fetched &mdash; otherwise network errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple endpoints to provide alternatives if some endpoints are unreachable.</p>
 
         </section>
         <section>
-          <h2>The `max-age` Directive</h2>
-          <p>The REQUIRED <dfn>max-age</dfn> directive specifies the number of seconds, after the reception of the NEL header field, during which the user agent regards the host (from whom the policy was received) as a <a>known NEL origin</a>. The ABNF grammar for the name and value of the directive is:</p>
+          <h2>The `max-age` Field</h2>
+          <p>The REQUIRED <dfn>max-age</dfn> field specifies the number of seconds, after the reception of the NEL header field, during which the user agent regards the host (from whom the policy was received) as a <a>known NEL origin</a>. The value of the field MUST be an non-negative integer.</p>
 
-          <pre>
-directive-name    = "max-age"
-directive-value   = delta-seconds
-          </pre>
+          <p>A <a>max-age</a> value of zero (i.e. '"max-age": 0') signals the user agent to cease regarding the host as a <a>known NEL origin</a>, including the <a>includeSubDomains</a> field if provided.</p>
 
-          <p>See [[!RFC7234]] section 1.2.1 for definition of `delta-seconds`. A <a>max-age</a> value of zero (i.e. "max-age=0") signals the user agent to cease regarding the host as a <a>known NEL origin</a>, including the <a>includeSubDomains</a> directive if provided.</p>
+          <p class="note">To ensure delivery of NEL reports, the application should ensure that the Reporting API is also configured with a sufficiently high max-age. If the Reporting policy expires, NEL reports will not be delivered, even if the NEL policy has not expired.</p>
         </section>
         <section>
-          <h2>The `includeSubDomains` Directive</h2>
-          <p>The OPTIONAL <dfn>includeSubDomains</dfn> directive is a valueless directive that, if present, signals the user agent that the <a>NEL policy</a> applies not only to the <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> that served the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>, but also to any <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> whose <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component is a subdomain of the <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component of the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>’s <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a>.</p>
+          <h2>The `includeSubDomains` Field</h2>
+          <p>The OPTIONAL <dfn>includeSubDomains</dfn> field, if present and true, signals the user agent that the <a>NEL policy</a> applies not only to the <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> that served the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>, but also to any <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> whose <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component is a subdomain of the <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component of the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>’s <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a>. If present, the value of the field MUST be a boolean value.</p>
+
+          <p class="note">To ensure delivery of NEL reports for subdomains, the application should ensure that the Reporting API is also configured with includeSubdomains enabled. If the Reporting policy is not, and there is not a separate Reporting policy for a given subdomain, NEL reports for that subdomain will not be delivered, even if the NEL policy includes the subdomain.</p>
         </section>
       </section>
     </section>
@@ -193,7 +183,7 @@ directive-value   = delta-seconds
 
       <p>An HTTP host declares itself an <dfn>NEL origin</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> from a <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">`Potentially Trustworthy` origin</a>. Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>known NEL origin</dfn>.</p>
 
-      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL origin</a> separately from any NEL policies issued by any other <a data-lt="NEL origin">NEL origins</a>. Only the given <a>NEL origin</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a data-lt="report-uri">report URL</a>, <a data-lt="max-age">time duration</a>, and <a data-lt="includeSubDomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL origin</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>includeSubDomains</a> directive) for that <a>NEL origin</a>.</p>
+      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL origin</a> separately from any NEL policies issued by any other <a data-lt="NEL origin">NEL origins</a>. Only the given <a>NEL origin</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a data-lt="report-to">endpoint group</a>, <a data-lt="max-age">time duration</a>, and <a data-lt="includeSubDomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL origin</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>includeSubDomains</a> field) for that <a>NEL origin</a>.</p>
     </section>
 
     <section>
@@ -217,19 +207,14 @@ directive-value   = delta-seconds
 
       <p class="note">Note that the above definition of "network error" is different from definition in [[Fetch]]. The definition of <a>network error</a> in this specification is a subset of [[Fetch]] definition - i.e. all of the above conditions would trigger a "network error" in [[Fetch]] processing, but conditions such as blocked requests due to mixed content, CORS failures, etc., would not.</p>
 
-      <p>When a <a>network error</a> occurs for a URL that belongs to a <a>known NEL origin</a> the user agent SHOULD log the error and attempt to deliver it to the <a data-lt="report-uri">report URL</a> defined by the <a>NEL policy</a> of the associated <a>NEL origin</a>:</p>
+      <p>When a <a>network error</a> occurs for a URL that belongs to a <a>known NEL origin</a> the user agent SHOULD log the error and queue it for delivery to the <a data-lt="report-to">endpoint group</a> defined by the <a>NEL policy</a> of the associated <a>NEL origin</a>.</p>
 
-      <ul>
-        <li>The user agent SHOULD make best effort to deliver the error report as soon as possible to provide the necessary real-time feedback.</li>
-        <li>The user agent MAY delay delivery of the report to account for poor or missing connectivity (e.g. temporarily offline due to poor service).</li>
-        <li>The user agent MAY abandon delivery of the report if the time of error exceeds 24 hours, or if the <a data-lt="report-uri">report URL</a> is not responding or returns an error.</li>
-        <li>The user agent MAY aggregate multiple error reports for the same <a>NEL origin</a> and deliver them in a single report.</li>
-      </ul>
+      <p>Delivery of reports, including scheduling, retrying, or abandoning delivery, is handled by the Reporting API, not by Network Error Logging.</p>
 
       <p>To generate a <dfn>network error object</dfn>, the user agent MUST use an algorithm equivalent to the following:</p>
 
       <ol>
-        <li>Prepare a JSON object <i>neterror</i> with the following keys and values:
+        <li>Prepare a JSON object <em>neterror</em> with the following keys and values:
 
           <dl>
             <dt id="report-uri"><a href="#report-uri"></a>uri</dt>
@@ -254,9 +239,6 @@ directive-value   = delta-seconds
 
             <dt id="report-elapsed-time"><a href="#report-elapsed-time">elapsed-time</a></dt>
             <dd>The elapsed number of milliseconds between the start of the resource fetch and when it was aborted by the user agent.</dd>
-
-            <dt id="report-age"><a href="#report-age">age</a></dt>
-            <dd>The elapsed number of milliseconds between the time when the user agent aborted the request and when the error report is being delivered.</dd>
 
             <dt id="report-type"><a href="#report-type">type</a></dt>
             <dd>The description of the error type, which may be one the following strings:
@@ -357,41 +339,7 @@ directive-value   = delta-seconds
           </dl>
         </li>
 
-        <li>Return <i>neterror</i>.</li>
-      </ol>
-
-      <p>To send network error reports, the user agent MUST use an algorithm equivalent to the following:</p>
-
-      <ol>
-        <li>Prepare a JSON object <dfn>report object</dfn> with the following keys and values:
-
-          <dl>
-            <dt>nel-report</dt>
-            <dd>An array object containing one or more <a data-lt="network error object">network error objects</a>.</dd>
-          </dl>
-        </li>
-
-        <li>Let <dfn>report body</dfn> be the JSON stringification of the <a>report object</a>.</li>
-
-        <li>For each <a data-lt="report-uri">report URL</a> in the <a>set of report URLs</a>:
-
-        <ol>
-          <li><a href="http://www.w3.org/html/wg/drafts/html/CR/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#fetch">fetch</a> <a data-lt="report-uri">report URL</a> using HTTP method POST, with a `Content-Type` header field of `application/nel-report`, and an entity body consisting of <a>report body</a>. If the origin of <a data-lt="report-uri">report URL</a> is not the same as the origin of the <a>NEL origin</a> for which the report is generated, the block cookies flag MUST also be set. The <a href="https://www.w3.org/TR/html5/webappapis.html#task-source">task source</a> for these <a href="https://www.w3.org/TR/html5/webappapis.html#concept-task">tasks</a> is the <dfn>Network Error Logging task source</dfn>.</li>
-
-          <li>If the fetch is successful (2xx HTTP response code), the user agent MUST abort the remaining steps.</li>
-
-          <li>If the fetch failed with a <a href="https://tools.ietf.org/html/rfc7231#section-6.5.9">410 Gone</a> HTTP response code ([[RFC7231]]), the user agent MUST update the <a>NEL policy</a> by removing the current <a data-lt="report-uri">report URL</a> from the <a>set of report URLs</a>.</li>
-
-          <li>If the fetch failed after multiple delivery attempts the user agent MAY update the <a>NEL policy</a> by removing the current <a data-lt="report-uri">report URL</a> from the <a>set of report URLs</a>.
-
-          <p class="note">The user agent is allowed to garbage collect report-uri's that are no longer functional, but it should account for common failure cases such as captive portals, which may temporarily prevent it from delivering the error reports. The exact implementation logic is deferred to the user-agent, which may use own mechanisms and heuristics to detect such cases.</p>
-          </li>
-
-          <li>If the <a>NEL policy</a> was updated and the new <a>NEL policy</a> contains an empty <a>set of report URLs</a> the user agent MUST remove the <a>NEL policy</a> and abort the remaining steps.</li>
-
-          <li>If the user agent has reached the end of the set of <a data-lt="report-uri">report URLs</a>, the user agent MUST sleep before returning to the beginning of the set and reattempting delivery - e.g. use exponential backoff. Otherwise, the user agent MUST attempt immediate delivery of the error report to the next <a data-lt="report-uri">report URL</a> in the <a>set of report URLs</a>.</li>
-        </ol>
-        </li>
+        <li>Return <em>neterror</em>.</li>
       </ol>
     </section>
 
@@ -405,10 +353,10 @@ directive-value   = delta-seconds
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; NEL: report-uri="https://example.com/report"; max-age=2592000
+&lt; NEL: {"report-to": "network-errors", "max-age": 2592000}
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL origin</a>: the user agent should report network errors to `https://example.com/report` and the policy applies for 2592000 seconds (30 days).</p>
+        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL origin</a>: the user agent should report network errors to the endpoint group "network-errors" and the policy applies for 2592000 seconds (30 days).</p>
 
         <p>Note that above registration will only succeed if the response is communicated from a `Potentially Trustworthy` origin - see <a href="#policy-delivery-and-processing"></a>.</p>
 
@@ -418,10 +366,10 @@ directive-value   = delta-seconds
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; NEL: report-uri="https://other-origin.com/report"; max-age=2592000
+&lt; NEL: {"report-to": "network-errors", "max-age": 2592000, "includeSubDomains": true}
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response is similar to the previous example but tells the user agent to report network errors to `https://other-origin.com/report`. The use of an alternative origin that is not coupled with the origin that is being accessed is **strongly encouraged** to enable real-time reporting and improved report delivery - see <a href="#the-report-uri-directive"></a>.</p>
+        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to the endpoint group "network-errors". Further, the policy is extended to all of the subdomains of the issuing <a>NEL origin</a> - see <a href="#the-includesubdomains-field"></a>.</p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
@@ -429,30 +377,19 @@ directive-value   = delta-seconds
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; NEL: report-uri="https://example.com/report" "https://other-origin.com/report"; max-age=2592000; includeSubDomains
-        </pre>
-
-        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to `https://example.com/report`, or `https://other-origin.com/report` if the former is unreachable. Further, the policy is extended to all of the subdomains of the issuing <a>NEL origin</a> - see <a href="#the-includesubdomains-directive"></a>.</p>
-
-        <pre class="example">
-&gt; GET / HTTP/1.1
-&gt; Host: example.com
-
-&lt; HTTP/1.1 200 OK
-&lt; ...
-&lt; NEL: max-age=0
+&lt; NEL: {"max-age": 0}
         </pre>
 
         <p>The above <a>NEL policy</a> provided in the server response contains <a>max-age</a> set to zero, which indicates that the user agent must delete the current registered <a>NEL policy</a> associated with the `example.com` <a>NEL origin</a> and all of its subdomains:</p>
         <ul>
           <li><a>includeSubDomains</a> is implicit when <a>max-age</a> is zero</li>
-          <li><a>report-uri</a> is optional when removing a previously registered policy</li>
+          <li><a>report-to</a> is optional when removing a previously registered policy</li>
         </ul>
       </section>
       <section>
         <h2>Sample Network Error Reports</h2>
 
-        <p>This section contains an example network error report the user agent might send when a network error is encountered for a <a>known NEL origin</a>.</p>
+        <p>This section contains an example network error report the user agent might queue when a network error is encountered for a <a>known NEL origin</a>.</p>
 
         <pre class="example">
 {
@@ -541,7 +478,7 @@ directive-value   = delta-seconds
 
     <section>
       <h2>IANA Considerations</h2>
-      <p>The permanent message header field registry  should be updated with the following registrations ([[RFC3864]]):</p>
+      <p>The permanent message header field registry should be updated with the following registrations ([[RFC3864]]):</p>
 
       <section>
         <h2>NEL</h2>
@@ -563,7 +500,7 @@ directive-value   = delta-seconds
 
   <section class="appendix">
     <h2>Acknowledgments</h2>
-    <p>This document reuses text from the [[CSP]] and [[RFC6797]] specification, as permitted by the licenses of those specifications. Additionally, sincere thanks to Thomas Tuttle, Chris Bentzel, Todd Reifsteck, Aaron Heady, and Mark Nottingham for their helpful comments and contributions to this work.</p>
+    <p>This document reuses text from the [[CSP]] and [[RFC6797]] specification, as permitted by the licenses of those specifications. Additionally, sincere thanks to Julia Tuttle, Chris Bentzel, Todd Reifsteck, Aaron Heady, and Mark Nottingham for their helpful comments and contributions to this work.</p>
   </section>
 
 </body>
