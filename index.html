@@ -125,14 +125,14 @@
 
     <section>
       <h2>Policy Delivery and Processing</h2>
-      <p>The server delivers the <a>NEL policy</a> to the user agent via an HTTP response header field (<a>NEL header field</a>). If the result of executing <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">is-origin-trusworthy</a> algorithm ([[!POWERFUL-FEATURES]]) on <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> that served the <a>NEL policy</a> is `Potentially Trustworthy` then the user agent MUST either:</p>
+      <p>The server delivers the <a>NEL policy</a> to the user agent via an HTTP response header field (<a>NEL header field</a>). If the result of executing <a href="https://www.w3.org/TR/secure-contexts/#is-origin-trustworthy">is-origin-trustworthy</a> algorithm [[!SECURE-CONTEXTS]] on the <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> that served the <a>NEL policy</a> is <code>Potentially Trustworthy</code> then the user agent MUST either:</p>
 
       <ul>
         <li>Register the host as a <a>known NEL origin</a> if it is not already registered.</li>
         <li>Update the registered policy for the <a>known NEL origin</a> if the provided policy is different than that already stored by the user agent.</li>
       </ul>
 
-      <p>Otherwise, if the result of the algorithm is <strong>not</strong> <a>Potentionally Trustworthy</a>, then the user MUST ignore the provided <a>NEL policy</a>.</p>
+      <p>Otherwise, if the result of the algorithm is <strong>not</strong> <code>Potentionally Trustworthy</code>, then the user MUST ignore the provided <a>NEL policy</a>.</p>
 
       <section>
         <h2>`NEL` Header Field</h2>
@@ -181,7 +181,7 @@ NEL = <a>json-field-value</a>
     <section>
       <h2>Policy Storage and Maintenance</h2>
 
-      <p>An HTTP host declares itself an <dfn>NEL origin</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> from a <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">`Potentially Trustworthy` origin</a>. Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>known NEL origin</dfn>.</p>
+      <p>An HTTP host declares itself an <dfn>NEL origin</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> from a <a href="https://www.w3.org/TR/secure-contexts/#is-origin-trustworthy">potentially trustworthy origin</a>. Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>known NEL origin</dfn>.</p>
 
       <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL origin</a> separately from any NEL policies issued by any other <a data-lt="NEL origin">NEL origins</a>. Only the given <a>NEL origin</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a data-lt="report-to">endpoint group</a>, <a data-lt="max-age">time duration</a>, and <a data-lt="includeSubDomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL origin</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>includeSubDomains</a> field) for that <a>NEL origin</a>.</p>
     </section>
@@ -358,7 +358,7 @@ NEL = <a>json-field-value</a>
 
         <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL origin</a>: the user agent should report network errors to the endpoint group "network-errors" and the policy applies for 2592000 seconds (30 days).</p>
 
-        <p>Note that above registration will only succeed if the response is communicated from a `Potentially Trustworthy` origin - see <a href="#policy-delivery-and-processing"></a>.</p>
+        <p>Note that above registration will only succeed if the response is communicated from a <a href="#policy-delivery-and-processing">potentially trustworthy origin</a>.</p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
@@ -464,7 +464,7 @@ NEL = <a>json-field-value</a>
 
       <p><a>NEL</a> provides network error reports that could expose new information about the user's network configuration. For example, an attacker could abuse NEL reporting to probe users network configuration. Also, similar to HSTS, HPKP, and pinned CSP policies, the stored <a>NEL policy</a> could be used as a "supercookie" by setting a distinct policy with a custom (per-user) reporting URI to act as an identififer in combination with (or instead of) HTTP cookies.</p>
 
-      <p>To mitigate some of the above risks, NEL registration is restricted to <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">trustworthy origins</a>, and delivery of network error reports is similarly restricted to <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">trustworthy origins</a>. This disallows a transient HTTP MITM from trivially abusing NEL as a persistent tracker.</p>
+      <p>To mitigate some of the above risks, NEL registration is restricted to <a href="https://www.w3.org/TR/secure-contexts/#is-origin-trustworthy">trustworthy origins</a>, and delivery of network error reports is similarly restricted to <a href="https://www.w3.org/TR/secure-contexts/#is-origin-trustworthy">trustworthy origins</a>. This disallows a transient HTTP MITM from trivially abusing NEL as a persistent tracker.</p>
 
       <p>In addition to above restrictions, the user agents MUST:</p>
 
