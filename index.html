@@ -155,25 +155,25 @@ NEL = <a>json-field-value</a>
         <p class="note">The restriction on <code>meta</code> element is consistent with [[CSP]] specification, which restricts reporting registration to HTTP header fields only for same reasons.</p>
 
         <section>
-          <h2>The `report-to` Field</h2>
+          <h2>The <code>report-to</code> Field</h2>
           <p>The <dfn>report-to</dfn> field specifies the <a>endpoint group</a> to which the user agent sends reports about network errors. The <a>report-to</a> field is a REQUIRED field to register an <a>NEL policy</a>, and OPTIONAL if the intent is to remove a previous registration - see <a>max-age</a>. The value of the field MUST be a string containing the <a>endpoint group</a> to which reports will be sent.</p>
 
-          <p class="note">To improve delivery of NEL reports, the application should set `report-to` to an endpoint group containing at least one endpoint in an alternative origin whose infrastructure is not coupled with the origin from which the resource is being fetched &mdash; otherwise network errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple endpoints to provide alternatives if some endpoints are unreachable.</p>
+          <p class="note">To improve delivery of NEL reports, the application should set <code>report-to</code> to an endpoint group containing at least one endpoint in an alternative origin whose infrastructure is not coupled with the origin from which the resource is being fetched &mdash; otherwise network errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple endpoints to provide alternatives if some endpoints are unreachable.</p>
 
         </section>
         <section>
-          <h2>The `max-age` Field</h2>
+          <h2>The <code>max-age</code> Field</h2>
           <p>The REQUIRED <dfn>max-age</dfn> field specifies the number of seconds, after the reception of the NEL header field, during which the user agent regards the host (from whom the policy was received) as a <a>known NEL origin</a>. The value of the field MUST be an non-negative integer.</p>
 
-          <p>A <a>max-age</a> value of zero (i.e. '"max-age": 0') signals the user agent to cease regarding the host as a <a>known NEL origin</a>, including the <a>includeSubDomains</a> field if provided.</p>
+          <p>A <a>max-age</a> value of zero (i.e. '"max-age": 0') signals the user agent to cease regarding the host as a <a>known NEL origin</a>, including the <a>include-subdomains</a> field if provided.</p>
 
-          <p class="note">To ensure delivery of NEL reports, the application should ensure that the Reporting API is also configured with a sufficiently high max-age. If the Reporting policy expires, NEL reports will not be delivered, even if the NEL policy has not expired.</p>
+          <p class="note">To ensure delivery of NEL reports, the application should ensure that the Reporting API is also configured with a sufficiently high <code>max-age</code>. If the Reporting policy expires, NEL reports will not be delivered, even if the NEL policy has not expired.</p>
         </section>
         <section>
-          <h2>The `includeSubDomains` Field</h2>
-          <p>The OPTIONAL <dfn>includeSubDomains</dfn> field, if present and true, signals the user agent that the <a>NEL policy</a> applies not only to the <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> that served the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>, but also to any <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> whose <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component is a subdomain of the <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component of the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>’s <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a>. If present, the value of the field MUST be a boolean value.</p>
+          <h2>The <code>include-subdomains</code> Field</h2>
+          <p>The OPTIONAL <dfn>include-subdomains</dfn> field, if present and true, signals the user agent that the <a>NEL policy</a> applies not only to the <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> that served the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>, but also to any <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> whose <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component is a subdomain of the <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component of the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>’s <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a>. If present, the value of the field MUST be a boolean value.</p>
 
-          <p class="note">To ensure delivery of NEL reports for subdomains, the application should ensure that the Reporting API is also configured with includeSubdomains enabled. If the Reporting policy is not, and there is not a separate Reporting policy for a given subdomain, NEL reports for that subdomain will not be delivered, even if the NEL policy includes the subdomain.</p>
+          <p class="note">To ensure delivery of NEL reports for subdomains, the application should ensure that the Reporting API is also configured with <code>include-subdomains</code> enabled. If the Reporting policy is not, and there is not a separate Reporting policy for a given subdomain, NEL reports for that subdomain will not be delivered, even if the NEL policy includes the subdomain.</p>
         </section>
       </section>
     </section>
@@ -183,7 +183,7 @@ NEL = <a>json-field-value</a>
 
       <p>An HTTP host declares itself an <dfn>NEL origin</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> from a <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#is-origin-trustworthy">`Potentially Trustworthy` origin</a>. Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>known NEL origin</dfn>.</p>
 
-      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL origin</a> separately from any NEL policies issued by any other <a data-lt="NEL origin">NEL origins</a>. Only the given <a>NEL origin</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a data-lt="report-to">endpoint group</a>, <a data-lt="max-age">time duration</a>, and <a data-lt="includeSubDomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL origin</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>includeSubDomains</a> field) for that <a>NEL origin</a>.</p>
+      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL origin</a> separately from any NEL policies issued by any other <a data-lt="NEL origin">NEL origins</a>. Only the given <a>NEL origin</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a data-lt="report-to">endpoint group</a>, <a data-lt="max-age">time duration</a>, and <a data-lt="include-subdomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL origin</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>include-subdomains</a> field) for that <a>NEL origin</a>.</p>
     </section>
 
     <section>
@@ -366,7 +366,7 @@ NEL = <a>json-field-value</a>
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; NEL: {"report-to": "network-errors", "max-age": 2592000, "includeSubDomains": true}
+&lt; NEL: {"report-to": "network-errors", "max-age": 2592000, "include-subdomains": true}
         </pre>
 
         <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to the endpoint group "network-errors". Further, the policy is extended to all of the subdomains of the issuing <a>NEL origin</a> - see <a href="#the-includesubdomains-field"></a>.</p>
@@ -382,7 +382,7 @@ NEL = <a>json-field-value</a>
 
         <p>The above <a>NEL policy</a> provided in the server response contains <a>max-age</a> set to zero, which indicates that the user agent must delete the current registered <a>NEL policy</a> associated with the `example.com` <a>NEL origin</a> and all of its subdomains:</p>
         <ul>
-          <li><a>includeSubDomains</a> is implicit when <a>max-age</a> is zero</li>
+          <li><a>include-subdomains</a> is implicit when <a>max-age</a> is zero</li>
           <li><a>report-to</a> is optional when removing a previously registered policy</li>
         </ul>
       </section>
