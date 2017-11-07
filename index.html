@@ -78,7 +78,7 @@
 
     <p>Today, application developers do not have real-time web application availability data from their end users. For example, if the user fails to load the page due to a network error, such as a failed DNS lookup, a connection timeout, a reset connection, or other reasons, the site developer is unable to detect and address this issue. Existing methods, such as synthetic monitoring provide a partial solution by placing monitoring nodes in predetermined geographic locations, but require additional infrastructure investments, and cannot provide truly global and near real-time availability data for real end users.</p>
 
-    <p>Network Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report network errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully fetch a resource from that origin, the user agent logs the network error report and attempts to deliver it to a group of endpoints previously configured using the <a href="https://wicg.github.io/reporting/">Reporting API</a>.</p>
+    <p>Network Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report network errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully fetch a resource from that origin, the user agent logs the network error report and attempts to deliver it to a group of endpoints previously configured using the Reporting API [[!REPORTING]].</p>
 
     <p>For example, if the user agent fails to fetch a resource from <code>https://www.example.com</code> due to an aborted TCP connection, the user agent would queue the following report via the Reporting API:</p>
 
@@ -86,7 +86,7 @@
       <dt>type</dt>
       <dd><code>"network-error"</code></dd>
       <dt>endpoint group</dt>
-      <dd>the endpoint group configured by <a href="#the-report-to-field">the <code>report-to</code> field</a></dd>
+      <dd>the endpoint group configured by the <a>report-to</a> field</dd>
       <dt>settings</dt>
       <dd>TODO</dd>
       <dt>data</dt>
@@ -105,27 +105,101 @@
   </section>
 
   <section>
+    <h2>Conformance requirements</h2>
+    <p>All diagrams, examples, and notes in this specification are non-normative, as are all sections explicitly marked non-normative.  Everything else in this specification is normative.</p>
+    <p>The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in the normative parts of this document are to be interpreted as described in [[!RFC2119]].</p>
+    <p>Requirements phrased in the imperative as part of algorithms (such as "strip any leading space characters" or "return false and abort these steps") are to be interpreted with the meaning of the key word ("must", "should", "may", etc) used in introducing the algorithm.</p>
+    <p>Some conformance requirements are phrased as requirements on attributes, methods or objects. Such requirements are to be interpreted as requirements on the user agent.</p>
+    <p>Conformance requirements phrased as algorithms or specific steps may be implemented in any manner, so long as the end result is equivalent. (In particular, the algorithms defined in this specification are intended to be easy to follow, and not intended to be performant.)</p>
+    <section>
+      <h2>Dependencies</h2>
+      <dl>
+        <dt>Fetch</dt>
+        <dd>
+          <p>The following terms are defined in the Fetch specification: [[!FETCH]]</p>
+          <ul>
+            <li><dfn data-cite="!FETCH#concept-request-client">client</dfn></li>
+          </ul>
+        </dd>
+        <dt>HTML</dt>
+        <dd>
+          <p>The following terms are defined in the HTML specification: [[!HTML]]</p>
+          <ul>
+            <li><dfn data-cite="!HTML#navigator.online"><code>navigator.onLine</code></dfn></li>
+            <li>resource <dfn data-cite="!HTML#origin">origin</dfn></li>
+          </ul>
+        </dd>
+        <dt>HTTP</dt>
+        <dd>
+          <p>The following terms are defined in the HTTP specification: [[!RFC7231]]</p>
+          <ul>
+            <li><dfn data-cite="!RFC7231#section-6.6">5xx status code</dfn></li>
+            <li><dfn data-cite="!RFC7231#section-3">resource representation</dfn></li>
+            <li><dfn data-cite="!RFC7231#section-6">status code</dfn></li>
+          </ul>
+        </dd>
+        <dt>HTTP JSON field values</dt>
+        <dd>
+          <p>The following terms are defined in the HTTP-JFV specification: [[!HTTP-JFV]]</p>
+          <ul>
+            <li><dfn data-cite="!HTTP-JFV#json-field-value">json-field-value</dfn></li>
+          </ul>
+        </dd>
+        <dt>JSON</dt>
+        <dd>
+          <p>The following terms are defined in the JSON specification: [[!RFC7159]]</p>
+          <ul>
+            <li><dfn data-cite="!RFC7159#section-4">JSON object</dfn></li>
+          </ul>
+        </dd>
+        <dt>Referrer Policy</dt>
+        <dd>
+          <p>The following terms are defined in the Referrer Policy specification: [[!REFERRER-POLICY]]</p>
+          <ul>
+            <li><dfn data-cite="!REFERRER-POLICY#referrer-policy">referrer policy</dfn></li>
+          </ul>
+        </dd>
+        <dt>Reporting API</dt>
+        <dd>
+          <p>The following terms are defined in the Reporting API specification: [[!REPORTING]]</p>
+          <ul>
+            <li><dfn data-cite="!REPORTING#endpoint-group">endpoint group</dfn></li>
+          </ul>
+        </dd>
+        <dt>Resource Timing</dt>
+        <dd>
+          <p>The following terms are defined in the Resource Timing specification: [[!RESOURCE-TIMING-2]]</p>
+          <ul>
+            <li><dfn data-cite="!RESOURCE-TIMING-2#dom-performanceresourcetiming-nexthopprotocol">network protocol</dfn></li>
+          </ul>
+        </dd>
+        <dt>Secure Contexts</dt>
+        <dd>
+          <p>The following terms are defined in the Secure Contexts specification: [[!SECURE-CONTEXTS]]</p>
+          <ul>
+            <li>the <dfn data-cite="!SECURE-CONTEXTS#is-origin-trustworthy">is-origin-trustworthy</dfn> algorithm</li>
+            <li><dfn data-cite="!SECURE-CONTEXTS#potentially-trustworthy-origin" data-lt="trustworthy origins|potentially trustworthy origin">potentially trustworthy origin</dfn></li>
+          </ul>
+        </dd>
+        <dt>URL</dt>
+        <dd>
+          <p>The following terms are defined in the URL specification: [[!URL]]</p>
+          <ul>
+            <li><dfn data-cite="!URL#concept-url-fragment">fragment</dfn></li>
+            <li><dfn data-cite="!URL#concept-host">host</dfn></li>
+            <li><dfn data-cite="!URL#concept-URL">URL</dfn></li>
+          </ul>
+        </dd>
+      </dl>
+    </section>
+  </section>
+
+  <section>
     <h2>Network Error Logging</h2>
 
     <section>
-      <h2>Key Concepts and Terminology</h2>
-      <dl>
-        <dt><dfn>origin</dfn></dt>
-        <dd>Defined by the Origin specification. [[RFC6454]]</dd>
-        <dt><dfn>JSON object</dfn></dt>
-        <dd>Defined in the JSON specification. [[RFC7159]]</dd>
-        <dt><dfn>URL</dfn></dt>
-        <dd>Defined by [[URL]].</dd>
-        <dt><dfn>endpoint group</dfn></dt>
-        <dd>Defined in the <a href="https://wicg.github.io/reporting/#id-member">Reporting API specification</a>.</dd>
-        <dt><dfn>json-field-value</dfn></dt>
-        <dd>Defined in the <a href="https://greenbytes.de/tech/webdav/draft-reschke-http-jfv-02.html#rfc.section.2">JSON Field Values specification</a>.</dd>
-      </dl>
-    </section>
-
-    <section>
       <h2>Policy Delivery and Processing</h2>
-      <p>The server delivers the <a>NEL policy</a> to the user agent via an HTTP response header field (<a>NEL header field</a>). If the result of executing <a href="https://www.w3.org/TR/secure-contexts/#is-origin-trustworthy">is-origin-trustworthy</a> algorithm [[!SECURE-CONTEXTS]] on the <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> that served the <a>NEL policy</a> is <code>Potentially Trustworthy</code> then the user agent MUST either:</p>
+      <p>The server delivers the <a>NEL policy</a> to the user agent via an HTTP response header field (<a>NEL header field</a>). If the result of executing the <a>is-origin-trustworthy</a> algorithm on the <a>origin</a> that served the <a>NEL policy</a> is <code>Potentially Trustworthy</code> then the user agent MUST either:</p>
 
       <ul>
         <li>Register the host as a <a>known NEL origin</a> if it is not already registered.</li>
@@ -138,21 +212,15 @@
         <h2>`NEL` Header Field</h2>
         <p>The <dfn>NEL header field</dfn> is used to communicate the <dfn>NEL policy</dfn> to the user agent. The ABNF (Augmented Backus-Naur Form) syntax for the <a>NEL header field</a> is as follows:</p>
 
-        <pre>
-NEL = <a>json-field-value</a>
-        </pre>
+        <pre>NEL = json-field-value</pre>
 
-        <p>The header's value is interpreted as an array of JSON objects, as
-        described in Section 4 of [[HTTP-JFV]].</p>
-
-        <p>Each object in the array defines an <a>NEL policy</a> for the origin.
-        The user agent MUST process the first valid policy in the array.</p>
+        <p>The header's value is interpreted as an array of JSON objects, as defined by <a>json-field-value</a>. Each object in the array defines an <a>NEL policy</a> for the origin. The user agent MUST process the first valid policy in the array.</p>
 
         <p>User agents MUST ignore any unknown or invalid field(s) or value(s) that do not conform to the syntax defined in this specification. A valid <a>NEL header field</a> MUST, at a minimum, contain one object with all of the "REQUIRED" fields defined in this specification.</p>
 
         <p>The user agent MUST ignore the NEL header specified via a <code>meta</code> element to mitigate hijacking of error reporting via scripting attacks. The <a>NEL policy</a> MUST be delivered via the <a>NEL header field</a>.</p>
 
-        <p class="note">The restriction on <code>meta</code> element is consistent with [[CSP]] specification, which restricts reporting registration to HTTP header fields only for same reasons.</p>
+        <p class="note">The restriction on <code>meta</code> element is consistent with the [[CSP]] specification, which restricts reporting registration to HTTP header fields only for the same reasons.</p>
 
         <section>
           <h2>The <code>report-to</code> Field</h2>
@@ -171,7 +239,7 @@ NEL = <a>json-field-value</a>
         </section>
         <section>
           <h2>The <code>include-subdomains</code> Field</h2>
-          <p>The OPTIONAL <dfn>include-subdomains</dfn> field, if present and true, signals the user agent that the <a>NEL policy</a> applies not only to the <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> that served the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>, but also to any <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a> whose <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component is a subdomain of the <a href="https://url.spec.whatwg.org/#concept-url-host">host</a> component of the <a href="https://tools.ietf.org/html/rfc7231#section-3">resource representation</a>’s <a href="https://tools.ietf.org/html/rfc6454#section-3.2">origin</a>. If present, the value of the field MUST be a boolean value.</p>
+          <p>The OPTIONAL <dfn>include-subdomains</dfn> field, if present and true, signals the user agent that the <a>NEL policy</a> applies not only to the <a>origin</a> that served the <a>resource representation</a>, but also to any <a>origin</a> whose <a>host</a> component is a subdomain of the <a>host</a> component of the <a>resource representation</a>’s <a>origin</a>. If present, the value of the field MUST be a boolean value.</p>
 
           <p class="note">To ensure delivery of NEL reports for subdomains, the application should ensure that the Reporting API is also configured with <code>include-subdomains</code> enabled. If the Reporting policy is not, and there is not a separate Reporting policy for a given subdomain, NEL reports for that subdomain will not be delivered, even if the NEL policy includes the subdomain.</p>
         </section>
@@ -181,7 +249,7 @@ NEL = <a>json-field-value</a>
     <section>
       <h2>Policy Storage and Maintenance</h2>
 
-      <p>An HTTP host declares itself an <dfn>NEL origin</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> from a <a href="https://www.w3.org/TR/secure-contexts/#is-origin-trustworthy">potentially trustworthy origin</a>. Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>known NEL origin</dfn>.</p>
+      <p>An HTTP host declares itself an <dfn>NEL origin</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> from a <a>potentially trustworthy origin</a>. Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>known NEL origin</dfn>.</p>
 
       <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL origin</a> separately from any NEL policies issued by any other <a data-lt="NEL origin">NEL origins</a>. Only the given <a>NEL origin</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a data-lt="report-to">endpoint group</a>, <a data-lt="max-age">time duration</a>, and <a data-lt="include-subdomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL origin</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>include-subdomains</a> field) for that <a>NEL origin</a>.</p>
     </section>
@@ -201,9 +269,9 @@ NEL = <a>json-field-value</a>
         <li>Fails to fetch the resource due to a redirect loop</li>
       </ul>
 
-      <p>The user agent MAY classify and report server error responses (<a href="https://tools.ietf.org/html/rfc7231#section-6.6">5xx status code</a>, [[RFC7231]]) as network errors. For example, a network error report may be triggered when a fetch fails due to proxy or gateway errors, service downtime, and other types of server errors.</p>
+      <p>The user agent MAY classify and report server error responses (<a>5xx status code</a>) as network errors. For example, a network error report may be triggered when a fetch fails due to proxy or gateway errors, service downtime, and other types of server errors.</p>
 
-      <p>The failure to fetch a resource when the user agent is known to be offline (when <a href="https://html.spec.whatwg.org/#navigator.online">`navigator.onLine`</a> returns `false`) MUST NOT be considered to be a <a>network error</a>.</p>
+      <p>The failure to fetch a resource when the user agent is known to be offline (when <a>navigator.onLine</a> returns `false`) MUST NOT be considered to be a <a>network error</a>.</p>
 
       <p class="note">Note that the above definition of "network error" is different from definition in [[Fetch]]. The definition of <a>network error</a> in this specification is a subset of [[Fetch]] definition - i.e. all of the above conditions would trigger a "network error" in [[Fetch]] processing, but conditions such as blocked requests due to mixed content, CORS failures, etc., would not.</p>
 
@@ -217,13 +285,13 @@ NEL = <a>json-field-value</a>
         <li>Prepare a JSON object <em>neterror</em> with the following keys and values:
 
           <dl>
-            <dt id="report-uri"><a href="#report-uri"></a>uri</dt>
-            <dd>The URL that encountered the <a>network error</a>, with any <a href="http://www.w3.org/html/wg/drafts/html/CR/infrastructure.html#concept-url-fragment">fragment</a> component removed.</dd>
+            <dt><dfn data-lt="report-uri"><code>uri</code></dfn></dt>
+            <dd>The URL that encountered the <a>network error</a>, with any <a>fragment</a> component removed.</dd>
 
-            <dt id="report-referrer"><a href="#report-referrer"></a>referrer</dt>
-            <dd>The referrer information of the request, as <a href="https://w3c.github.io/webappsec/specs/referrer-policy/#determine-requests-referrer">determined by the Referrer policy</a> ([[!REFERRER-POLICY]]) associated with its <a href="https://fetch.spec.whatwg.org/#concept-request-client">client</a>.</dd>
+            <dt><dfn data-lt="report-referrer"><code>referrer</code></dfn></dt>
+            <dd>The referrer information of the request, as determined by the <a>referrer policy</a> associated with its <a>client</a>.</dd>
 
-            <dt id="report-server-ip"><a href="#report-server-ip"></a>server-ip</dt>
+            <dt><dfn data-lt="report-server-ip"><code>server-ip</code></dfn></dt>
             <dd>The IP address of the host to which the user agent sent the request, if available. Otherwise, an empty string.
               <ul>
               <li>A host identified by an IPv4 address is represented in dotted-decimal notation (a sequence of four decimal numbers in the range 0 to 255, separated by "."). [[RFC1123]]</li>
@@ -231,16 +299,16 @@ NEL = <a>json-field-value</a>
               </ul>
             </dd>
 
-            <dt id="report-protocol"><a href="#report-protocol">protocol</a></dt>
-            <dd>The <a href="https://w3c.github.io/navigation-timing/#widl-PerformanceNavigationTiming-nextHopProtocol">network protocol</a>  used to fetch the resource as identified by the ALPN Protocol ID, if available. Otherwise, an empty string.</dd>
+            <dt><dfn data-lt="report-protocol"><code>protocol</code></dfn></dt>
+            <dd>The <a>network protocol</a>  used to fetch the resource as identified by the ALPN Protocol ID, if available. Otherwise, an empty string.</dd>
 
-            <dt id="report-status-code"><a href="#report-status-code">status-code</a></dt>
-            <dd>The <a href="https://tools.ietf.org/html/rfc7230#section-3.1.2">status-code</a> of the HTTP response, if available. Otherwise, the number 0.</dd>
+            <dt><dfn data-lt="report-status-code"><code>status-code</code></dfn></dt>
+            <dd>The <a>status code</a> of the HTTP response, if available. Otherwise, the number 0.</dd>
 
-            <dt id="report-elapsed-time"><a href="#report-elapsed-time">elapsed-time</a></dt>
+            <dt><dfn data-lt="report-elapsed-time"><code>elapsed-time</code></dfn></dt>
             <dd>The elapsed number of milliseconds between the start of the resource fetch and when it was aborted by the user agent.</dd>
 
-            <dt id="report-type"><a href="#report-type">type</a></dt>
+            <dt><dfn data-lt="report-type"><code>type</code></dfn></dt>
             <dd>The description of the error type, which may be one the following strings:
 
             <dl class='reportTypeGroup'>
@@ -358,7 +426,7 @@ NEL = <a>json-field-value</a>
 
         <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL origin</a>: the user agent should report network errors to the endpoint group "network-errors" and the policy applies for 2592000 seconds (30 days).</p>
 
-        <p>Note that above registration will only succeed if the response is communicated from a <a href="#policy-delivery-and-processing">potentially trustworthy origin</a>.</p>
+        <p>Note that above registration will only succeed if the response is communicated from a <a>potentially trustworthy origin</a>.</p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
@@ -369,7 +437,7 @@ NEL = <a>json-field-value</a>
 &lt; NEL: {"report-to": "network-errors", "max-age": 2592000, "include-subdomains": true}
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to the endpoint group "network-errors". Further, the policy is extended to all of the subdomains of the issuing <a>NEL origin</a> - see <a href="#the-includesubdomains-field"></a>.</p>
+        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to the endpoint group "network-errors". Further, the policy is extended to all of the subdomains of the issuing <a>NEL origin</a> — see <a>include-subdomains</a>.</p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
@@ -464,7 +532,7 @@ NEL = <a>json-field-value</a>
 
       <p><a>NEL</a> provides network error reports that could expose new information about the user's network configuration. For example, an attacker could abuse NEL reporting to probe users network configuration. Also, similar to HSTS, HPKP, and pinned CSP policies, the stored <a>NEL policy</a> could be used as a "supercookie" by setting a distinct policy with a custom (per-user) reporting URI to act as an identififer in combination with (or instead of) HTTP cookies.</p>
 
-      <p>To mitigate some of the above risks, NEL registration is restricted to <a href="https://www.w3.org/TR/secure-contexts/#is-origin-trustworthy">trustworthy origins</a>, and delivery of network error reports is similarly restricted to <a href="https://www.w3.org/TR/secure-contexts/#is-origin-trustworthy">trustworthy origins</a>. This disallows a transient HTTP MITM from trivially abusing NEL as a persistent tracker.</p>
+      <p>To mitigate some of the above risks, NEL registration is restricted to <a>trustworthy origins</a>, and delivery of network error reports is similarly restricted to <a>trustworthy origins</a>. This disallows a transient HTTP MITM from trivially abusing NEL as a persistent tracker.</p>
 
       <p>In addition to above restrictions, the user agents MUST:</p>
 
