@@ -11,6 +11,12 @@
     specStatus: "CG-DRAFT",
     edDraftURI: "https://wicg.github.io/network-error-logging/",
     editors: [{
+      name: "Douglas Creager",
+      url: "http://dcreager.net/",
+      mailto: "dcreager@google.com",
+      company: "Google",
+      w3cid: "103120"
+    }, {
       name: "Ilya Grigorik",
       url: "https://www.igvita.com/",
       mailto: "igrigorik@gmail.com",
@@ -76,9 +82,11 @@
 
     <p>Accurately measuring performance characteristics of web applications is an important aspect in helping site developers understand how to improve their web applications. The worst case scenario is the failure to load the application, or a particular resource, due to a network error, and to address such failures the developer requires assistance from the user agent to identify when, where, and why such failures are occurring.</p>
 
-    <p>Today, application developers do not have real-time web application availability data from their end users. For example, if the user fails to load the page due to a network error, such as a failed DNS lookup, a connection timeout, a reset connection, or other reasons, the site developer is unable to detect and address this issue. Existing methods, such as synthetic monitoring provide a partial solution by placing monitoring nodes in predetermined geographic locations, but require additional infrastructure investments, and cannot provide truly global and near real-time availability data for real end users.</p>
+    <p>Today, application developers do not have real-time web application availability data from their end users. For example, if the user fails to load the page due to a network error, such as a failed DNS lookup, a connection timeout, a reset connection, or other reasons, the site developer is unable to detect and address this issue. Note that these kinds of network errors cannot be detected purely server-side, since by definition the client might not have been able to successfully establish a connection with the server.</p>
 
-    <p>Network Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report network errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, and an end user fails to successfully fetch a resource from that origin, the user agent logs the network error report and attempts to deliver it to a group of endpoints previously configured using the Reporting API [[!REPORTING]].</p>
+    <p>Existing methods (such as synthetic monitoring) provide a partial solution by placing monitoring nodes in predetermined geographic locations, but require additional infrastructure investments, and cannot provide truly global and near real-time availability data for real end users.</p>
+
+    <p>Network Error Logging (<dfn>NEL</dfn>) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report network errors for a given origin. To take advantage of <a>NEL</a>, a web application opts into using <a>NEL</a> by supplying a <code>NEL</code> HTTP response header field that describes the reporting policy. Then, if the <a>NEL</a> policy is available for a given origin, the user agent logs information about requests to that origin, and attempts to deliver that information to a group of endpoints previously configured using the Reporting API [[!REPORTING]].  As the name implies, <a>NEL</a> reports are primarily used to describe <em>errors</em>. However, in order to determine <em>rates</em> of errors across different client populations, we must also know how many <em>successful</em> requests are occurring; these successful requests can also be reported via the <a>NEL</a> mechanism.</p>
 
     <p>For example, if the user agent fails to fetch a resource from <code>https://www.example.com</code> due to an aborted TCP connection, the user agent would queue the following report via the Reporting API:</p>
 
@@ -96,6 +104,7 @@
   "referrer": "https://referrer.com/",
   "server-ip": "123.122.121.120",
   "elapsed-time": 321,
+  "sampling-fraction": 1.0,
   "type": "tcp.aborted"
 }
       </pre></dd>
@@ -243,6 +252,16 @@
 
           <p class="note">To ensure delivery of NEL reports for subdomains, the application should ensure that the Reporting API is also configured with <code>include-subdomains</code> enabled. If the Reporting policy is not, and there is not a separate Reporting policy for a given subdomain, NEL reports for that subdomain will not be delivered, even if the NEL policy includes the subdomain.</p>
         </section>
+
+        <section>
+          <h2>The <code>success-fraction</code> field</h2>
+          <p>The OPTIONAL <dfn>success-fraction</dfn> field defines the <a>sampling rate</a> that should be applied to reports about requests that do not result in a <a>network error</a>. If present, this field MUST have a value between <code>0.0</code> and <code>1.0</code>, inclusive. If this field is not present, it defaults to <code>0.0</code> — by default, the user agent will <em>not</em> collect NEL reports about successful requests unless specifically requested by the origin.</p>
+        </section>
+
+        <section>
+          <h2>The <code>error-fraction</code> field</h2>
+          <p>The OPTIONAL <dfn>error-fraction</dfn> field defines the <a>sampling rate</a> that should be applied to reports about requests that result in a <a>network error</a>. If present, this field MUST have a value between <code>0.0</code> and <code>1.0</code>, inclusive. If this field is not present, it defaults to <code>1.0</code> — by default, the user agent will collect NEL reports about <em>all</em> requests that result in a <a>network error</a>.</p>
+        </section>
       </section>
     </section>
 
@@ -271,25 +290,33 @@
 
       <p>The user agent MAY classify and report server error responses (<a>5xx status code</a>) as network errors. For example, a network error report may be triggered when a fetch fails due to proxy or gateway errors, service downtime, and other types of server errors.</p>
 
-      <p>The failure to fetch a resource when the user agent is known to be offline (when <a>navigator.onLine</a> returns `false`) MUST NOT be considered to be a <a>network error</a>.</p>
+      <p>The failure to fetch a resource when the user agent is known to be offline (when <a>navigator.onLine</a> returns <code>false</code>) MUST NOT be considered to be a <a>network error</a>.</p>
 
       <p class="note">Note that the above definition of "network error" is different from definition in [[Fetch]]. The definition of <a>network error</a> in this specification is a subset of [[Fetch]] definition - i.e. all of the above conditions would trigger a "network error" in [[Fetch]] processing, but conditions such as blocked requests due to mixed content, CORS failures, etc., would not.</p>
 
-      <p>When a <a>network error</a> occurs for a URL that belongs to a <a>known NEL origin</a> the user agent SHOULD log the error and queue it for delivery to the <a data-lt="report-to">endpoint group</a> defined by the <a>NEL policy</a> of the associated <a>NEL origin</a>.</p>
-
-      <p>Delivery of reports, including scheduling, retrying, or abandoning delivery, is handled by the Reporting API, not by Network Error Logging.</p>
-
-      <p>To generate a <dfn>network error object</dfn>, the user agent MUST use an algorithm equivalent to the following:</p>
+      <p>When a request is made to a URL that belongs to a <a>known NEL origin</a> the user agent MUST use an algorithm equivalent to the following to decide whether to generate and upload a <dfn>network error object</dfn> for the request:</p>
 
       <ol>
-        <li>Prepare a JSON object <em>neterror</em> with the following keys and values:
+        <li>Determine the <dfn>active sampling rate</dfn> for this request:
+          <ul>
+            <li>If the request resulted in a <a>network error</a>, then the active sampling rate is the value of the <a><code>error-fraction</code></a> field in the origin's <a>NEL policy</a>, or <code>1.0</code> if the <a>NEL policy</a> does not contain an <a><code>error-fraction</code></a> field.</li>
+            <li>If the request did <em>not</em> result in a <a>network error</a>, then the active sampling rate is the value of the <a><code>success-fraction</code></a> field in the origin's <a>NEL policy</a>, or <code>0.0</code> if the <a>NEL policy</a> does not contain an <a><code>success-fraction</code></a> field.</li>
+          </ul>
+        </li>
+
+        <li>Decide whether or not to report on this request. Choose a random number between 0.0 and 1.0, inclusive. If this number is greater than or equal to the <a>active sampling rate</a> for this request, ignore the request and skip the remainder of this algorithm.</li>
+
+        <li>Prepare a JSON object <em>report</em> with the following keys and values:
 
           <dl>
             <dt><dfn data-lt="report-uri"><code>uri</code></dfn></dt>
-            <dd>The URL that encountered the <a>network error</a>, with any <a>fragment</a> component removed.</dd>
+            <dd>The URL of the request, with any <a>fragment</a> component removed.</dd>
 
             <dt><dfn data-lt="report-referrer"><code>referrer</code></dfn></dt>
             <dd>The referrer information of the request, as determined by the <a>referrer policy</a> associated with its <a>client</a>.</dd>
+
+            <dt><dfn data-lt="report-sampling-fraction"><code>sampling-fraction</code></dfn></dt>
+            <dd>The <a>active sampling rate</a> for this request.</dd>
 
             <dt><dfn data-lt="report-server-ip"><code>server-ip</code></dfn></dt>
             <dd>The IP address of the host to which the user agent sent the request, if available. Otherwise, an empty string.
@@ -309,8 +336,12 @@
             <dd>The elapsed number of milliseconds between the start of the resource fetch and when it was aborted by the user agent.</dd>
 
             <dt><dfn data-lt="report-type"><code>type</code></dfn></dt>
-            <dd>The description of the error type, which may be one the following strings:
+            <dd>The description of the error type, which SHOULD be one the following strings:
 
+            <dl class='reportTypeGroup'>
+              <dt>ok</dt>
+              <dd>The request did <em>not</em> result in a <a>network error</a></dd>
+            </dl>
             <dl class='reportTypeGroup'>
               <dt>dns.unreachable</dt>
               <dd>DNS server is unreachable</dd>
@@ -402,13 +433,33 @@
               <dd>error type is unknown</dd>
             </dl>
 
-            <p>The user agent MAY extend the above error type list with custom values - e.g. new error types to accommodate new protocols, or more detailed error descriptions of existing ones. When doing so, the user agent SHOULD follow the dot-delimited pattern (`[group].[optional-subgroup].[error-name]`) to facilitate simple and consistent processing of the error reports - e.g. the collector may provide aggregation by category and/or one or multiple subgroups.</p>
+            <p>The user agent MAY extend the above error type list with custom values — e.g. new error types to accommodate new protocols, or more detailed error descriptions of existing ones. When doing so, the user agent SHOULD follow the dot-delimited pattern (<code>[group].[optional-subgroup].[error-name]</code>) to facilitate simple and consistent processing of the error reports — e.g. the collector may provide aggregation by category and/or one or multiple subgroups.</p>
             </dd>
           </dl>
         </li>
 
-        <li>Return <em>neterror</em>.</li>
+        <li>
+          <p><a data-cite="!REPORTING#queue-report">Queue the report for delivery</a> via the Reporting API. [[!REPORTING]]</p>
+
+          <dl>
+            <dt>type</dt>
+            <dd><code>"network-error"</code></dd>
+            <dt>data</dt>
+            <dd>the <em>report</em> created above</dd>
+            <dt>endpoint group</dt>
+            <dd>the <a data-lt="report-to">endpoint group</a> defined by the <a>NEL policy</a> of the associated <a>NEL origin</a></dd>
+            <dt>settings</dt>
+            <dd>the <a data-cite="!HTML#environment-settings-object">environment settings object</a> for the request described by <em>report</em></dd>
+          </dl>
+        </li>
       </ol>
+    </section>
+
+    <section>
+      <h2>Sampling rates</h2>
+      <p>A <a>NEL origin</a> that expects to serve a large volume of traffic might not be equipped to ingest NEL reports for every request made to the origin. The origin can define a <dfn>sampling rate</dfn> to limit the number of NEL reports that each user agent submits. Since successful requests should typically greatly outnumber requests that result in a <a>network error</a>, the origin can specify different sampling rates for each.</p>
+
+      <p>The sampling rates are specified as a fraction — a number between 0.0 and 1.0, inclusive — stored in the <a><code>success-fraction</code></a> and <a><code>error-fraction</code></a> fields of the <a>NEL policy</a>. The user agent will use these fractions to probabilistically decide whether to create a <a>network error object</a> for each individual request to the <a>NEL origin</a>.</p>
     </section>
 
     <section>
