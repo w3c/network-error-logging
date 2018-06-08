@@ -94,7 +94,7 @@
       <dt>type</dt>
       <dd><code>"network-error"</code></dd>
       <dt>endpoint group</dt>
-      <dd>the endpoint group configured by the <a>report-to</a> field</dd>
+      <dd>the endpoint group configured by the <a>report_to</a> field</dd>
       <dt>settings</dt>
       <dd>TODO</dd>
       <dt>data</dt>
@@ -102,9 +102,9 @@
 {
   "uri": "https://www.example.com/resource",
   "referrer": "https://referrer.com/",
-  "server-ip": "123.122.121.120",
-  "elapsed-time": 321,
-  "sampling-fraction": 1.0,
+  "server_ip": "123.122.121.120",
+  "elapsed_time": 321,
+  "sampling_fraction": 1.0,
   "type": "tcp.aborted"
 }
       </pre></dd>
@@ -232,35 +232,35 @@
         <p class="note">The restriction on <code>meta</code> element is consistent with the [[CSP]] specification, which restricts reporting registration to HTTP header fields only for the same reasons.</p>
 
         <section>
-          <h2>The <code>report-to</code> Field</h2>
-          <p>The <dfn>report-to</dfn> field specifies the <a>endpoint group</a> to which the user agent sends reports about network errors. The <a>report-to</a> field is a REQUIRED field to register an <a>NEL policy</a>, and OPTIONAL if the intent is to remove a previous registration - see <a>max-age</a>. The value of the field MUST be a string containing the <a>endpoint group</a> to which reports will be sent.</p>
+          <h2>The <code>report_to</code> Field</h2>
+          <p>The <dfn>report_to</dfn> field specifies the <a>endpoint group</a> to which the user agent sends reports about network errors. The <a>report_to</a> field is a REQUIRED field to register an <a>NEL policy</a>, and OPTIONAL if the intent is to remove a previous registration - see <a>max_age</a>. The value of the field MUST be a string containing the <a>endpoint group</a> to which reports will be sent.</p>
 
-          <p class="note">To improve delivery of NEL reports, the application should set <code>report-to</code> to an endpoint group containing at least one endpoint in an alternative origin whose infrastructure is not coupled with the origin from which the resource is being fetched &mdash; otherwise network errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple endpoints to provide alternatives if some endpoints are unreachable.</p>
+          <p class="note">To improve delivery of NEL reports, the application should set <code>report_to</code> to an endpoint group containing at least one endpoint in an alternative origin whose infrastructure is not coupled with the origin from which the resource is being fetched &mdash; otherwise network errors cannot be reported until the problem is solved, if ever &mdash; and provide multiple endpoints to provide alternatives if some endpoints are unreachable.</p>
 
         </section>
         <section>
-          <h2>The <code>max-age</code> Field</h2>
-          <p>The REQUIRED <dfn>max-age</dfn> field specifies the number of seconds, after the reception of the NEL header field, during which the user agent regards the host (from whom the policy was received) as a <a>known NEL origin</a>. The value of the field MUST be an non-negative integer.</p>
+          <h2>The <code>max_age</code> Field</h2>
+          <p>The REQUIRED <dfn>max_age</dfn> field specifies the number of seconds, after the reception of the NEL header field, during which the user agent regards the host (from whom the policy was received) as a <a>known NEL origin</a>. The value of the field MUST be an non-negative integer.</p>
 
-          <p>A <a>max-age</a> value of zero (i.e. '"max-age": 0') signals the user agent to cease regarding the host as a <a>known NEL origin</a>, including the <a>include-subdomains</a> field if provided.</p>
+          <p>A <a>max_age</a> value of zero (i.e. <code>"max_age": 0</code>) signals the user agent to cease regarding the host as a <a>known NEL origin</a>, including the <a>include_subdomains</a> field if provided.</p>
 
-          <p class="note">To ensure delivery of NEL reports, the application should ensure that the Reporting API is also configured with a sufficiently high <code>max-age</code>. If the Reporting policy expires, NEL reports will not be delivered, even if the NEL policy has not expired.</p>
+          <p class="note">To ensure delivery of NEL reports, the application should ensure that the Reporting API is also configured with a sufficiently high <code>max_age</code>. If the Reporting policy expires, NEL reports will not be delivered, even if the NEL policy has not expired.</p>
         </section>
         <section>
-          <h2>The <code>include-subdomains</code> Field</h2>
-          <p>The OPTIONAL <dfn>include-subdomains</dfn> field, if present and true, signals the user agent that the <a>NEL policy</a> applies not only to the <a>origin</a> that served the <a>resource representation</a>, but also to any <a>origin</a> whose <a>host</a> component is a subdomain of the <a>host</a> component of the <a>resource representation</a>’s <a>origin</a>. If present, the value of the field MUST be a boolean value.</p>
+          <h2>The <code>include_subdomains</code> Field</h2>
+          <p>The OPTIONAL <dfn>include_subdomains</dfn> field, if present and true, signals the user agent that the <a>NEL policy</a> applies not only to the <a>origin</a> that served the <a>resource representation</a>, but also to any <a>origin</a> whose <a>host</a> component is a subdomain of the <a>host</a> component of the <a>resource representation</a>’s <a>origin</a>. If present, the value of the field MUST be a boolean value.</p>
 
-          <p class="note">To ensure delivery of NEL reports for subdomains, the application should ensure that the Reporting API is also configured with <code>include-subdomains</code> enabled. If the Reporting policy is not, and there is not a separate Reporting policy for a given subdomain, NEL reports for that subdomain will not be delivered, even if the NEL policy includes the subdomain.</p>
-        </section>
-
-        <section>
-          <h2>The <code>success-fraction</code> field</h2>
-          <p>The OPTIONAL <dfn>success-fraction</dfn> field defines the <a>sampling rate</a> that should be applied to reports about requests that do not result in a <a>network error</a>. If present, this field MUST have a value between <code>0.0</code> and <code>1.0</code>, inclusive. If this field is not present, it defaults to <code>0.0</code> — by default, the user agent will <em>not</em> collect NEL reports about successful requests unless specifically requested by the origin.</p>
+          <p class="note">To ensure delivery of NEL reports for subdomains, the application should ensure that the Reporting API is also configured with <code>include_subdomains</code> enabled. If the Reporting policy is not, and there is not a separate Reporting policy for a given subdomain, NEL reports for that subdomain will not be delivered, even if the NEL policy includes the subdomain.</p>
         </section>
 
         <section>
-          <h2>The <code>error-fraction</code> field</h2>
-          <p>The OPTIONAL <dfn>error-fraction</dfn> field defines the <a>sampling rate</a> that should be applied to reports about requests that result in a <a>network error</a>. If present, this field MUST have a value between <code>0.0</code> and <code>1.0</code>, inclusive. If this field is not present, it defaults to <code>1.0</code> — by default, the user agent will collect NEL reports about <em>all</em> requests that result in a <a>network error</a>.</p>
+          <h2>The <code>success_fraction</code> field</h2>
+          <p>The OPTIONAL <dfn>success_fraction</dfn> field defines the <a>sampling rate</a> that should be applied to reports about requests that do not result in a <a>network error</a>. If present, this field MUST have a value between <code>0.0</code> and <code>1.0</code>, inclusive. If this field is not present, it defaults to <code>0.0</code> — by default, the user agent will <em>not</em> collect NEL reports about successful requests unless specifically requested by the origin.</p>
+        </section>
+
+        <section>
+          <h2>The <code>failure_fraction</code> field</h2>
+          <p>The OPTIONAL <dfn>failure_fraction</dfn> field defines the <a>sampling rate</a> that should be applied to reports about requests that result in a <a>network error</a>. If present, this field MUST have a value between <code>0.0</code> and <code>1.0</code>, inclusive. If this field is not present, it defaults to <code>1.0</code> — by default, the user agent will collect NEL reports about <em>all</em> requests that result in a <a>network error</a>.</p>
         </section>
       </section>
     </section>
@@ -270,7 +270,7 @@
 
       <p>An HTTP host declares itself an <dfn>NEL origin</dfn> by issuing an <a>NEL policy</a>, which is communicated via the <a>NEL header field</a> from a <a>potentially trustworthy origin</a>. Upon error-free receipt and processing of this header by a conformant user agent, the user agent regards the host as a <dfn>known NEL origin</dfn>.</p>
 
-      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL origin</a> separately from any NEL policies issued by any other <a data-lt="NEL origin">NEL origins</a>. Only the given <a>NEL origin</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a data-lt="report-to">endpoint group</a>, <a data-lt="max-age">time duration</a>, and <a data-lt="include-subdomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL origin</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>include-subdomains</a> field) for that <a>NEL origin</a>.</p>
+      <p>The user agent MUST maintain the <a>NEL policy</a> of any given <a>NEL origin</a> separately from any NEL policies issued by any other <a data-lt="NEL origin">NEL origins</a>. Only the given <a>NEL origin</a> can update or cause deletion of its <a>NEL policy</a>. This is accomplished by sending a <a>NEL header field</a> to the user agent with new values for the policy <a data-lt="report_to">endpoint group</a>, <a data-lt="max_age">time duration</a>, and <a data-lt="include_subdomains">subdomain applicability</a>. Thus, the user agent MUST store the "freshest" <a>NEL policy</a> information on behalf of an <a>NEL origin</a>, and specifying a zero time duration MUST cause the user agent to delete the <a>NEL policy</a> (including any asserted <a>include_subdomains</a> field) for that <a>NEL origin</a>.</p>
     </section>
 
     <section>
@@ -299,8 +299,8 @@
       <ol>
         <li>Determine the <dfn>active sampling rate</dfn> for this request:
           <ul>
-            <li>If the request resulted in a <a>network error</a>, then the active sampling rate is the value of the <a><code>error-fraction</code></a> field in the origin's <a>NEL policy</a>, or <code>1.0</code> if the <a>NEL policy</a> does not contain an <a><code>error-fraction</code></a> field.</li>
-            <li>If the request did <em>not</em> result in a <a>network error</a>, then the active sampling rate is the value of the <a><code>success-fraction</code></a> field in the origin's <a>NEL policy</a>, or <code>0.0</code> if the <a>NEL policy</a> does not contain an <a><code>success-fraction</code></a> field.</li>
+            <li>If the request resulted in a <a>network error</a>, then the active sampling rate is the value of the <a><code>failure_fraction</code></a> field in the origin's <a>NEL policy</a>, or <code>1.0</code> if the <a>NEL policy</a> does not contain an <a><code>failure_fraction</code></a> field.</li>
+            <li>If the request did <em>not</em> result in a <a>network error</a>, then the active sampling rate is the value of the <a><code>success_fraction</code></a> field in the origin's <a>NEL policy</a>, or <code>0.0</code> if the <a>NEL policy</a> does not contain an <a><code>success_fraction</code></a> field.</li>
           </ul>
         </li>
 
@@ -315,10 +315,10 @@
             <dt><dfn data-lt="report-referrer"><code>referrer</code></dfn></dt>
             <dd>The referrer information of the request, as determined by the <a>referrer policy</a> associated with its <a>client</a>.</dd>
 
-            <dt><dfn data-lt="report-sampling-fraction"><code>sampling-fraction</code></dfn></dt>
+            <dt><dfn data-lt="report-sampling-fraction"><code>sampling_fraction</code></dfn></dt>
             <dd>The <a>active sampling rate</a> for this request.</dd>
 
-            <dt><dfn data-lt="report-server-ip"><code>server-ip</code></dfn></dt>
+            <dt><dfn data-lt="report-server-ip"><code>server_ip</code></dfn></dt>
             <dd>The IP address of the host to which the user agent sent the request, if available. Otherwise, an empty string.
               <ul>
               <li>A host identified by an IPv4 address is represented in dotted-decimal notation (a sequence of four decimal numbers in the range 0 to 255, separated by "."). [[RFC1123]]</li>
@@ -329,10 +329,10 @@
             <dt><dfn data-lt="report-protocol"><code>protocol</code></dfn></dt>
             <dd>The <a>network protocol</a>  used to fetch the resource as identified by the ALPN Protocol ID, if available. Otherwise, an empty string.</dd>
 
-            <dt><dfn data-lt="report-status-code"><code>status-code</code></dfn></dt>
+            <dt><dfn data-lt="report-status-code"><code>status_code</code></dfn></dt>
             <dd>The <a>status code</a> of the HTTP response, if available. Otherwise, the number 0.</dd>
 
-            <dt><dfn data-lt="report-elapsed-time"><code>elapsed-time</code></dfn></dt>
+            <dt><dfn data-lt="report-elapsed-time"><code>elapsed_time</code></dfn></dt>
             <dd>The elapsed number of milliseconds between the start of the resource fetch and when it was aborted by the user agent.</dd>
 
             <dt><dfn data-lt="report-type"><code>type</code></dfn></dt>
@@ -447,7 +447,7 @@
             <dt>data</dt>
             <dd>the <em>report</em> created above</dd>
             <dt>endpoint group</dt>
-            <dd>the <a data-lt="report-to">endpoint group</a> defined by the <a>NEL policy</a> of the associated <a>NEL origin</a></dd>
+            <dd>the <a data-lt="report_to">endpoint group</a> defined by the <a>NEL policy</a> of the associated <a>NEL origin</a></dd>
             <dt>settings</dt>
             <dd>the <a data-cite="!HTML#environment-settings-object">environment settings object</a> for the request described by <em>report</em></dd>
           </dl>
@@ -459,7 +459,7 @@
       <h2>Sampling rates</h2>
       <p>A <a>NEL origin</a> that expects to serve a large volume of traffic might not be equipped to ingest NEL reports for every request made to the origin. The origin can define a <dfn>sampling rate</dfn> to limit the number of NEL reports that each user agent submits. Since successful requests should typically greatly outnumber requests that result in a <a>network error</a>, the origin can specify different sampling rates for each.</p>
 
-      <p>The sampling rates are specified as a fraction — a number between 0.0 and 1.0, inclusive — stored in the <a><code>success-fraction</code></a> and <a><code>error-fraction</code></a> fields of the <a>NEL policy</a>. The user agent will use these fractions to probabilistically decide whether to create a <a>network error object</a> for each individual request to the <a>NEL origin</a>.</p>
+      <p>The sampling rates are specified as a fraction — a number between 0.0 and 1.0, inclusive — stored in the <a><code>success_fraction</code></a> and <a><code>failure_fraction</code></a> fields of the <a>NEL policy</a>. The user agent will use these fractions to probabilistically decide whether to create a <a>network error object</a> for each individual request to the <a>NEL origin</a>.</p>
     </section>
 
     <section>
@@ -472,7 +472,7 @@
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; NEL: {"report-to": "network-errors", "max-age": 2592000}
+&lt; NEL: {"report_to": "network-errors", "max_age": 2592000}
         </pre>
 
         <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL origin</a>: the user agent should report network errors to the endpoint group "network-errors" and the policy applies for 2592000 seconds (30 days).</p>
@@ -485,10 +485,10 @@
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; NEL: {"report-to": "network-errors", "max-age": 2592000, "include-subdomains": true}
+&lt; NEL: {"report_to": "network-errors", "max_age": 2592000, "include_subdomains": true}
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to the endpoint group "network-errors". Further, the policy is extended to all of the subdomains of the issuing <a>NEL origin</a> — see <a>include-subdomains</a>.</p>
+        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to the endpoint group "network-errors". Further, the policy is extended to all of the subdomains of the issuing <a>NEL origin</a> — see <a>include_subdomains</a>.</p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
@@ -496,13 +496,13 @@
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; NEL: {"max-age": 0}
+&lt; NEL: {"max_age": 0}
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response contains <a>max-age</a> set to zero, which indicates that the user agent must delete the current registered <a>NEL policy</a> associated with the `example.com` <a>NEL origin</a> and all of its subdomains:</p>
+        <p>The above <a>NEL policy</a> provided in the server response contains <a>max_age</a> set to zero, which indicates that the user agent must delete the current registered <a>NEL policy</a> associated with the `example.com` <a>NEL origin</a> and all of its subdomains:</p>
         <ul>
-          <li><a>include-subdomains</a> is implicit when <a>max-age</a> is zero</li>
-          <li><a>report-to</a> is optional when removing a previously registered policy</li>
+          <li><a>include_subdomains</a> is implicit when <a>max_age</a> is zero</li>
+          <li><a>report_to</a> is optional when removing a previously registered policy</li>
         </ul>
       </section>
       <section>
@@ -516,10 +516,10 @@
             {
               "uri": "https://www.example.com/",
               "referrer": "http://example.com/",
-              "server-ip": "123.122.121.120",
+              "server_ip": "123.122.121.120",
               "protocol": "h2",
-              "status-code": 200,
-              "elapsed-time": 823,
+              "status_code": 200,
+              "elapsed_time": 823,
               "age": 0,
               "type": "http.protocol.error"
             }
@@ -535,10 +535,10 @@
             {
               "uri": "https://widget.com/thing.js",
               "referrer": "https://www.example.com/",
-              "server-ip": "234.233.232.231",
+              "server_ip": "234.233.232.231",
               "protocol": "",
-              "status-code": 0,
-              "elapsed-time": 143,
+              "status_code": 0,
+              "elapsed_time": 143,
               "age": 0,
               "type": "http.dns.name_not_resolved"
             }
