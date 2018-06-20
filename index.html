@@ -110,7 +110,11 @@
       </pre></dd>
     </dl>
 
-    <p>See <a href="#reporting">reporting</a> for explanation of the communicated fields and format of the report, and <a href="#examples">examples</a> for more hands-on examples of NEL registration and reporting process.</p>
+    <p>
+    See <a href="#network-error-reports"></a> for explanation of the
+    communicated fields and format of the report, and <a href="#examples"></a>
+    for more hands-on examples of NEL registration and reporting process.
+    </p>
   </section>
 
   <section>
@@ -173,6 +177,7 @@
           <p>The following terms are defined in the Reporting API specification: [[!REPORTING]]</p>
           <ul>
             <li><dfn data-cite="!REPORTING#endpoint-group">endpoint group</dfn></li>
+            <li><dfn data-cite="!REPORTING#report-type">report type</dfn></li>
           </ul>
         </dd>
         <dt>Resource Timing</dt>
@@ -207,6 +212,200 @@
     <h2>Network Error Logging</h2>
 
     <section>
+      <h2>Network error reports</h2>
+
+      <p>
+      A <dfn data-lt="network error|network error reports">network error
+        report</dfn> describes whether or not the user agent encountered any
+      connection or protocol error while handling a network request, thus
+      preventing it from successfully completing the request-response exchange.
+      This may include, but is not limited to DNS, TCP, TLS, and HTTP connection
+      and protocol errors. For example, a network error is triggered when the
+      user agent:
+      </p>
+
+      <ul>
+        <li>Fails to resolve the DNS name</li>
+        <li>Fails to establish a TCP connection</li>
+        <li>Fails to establish a secure TLS tunnel</li>
+        <li>Fails to fetch the resource due to a TLS protocol error</li>
+        <li>Fails to fetch the resource due to a HTTP protocol error</li>
+        <li>Fails to fetch the resource due to a socket timeout or error</li>
+        <li>Fails to fetch the resource due to a redirect loop</li>
+      </ul>
+
+      <p>
+      The user agent MAY classify and report server error responses (<a>5xx
+        status code</a>) as network errors. For example, a network error report
+      may be triggered when a fetch fails due to proxy or gateway errors,
+      service downtime, and other types of server errors.
+      </p>
+
+      <p>
+      The failure to fetch a resource when the user agent is known to be offline
+      (when <a>navigator.onLine</a> returns <code>false</code>) MUST NOT be
+      considered to be a <a>network error</a>.
+      </p>
+
+      <p class="note">
+      Note that the above definition of "network error" is different from
+      definition in [[Fetch]]. The definition of <a>network error</a> in this
+      specification is a subset of [[Fetch]] definition – i.e. all of the above
+      conditions would trigger a "network error" in [[Fetch]] processing, but
+      conditions such as blocked requests due to mixed content, CORS failures,
+      etc., would not.
+      </p>
+
+      <p>
+      <a>Network error reports</a> have a <a>report type</a> of
+      <code>network-error</code>.
+      </p>
+
+      <p>
+      A <a>network error report</a>'s <dfn data-lt="network error report
+        body">body</dfn> contains the following fields:
+      </p>
+
+      <dl>
+        <dt><dfn data-lt="report-uri"><code>uri</code></dfn></dt>
+        <dd>The URL of the request, with any <a>fragment</a> component removed.</dd>
+
+        <dt><dfn data-lt="report-referrer"><code>referrer</code></dfn></dt>
+        <dd>The referrer information of the request, as determined by the <a>referrer policy</a> associated with its <a>client</a>.</dd>
+
+        <dt><dfn data-lt="report-sampling-fraction"><code>sampling_fraction</code></dfn></dt>
+        <dd>The <a>active sampling rate</a> for this request.</dd>
+
+        <dt><dfn data-lt="report-server-ip"><code>server_ip</code></dfn></dt>
+        <dd>The IP address of the host to which the user agent sent the request, if available. Otherwise, an empty string.
+        <ul>
+          <li>A host identified by an IPv4 address is represented in dotted-decimal notation (a sequence of four decimal numbers in the range 0 to 255, separated by "."). [[RFC1123]]</li>
+          <li>A host identified by an IPv6 address is represented as an ordered list of eight 16-bit pieces (a sequence of `x:x:x:x:x:x:x:x`, where the 'x's are one to four hexadecimal digits of the eight 16-bit pieces of the address). [[RFC4291]] </li>
+        </ul>
+        </dd>
+
+        <dt><dfn data-lt="report-protocol"><code>protocol</code></dfn></dt>
+        <dd>The <a>network protocol</a>  used to fetch the resource as identified by the ALPN Protocol ID, if available. Otherwise, an empty string.</dd>
+
+        <dt><dfn data-lt="report-status-code"><code>status_code</code></dfn></dt>
+        <dd>The <a>status code</a> of the HTTP response, if available. Otherwise, the number 0.</dd>
+
+        <dt><dfn data-lt="report-elapsed-time"><code>elapsed_time</code></dfn></dt>
+        <dd>The elapsed number of milliseconds between the start of the resource fetch and when it was aborted by the user agent.</dd>
+
+        <dt><dfn data-lt="report-type"><code>type</code></dfn></dt>
+        <dd>The description of the error type, which SHOULD be one the following strings:
+
+        <dl class='reportTypeGroup'>
+          <dt>ok</dt>
+          <dd>The request did <em>not</em> result in a <a>network error</a></dd>
+        </dl>
+        <dl class='reportTypeGroup'>
+          <dt>dns.unreachable</dt>
+          <dd>DNS server is unreachable</dd>
+
+          <dt>dns.name_not_resolved</dt>
+          <dd>DNS server responded but is unable to resolve the address</dd>
+          <dt>dns.failed</dt>
+          <dd>Request to the DNS server failed due to reasons not covered by previous errors</dd>
+
+        </dl>
+        <dl class='reportTypeGroup'>
+          <dt>tcp.timed_out</dt>
+          <dd>TCP connection to the server timed out</dd>
+
+          <dt>tcp.closed</dt>
+          <dd>The TCP connection was closed by the server</dd>
+
+          <dt>tcp.reset</dt>
+          <dd>The TCP connection was reset</dd>
+
+          <dt>tcp.refused</dt>
+          <dd>The TCP connection was refused by the server</dd>
+
+          <dt>tcp.aborted</dt>
+          <dd>The TCP connection was aborted</dd>
+
+          <dt>tcp.address_invalid</dt>
+          <dd>The IP address is invalid</dd>
+
+          <dt>tcp.address_unreachable</dt>
+          <dd>The IP address is unreachable</dd>
+
+          <dt>tcp.failed</dt>
+          <dd>The TCP connection failed due to reasons not covered by previous errors</dd>
+
+
+        </dl>
+        <dl class='reportTypeGroup'>
+          <dt>tls.version_or_cipher_mismatch</dt>
+          <dd>The TLS connection was aborted due to version or cipher mismatch</dd>
+
+          <dt>tls.bad_client_auth_cert</dt>
+          <dd>The TLS connection was aborted due to invalid client certificate</dd>
+
+          <dt>tls.cert.name_invalid</dt>
+          <dd>The TLS connection was aborted due to invalid name</dd>
+
+          <dt>tls.cert.date_invalid</dt>
+          <dd>The TLS connection was aborted due to invalid certificate date</dd>
+
+          <dt>tls.cert.authority_invalid</dt>
+          <dd>The TLS connection was aborted due to invalid issuing authority</dd>
+
+          <dt>tls.cert.invalid</dt>
+          <dd>The TLS connection was aborted due to invalid certificate</dd>
+
+          <dt>tls.cert.revoked</dt>
+          <dd>The TLS connection was aborted due to revoked server certificate</dd>
+
+          <dt>tls.cert.pinned_key_not_in_cert_chain</dt>
+          <dd>The TLS connection was aborted due to a key pinning error</dd>
+
+          <dt>tls.protocol.error</dt>
+          <dd>The TLS connection was aborted due to a TLS protocol error</dd>
+
+          <dt>tls.failed</dt>
+          <dd>The TLS connection failed due to reasons not covered by previous errors</dd>
+
+        </dl>
+        <dl class='reportTypeGroup'>
+          <dt>http.protocol.error</dt>
+          <dd>The connection was aborted due to an HTTP protocol error</dd>
+
+          <dt>http.response.invalid</dt>
+          <dd>Response is empty, has a content-length mismatch, has improper encoding, and/or other conditions that prevent user agent from processing the response</dd>
+
+          <dt>http.response.redirect_loop</dt>
+          <dd>The request was aborted due to a detected redirect loop</dd>
+
+          <dt>http.failed</dt>
+          <dd>The connection failed due to errors in HTTP protocol not covered by previous errors</dd>
+
+        </dl>
+        <dl class='reportTypeGroup'>
+          <dt>abandoned</dt>
+          <dd>User aborted the resource fetch before it is complete</dd>
+
+          <dt>unknown</dt>
+          <dd>error type is unknown</dd>
+        </dl>
+
+        <p>
+        The user agent MAY extend the above error type list with custom values —
+        e.g. new error types to accommodate new protocols, or more detailed
+        error descriptions of existing ones. When doing so, the user agent
+        SHOULD follow the dot-delimited pattern
+        (<code>[group].[optional-subgroup].[error-name]</code>) to facilitate
+        simple and consistent processing of the error reports — e.g. the
+        collector may provide aggregation by category and/or one or multiple
+        subgroups.
+        </p>
+        </dd>
+      </dl>
+    </section>
+
+    <section>
       <h2>Policy Delivery and Processing</h2>
       <p>The server delivers the <a>NEL policy</a> to the user agent via an HTTP response header field (<a>NEL header field</a>). If the result of executing the <a>is-origin-trustworthy</a> algorithm on the <a>origin</a> that served the <a>NEL policy</a> is <code>Potentially Trustworthy</code> then the user agent MUST either:</p>
 
@@ -218,7 +417,7 @@
       <p>Otherwise, if the result of the algorithm is <strong>not</strong> <code>Potentionally Trustworthy</code>, then the user MUST ignore the provided <a>NEL policy</a>.</p>
 
       <section>
-        <h2>`NEL` Header Field</h2>
+        <h2><code>NEL</code> Header Field</h2>
         <p>The <dfn>NEL header field</dfn> is used to communicate the <dfn>NEL policy</dfn> to the user agent. The ABNF (Augmented Backus-Naur Form) syntax for the <a>NEL header field</a> is as follows:</p>
 
         <pre>NEL = json-field-value</pre>
@@ -274,178 +473,35 @@
     </section>
 
     <section>
-      <h2>Reporting</h2>
+      <h2>Generating reports</h2>
 
-      <p>A <dfn>network error</dfn> is any condition where a connection or a  protocol error is encountered by the user agent, thus preventing it from successfully completing the request-response exchange. This may include, but is not limited to DNS, TCP, TLS, and HTTP connection and protocol errors. For example, a <a>network error</a> is triggered when the user agent:</p>
-
-      <ul>
-        <li>Fails to resolve the DNS name</li>
-        <li>Fails to establish a TCP connection</li>
-        <li>Fails to establish a secure TLS tunnel</li>
-        <li>Fails to fetch the resource due to a TLS protocol error</li>
-        <li>Fails to fetch the resource due to a HTTP protocol error</li>
-        <li>Fails to fetch the resource due to a socket timeout or error</li>
-        <li>Fails to fetch the resource due to a redirect loop</li>
-      </ul>
-
-      <p>The user agent MAY classify and report server error responses (<a>5xx status code</a>) as network errors. For example, a network error report may be triggered when a fetch fails due to proxy or gateway errors, service downtime, and other types of server errors.</p>
-
-      <p>The failure to fetch a resource when the user agent is known to be offline (when <a>navigator.onLine</a> returns <code>false</code>) MUST NOT be considered to be a <a>network error</a>.</p>
-
-      <p class="note">Note that the above definition of "network error" is different from definition in [[Fetch]]. The definition of <a>network error</a> in this specification is a subset of [[Fetch]] definition - i.e. all of the above conditions would trigger a "network error" in [[Fetch]] processing, but conditions such as blocked requests due to mixed content, CORS failures, etc., would not.</p>
-
-      <p>When a request is made to a URL that belongs to a <a>known NEL origin</a> the user agent MUST use an algorithm equivalent to the following to decide whether to generate and upload a <dfn>network error object</dfn> for the request:</p>
+      <p>
+      When a request is made to a URL that belongs to a <a>known NEL origin</a>
+      the user agent MUST use an algorithm equivalent to the following to decide
+      whether to generate and upload a <a>network error report</a> for the
+      request:
+      </p>
 
       <ol>
         <li>Determine the <dfn>active sampling rate</dfn> for this request:
           <ul>
-            <li>If the request resulted in a <a>network error</a>, then the active sampling rate is the value of the <a><code>failure_fraction</code></a> field in the origin's <a>NEL policy</a>, or <code>1.0</code> if the <a>NEL policy</a> does not contain an <a><code>failure_fraction</code></a> field.</li>
-            <li>If the request did <em>not</em> result in a <a>network error</a>, then the active sampling rate is the value of the <a><code>success_fraction</code></a> field in the origin's <a>NEL policy</a>, or <code>0.0</code> if the <a>NEL policy</a> does not contain an <a><code>success_fraction</code></a> field.</li>
+            <li>If the request resulted in a <a>network error</a>, then the active sampling rate is the value of the <a><code>failure_fraction</code></a> field in the origin's <a>NEL policy</a>, or <code>1.0</code> if the <a>NEL policy</a> does not contain a <a><code>failure_fraction</code></a> field.</li>
+            <li>If the request did <em>not</em> result in a <a>network error</a>, then the active sampling rate is the value of the <a><code>success_fraction</code></a> field in the origin's <a>NEL policy</a>, or <code>0.0</code> if the <a>NEL policy</a> does not contain a <a><code>success_fraction</code></a> field.</li>
           </ul>
         </li>
 
         <li>Decide whether or not to report on this request. Choose a random number between 0.0 and 1.0, inclusive. If this number is greater than or equal to the <a>active sampling rate</a> for this request, ignore the request and skip the remainder of this algorithm.</li>
 
-        <li>Prepare a JSON object <em>report</em> with the following keys and values:
-
-          <dl>
-            <dt><dfn data-lt="report-uri"><code>uri</code></dfn></dt>
-            <dd>The URL of the request, with any <a>fragment</a> component removed.</dd>
-
-            <dt><dfn data-lt="report-referrer"><code>referrer</code></dfn></dt>
-            <dd>The referrer information of the request, as determined by the <a>referrer policy</a> associated with its <a>client</a>.</dd>
-
-            <dt><dfn data-lt="report-sampling-fraction"><code>sampling_fraction</code></dfn></dt>
-            <dd>The <a>active sampling rate</a> for this request.</dd>
-
-            <dt><dfn data-lt="report-server-ip"><code>server_ip</code></dfn></dt>
-            <dd>The IP address of the host to which the user agent sent the request, if available. Otherwise, an empty string.
-              <ul>
-              <li>A host identified by an IPv4 address is represented in dotted-decimal notation (a sequence of four decimal numbers in the range 0 to 255, separated by "."). [[RFC1123]]</li>
-              <li>A host identified by an IPv6 address is represented as an ordered list of eight 16-bit pieces (a sequence of `x:x:x:x:x:x:x:x`, where the 'x's are one to four hexadecimal digits of the eight 16-bit pieces of the address). [[RFC4291]] </li>
-              </ul>
-            </dd>
-
-            <dt><dfn data-lt="report-protocol"><code>protocol</code></dfn></dt>
-            <dd>The <a>network protocol</a>  used to fetch the resource as identified by the ALPN Protocol ID, if available. Otherwise, an empty string.</dd>
-
-            <dt><dfn data-lt="report-status-code"><code>status_code</code></dfn></dt>
-            <dd>The <a>status code</a> of the HTTP response, if available. Otherwise, the number 0.</dd>
-
-            <dt><dfn data-lt="report-elapsed-time"><code>elapsed_time</code></dfn></dt>
-            <dd>The elapsed number of milliseconds between the start of the resource fetch and when it was aborted by the user agent.</dd>
-
-            <dt><dfn data-lt="report-type"><code>type</code></dfn></dt>
-            <dd>The description of the error type, which SHOULD be one the following strings:
-
-            <dl class='reportTypeGroup'>
-              <dt>ok</dt>
-              <dd>The request did <em>not</em> result in a <a>network error</a></dd>
-            </dl>
-            <dl class='reportTypeGroup'>
-              <dt>dns.unreachable</dt>
-              <dd>DNS server is unreachable</dd>
-
-              <dt>dns.name_not_resolved</dt>
-              <dd>DNS server responded but is unable to resolve the address</dd>
-              <dt>dns.failed</dt>
-              <dd>Request to the DNS server failed due to reasons not covered by previous errors</dd>
-
-            </dl>
-            <dl class='reportTypeGroup'>
-              <dt>tcp.timed_out</dt>
-              <dd>TCP connection to the server timed out</dd>
-
-              <dt>tcp.closed</dt>
-              <dd>The TCP connection was closed by the server</dd>
-
-              <dt>tcp.reset</dt>
-              <dd>The TCP connection was reset</dd>
-
-              <dt>tcp.refused</dt>
-              <dd>The TCP connection was refused by the server</dd>
-
-              <dt>tcp.aborted</dt>
-              <dd>The TCP connection was aborted</dd>
-
-              <dt>tcp.address_invalid</dt>
-              <dd>The IP address is invalid</dd>
-
-              <dt>tcp.address_unreachable</dt>
-              <dd>The IP address is unreachable</dd>
-
-              <dt>tcp.failed</dt>
-              <dd>The TCP connection failed due to reasons not covered by previous errors</dd>
-
-
-            </dl>
-            <dl class='reportTypeGroup'>
-              <dt>tls.version_or_cipher_mismatch</dt>
-              <dd>The TLS connection was aborted due to version or cipher mismatch</dd>
-
-              <dt>tls.bad_client_auth_cert</dt>
-              <dd>The TLS connection was aborted due to invalid client certificate</dd>
-
-              <dt>tls.cert.name_invalid</dt>
-              <dd>The TLS connection was aborted due to invalid name</dd>
-
-              <dt>tls.cert.date_invalid</dt>
-              <dd>The TLS connection was aborted due to invalid certificate date</dd>
-
-              <dt>tls.cert.authority_invalid</dt>
-              <dd>The TLS connection was aborted due to invalid issuing authority</dd>
-
-              <dt>tls.cert.invalid</dt>
-              <dd>The TLS connection was aborted due to invalid certificate</dd>
-
-              <dt>tls.cert.revoked</dt>
-              <dd>The TLS connection was aborted due to revoked server certificate</dd>
-
-              <dt>tls.cert.pinned_key_not_in_cert_chain</dt>
-              <dd>The TLS connection was aborted due to a key pinning error</dd>
-
-              <dt>tls.protocol.error</dt>
-              <dd>The TLS connection was aborted due to a TLS protocol error</dd>
-
-              <dt>tls.failed</dt>
-              <dd>The TLS connection failed due to reasons not covered by previous errors</dd>
-
-            </dl>
-            <dl class='reportTypeGroup'>
-              <dt>http.protocol.error</dt>
-              <dd>The connection was aborted due to an HTTP protocol error</dd>
-
-              <dt>http.response.invalid</dt>
-              <dd>Response is empty, has a content-length mismatch, has improper encoding, and/or other conditions that prevent user agent from processing the response</dd>
-
-              <dt>http.response.redirect_loop</dt>
-              <dd>The request was aborted due to a detected redirect loop</dd>
-
-              <dt>http.failed</dt>
-              <dd>The connection failed due to errors in HTTP protocol not covered by previous errors</dd>
-
-            </dl>
-            <dl class='reportTypeGroup'>
-              <dt>abandoned</dt>
-              <dd>User aborted the resource fetch before it is complete</dd>
-
-              <dt>unknown</dt>
-              <dd>error type is unknown</dd>
-            </dl>
-
-            <p>The user agent MAY extend the above error type list with custom values — e.g. new error types to accommodate new protocols, or more detailed error descriptions of existing ones. When doing so, the user agent SHOULD follow the dot-delimited pattern (<code>[group].[optional-subgroup].[error-name]</code>) to facilitate simple and consistent processing of the error reports — e.g. the collector may provide aggregation by category and/or one or multiple subgroups.</p>
-            </dd>
-          </dl>
-        </li>
+        <li>Construct a <a>network error report</a> for the request.</li>
 
         <li>
           <p><a data-cite="!REPORTING#queue-report">Queue the report for delivery</a> via the Reporting API. [[!REPORTING]]</p>
 
           <dl>
             <dt>type</dt>
-            <dd><code>"network-error"</code></dd>
+            <dd><code>network-error</code></dd>
             <dt>data</dt>
-            <dd>the <em>report</em> created above</dd>
+            <dd>the <a>body</a> of the <a>network error report</a> created above</dd>
             <dt>endpoint group</dt>
             <dd>the <a data-lt="report_to">endpoint group</a> defined by the <a>NEL policy</a> of the associated <a>NEL origin</a></dd>
             <dt>settings</dt>
@@ -459,7 +515,7 @@
       <h2>Sampling rates</h2>
       <p>A <a>NEL origin</a> that expects to serve a large volume of traffic might not be equipped to ingest NEL reports for every request made to the origin. The origin can define a <dfn>sampling rate</dfn> to limit the number of NEL reports that each user agent submits. Since successful requests should typically greatly outnumber requests that result in a <a>network error</a>, the origin can specify different sampling rates for each.</p>
 
-      <p>The sampling rates are specified as a fraction — a number between 0.0 and 1.0, inclusive — stored in the <a><code>success_fraction</code></a> and <a><code>failure_fraction</code></a> fields of the <a>NEL policy</a>. The user agent will use these fractions to probabilistically decide whether to create a <a>network error object</a> for each individual request to the <a>NEL origin</a>.</p>
+      <p>The sampling rates are specified as a fraction — a number between 0.0 and 1.0, inclusive — stored in the <a><code>success_fraction</code></a> and <a><code>failure_fraction</code></a> fields of the <a>NEL policy</a>. The user agent will use these fractions to probabilistically decide whether to create a <a>network error report</a> for each individual request to the <a>NEL origin</a>.</p>
     </section>
 
     <section>
