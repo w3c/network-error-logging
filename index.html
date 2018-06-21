@@ -177,6 +177,7 @@
           <p>The following terms are defined in the Reporting API specification: [[!REPORTING]]</p>
           <ul>
             <li><dfn data-cite="!REPORTING#endpoint-group">endpoint group</dfn></li>
+            <li><dfn data-cite="!REPORTING#observable-from-javascript">observable from JavaScript</dfn></li>
             <li><dfn data-cite="!REPORTING#report-type">report type</dfn></li>
           </ul>
         </dd>
@@ -259,6 +260,21 @@
       <p>
       <a>Network error reports</a> have a <a>report type</a> of
       <code>network-error</code>.
+      </p>
+
+      <p>
+      <a>Network error reports</a> are <strong>NOT</strong> <a>observable from
+        JavaScript</a>.
+      </p>
+
+      <p class="note">
+      <a>Network error reports</a> are not observable because they are only
+      intended to be visible to the administrator or owner of the server
+      <em>receiving</em> the requests.  If they were <a>observable from
+        JavaScript</a>, then the reports would also be visible to the
+      <em>originator</em> of the request.  For cross-origin requests, this could
+      leak information about the server's network configuration to parties
+      outside of its control.
       </p>
 
       <p>
