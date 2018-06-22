@@ -146,7 +146,8 @@
         <dd>
           <p>The following terms are defined in the HTTP specification: [[!RFC7231]]</p>
           <ul>
-            <li><dfn data-cite="!RFC7231#section-6.6">5xx status code</dfn></li>
+            <li><dfn data-lt="4xx" data-cite="!RFC7231#section-6.5">4xx status code</dfn></li>
+            <li><dfn data-lt="5xx" data-cite="!RFC7231#section-6.6">5xx status code</dfn></li>
             <li><dfn data-cite="!RFC7231#section-3">resource representation</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6">status code</dfn></li>
           </ul>
@@ -235,10 +236,11 @@
       </ul>
 
       <p>
-      The user agent MAY classify and report server error responses (<a>5xx
-        status code</a>) as network errors. For example, a network error report
-      may be triggered when a fetch fails due to proxy or gateway errors,
-      service downtime, and other types of server errors.
+      The user agent MUST classify and report HTTP error responses (i.e., those
+      with a <a>4xx</a> or <a>5xx</a> status code) as network errors. For
+      example, a network error report must be triggered when a fetch fails due
+      to proxy or gateway errors, service downtime, and other types of client or
+      server errors.
       </p>
 
       <p>
@@ -249,11 +251,11 @@
 
       <p class="note">
       Note that the above definition of "network error" is different from
-      definition in [[Fetch]]. The definition of <a>network error</a> in this
-      specification is a subset of [[Fetch]] definition – i.e. all of the above
-      conditions would trigger a "network error" in [[Fetch]] processing, but
-      conditions such as blocked requests due to mixed content, CORS failures,
-      etc., would not.
+      definition in [[FETCH]].  For example, <a>4xx</a> and <a>5xx</a> status
+      codes are not considered a "network error" by [[FETCH]], but here are
+      considered a <a>network error</a> with a type <code>http.error</code>.
+      Other conditions, such as blocked requests due to mixed content or CORS
+      failures, are considered "network errors" by [[FETCH]], but not by NEL.
       </p>
 
       <p>
@@ -370,6 +372,9 @@
 
         </dl>
         <dl class='reportTypeGroup'>
+          <dt>http.error</dt>
+          <dd>The HTTP response had a <a>4xx</a> or <a>5xx</a> status code</dd>
+
           <dt>http.protocol.error</dt>
           <dd>The connection was aborted due to an HTTP protocol error</dd>
 
