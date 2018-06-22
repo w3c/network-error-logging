@@ -102,9 +102,11 @@
 {
   "uri": "https://www.example.com/resource",
   "referrer": "https://referrer.com/",
-  "server_ip": "123.122.121.120",
-  "elapsed_time": 321,
   "sampling_fraction": 1.0,
+  "server_ip": "123.122.121.120",
+  "protocol": "http/1.1",
+  "method": "GET",
+  "elapsed_time": 321,
   "type": "tcp.aborted"
 }
       </pre></dd>
@@ -146,6 +148,7 @@
         <dd>
           <p>The following terms are defined in the HTTP specification: [[!RFC7231]]</p>
           <ul>
+            <li><dfn data-cite="!RFC7231#section-6.3.1" data-lt="200 response">200 status code</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6.6">5xx status code</dfn></li>
             <li><dfn data-cite="!RFC7231#section-3">resource representation</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6">status code</dfn></li>
@@ -528,10 +531,17 @@
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
+&lt; Report-To: {"group": "network-errors", "max_age": 2592000,
+              "endpoints": [{"url": "https://example.com/upload-reports"}]}
 &lt; NEL: {"report_to": "network-errors", "max_age": 2592000}
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should register a new <a>NEL policy</a>, or update an existing one if one already exists, for the `example.com` <a>NEL origin</a>: the user agent should report network errors to the endpoint group "network-errors" and the policy applies for 2592000 seconds (30 days).</p>
+        <p>
+        This <code>NEL</code> header defines a <a>NEL policy</a>, instructing
+        the user agent to report network errors about <code>example.com</code>
+        to the <a>endpoint group</a> named <code>network-errors</code>.  The
+        policy applies for 2592000 seconds (30 days).
+        </p>
 
         <p>Note that above registration will only succeed if the response is communicated from a <a>potentially trustworthy origin</a>.</p>
 
@@ -541,10 +551,18 @@
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
+&lt; Report-To: {"group": "network-errors", "max_age": 2592000,
+              "endpoints": [{"url": "https://example.com/upload-reports"}]}
 &lt; NEL: {"report_to": "network-errors", "max_age": 2592000, "include_subdomains": true}
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response specifies that the user agent should report network errors to the endpoint group "network-errors". Further, the policy is extended to all of the subdomains of the issuing <a>NEL origin</a> — see <a>include_subdomains</a>.</p>
+        <p>
+        This <code>NEL</code> header defines a similar <a>NEL policy</a> to the
+        previous example, instructing the user agent to report network errors
+        about <code>example.com</code> to the <a>endpoint group</a> named
+        <code>network-errors</code>.  Because of the <a>include_subdomains</a>
+        field, this policy also applies to all subdomains of
+        <code>example.com</code>.  </p>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
@@ -555,54 +573,86 @@
 &lt; NEL: {"max_age": 0}
         </pre>
 
-        <p>The above <a>NEL policy</a> provided in the server response contains <a>max_age</a> set to zero, which indicates that the user agent must delete the current registered <a>NEL policy</a> associated with the `example.com` <a>NEL origin</a> and all of its subdomains:</p>
-        <ul>
-          <li><a>include_subdomains</a> is implicit when <a>max_age</a> is zero</li>
-          <li><a>report_to</a> is optional when removing a previously registered policy</li>
-        </ul>
+        <p>
+        This <code>NEL</code> header instructs the user agent to remove any
+        existing <a>NEL policy</a> for <code>example.com</code>.
+        </p>
+
       </section>
       <section>
         <h2>Sample Network Error Reports</h2>
 
-        <p>This section contains an example network error report the user agent might queue when a network error is encountered for a <a>known NEL origin</a>.</p>
+        <p>
+        This section contains example <a>network error reports</a> the user
+        agent might queue when a network error is encountered for a <a>known NEL
+          origin</a>.  We show the full report payload that would be created by
+        the [[REPORTING]] API when uploading the report; the payload's
+        <code>body</code> field contains the <a>network error report body</a>.
+        </p>
 
         <pre class="example">
 {
-        "nel-report": [
-            {
-              "uri": "https://www.example.com/",
-              "referrer": "http://example.com/",
-              "server_ip": "123.122.121.120",
-              "protocol": "h2",
-              "status_code": 200,
-              "elapsed_time": 823,
-              "age": 0,
-              "type": "http.protocol.error"
-            }
-          ]
-        }
+  "age": 0,
+  "type": "network-error",
+  "url": "https://www.example.com/",
+  "body": {
+    "uri": "https://www.example.com/",
+    "sampling_fraction": 0.5,
+    "referrer": "http://example.com/",
+    "server_ip": "123.122.121.120",
+    "protocol": "h2",
+    "method": "GET",
+    "status_code": 200,
+    "elapsed_time": 823,
+    "type": "http.protocol.error"
+  }
+}
         </pre>
 
-        <p>The above report indicates that the user agent attempted to navigate from "example.com" to "www.example.com" (<a>known NEL origin</a>), which successfully resolved to the "123.122.121.120" IP address. However, while the user agent received a "200" response from the server via the "h2" protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. 823 milliseconds elapsed between the start of navigation and when the user agent aborted the navigation. Finally, the user agent sent this report immediately after the network error was encountered - i.e. the report age is 0.</p>
+        <p>
+        This report indicates that the user agent attempted to navigate from
+        <code>example.com</code> to <code>www.example.com</code> (<a>known NEL
+          origin</a>), which successfully resolved to the
+        <code>123.122.121.120</code> IP address.  However, while the user agent
+        received a <a>200 response</a> from the server via the HTTP/2
+        (<code>h2</code>) protocol, it encountered a protocol error in the
+        exchange and was forced to abandon the navigation.  The user agent
+        aborted the navigation 823 milliseconds after it started.  Finally, the
+        user agent sent this report immediately after the network error was
+        encountered – i.e. the report age is 0.
+        </p>
 
         <pre class="example">
 {
-        "nel-report": [
-            {
-              "uri": "https://widget.com/thing.js",
-              "referrer": "https://www.example.com/",
-              "server_ip": "234.233.232.231",
-              "protocol": "",
-              "status_code": 0,
-              "elapsed_time": 143,
-              "age": 0,
-              "type": "http.dns.name_not_resolved"
-            }
-          ]
-        }
+  "age": 0,
+  "type": "network-error",
+  "url": "https://widget.com/thing.js",
+  "report": {
+    "uri": "https://widget.com/thing.js",
+    "sampling_fraction": 1.0,
+    "referrer": "https://www.example.com/",
+    "server_ip": "",
+    "protocol": "",
+    "status_code": 0,
+    "elapsed_time": 143,
+    "type": "dns.name_not_resolved"
+  }
+}
         </pre>
 
-        <p>The above report indicates that the user agent attempted to fetch  "https://widget.com/thing.js", which belongs to a previously registered <a>NEL origin</a>, from "www.example.com" origin. However, the user agent was unable to resolve the DNS name and the request was aborted by the user agent after 143 milliseconds. Because "widget.com" is a known NEL origin, a network error report was logged and sent to the report URL specified by the NEL policy of that host immediately after the network error was encountered - i.e. the report age is 0.</p>
+        <p>
+        The above report indicates that the user agent attempted to fetch
+        <code>https://widget.com/thing.js</code> from
+        <code>https://www.example.com/</code>.  However, the user agent was
+        unable to resolve the DNS name (<code>widget.com</code>) and the request
+        was aborted by the user agent after 143 milliseconds.  A previous
+        request to <code>widget.com</code> delivered a valid <a>NEL policy</a>,
+        making <code>widget.com</code> a <a>known NEL origin</a>.  Because of
+        this existing policy, the user agent generates a <a>network error
+          report</a> was logged and uploaded immediately after the network error
+        was encountered – i.e. the report age is 0.
+        </p>
+
       </section>
     </section>
 
