@@ -105,7 +105,6 @@
   "sampling_fraction": 1.0,
   "server_ip": "123.122.121.120",
   "protocol": "http/1.1",
-  "method": "GET",
   "elapsed_time": 321,
   "type": "tcp.aborted"
 }
@@ -586,7 +585,7 @@
         This section contains example <a>network error reports</a> the user
         agent might queue when a network error is encountered for a <a>known NEL
           origin</a>.  We show the full report payload that would be created by
-        the [[REPORTING]] API when uploading the report; the payload's
+        the [[!REPORTING]] API when uploading the report; the payload's
         <code>body</code> field contains the <a>network error report body</a>.
         </p>
 
@@ -601,7 +600,6 @@
     "referrer": "http://example.com/",
     "server_ip": "123.122.121.120",
     "protocol": "h2",
-    "method": "GET",
     "status_code": 200,
     "elapsed_time": 823,
     "type": "http.protocol.error"
@@ -627,7 +625,7 @@
   "age": 0,
   "type": "network-error",
   "url": "https://widget.com/thing.js",
-  "report": {
+  "body": {
     "uri": "https://widget.com/thing.js",
     "sampling_fraction": 1.0,
     "referrer": "https://www.example.com/",
