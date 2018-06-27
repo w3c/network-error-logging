@@ -149,6 +149,7 @@
           <ul>
             <li><dfn data-cite="!RFC7231#section-6.3.1" data-lt="200 response">200 status code</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6.6">5xx status code</dfn></li>
+            <li><dfn data-cite="!RFC7231#section-4">request method</dfn></li>
             <li><dfn data-cite="!RFC7231#section-3">resource representation</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6">status code</dfn></li>
           </ul>
@@ -288,6 +289,9 @@
 
         <dt><dfn data-lt="report-protocol"><code>protocol</code></dfn></dt>
         <dd>The <a>network protocol</a>  used to fetch the resource as identified by the ALPN Protocol ID, if available. Otherwise, an empty string.</dd>
+
+        <dt><dfn data-lt="report-method"><code>method</code></dfn></dt>
+        <dd>The <a>request method</a> of the HTTP request.</dd>
 
         <dt><dfn data-lt="report-status-code"><code>status_code</code></dfn></dt>
         <dd>The <a>status code</a> of the HTTP response, if available. Otherwise, the number 0.</dd>
@@ -600,6 +604,7 @@
     "referrer": "http://example.com/",
     "server_ip": "123.122.121.120",
     "protocol": "h2",
+    "method": "GET",
     "status_code": 200,
     "elapsed_time": 823,
     "type": "http.protocol.error"
@@ -631,6 +636,7 @@
     "referrer": "https://www.example.com/",
     "server_ip": "",
     "protocol": "",
+    "method": "GET",
     "status_code": 0,
     "elapsed_time": 143,
     "type": "dns.name_not_resolved"
