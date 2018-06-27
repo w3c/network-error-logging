@@ -165,6 +165,7 @@
             <li><dfn data-cite="!RFC7231#section-6.3.1" data-lt="200 response">200 status code</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6.6">5xx status code</dfn></li>
             <li><dfn data-cite="!RFC7234">local cache</dfn></li>
+            <li><dfn data-cite="!RFC7230#section-6.3">persistent connections</dfn></li>
             <li><dfn data-cite="!RFC7230#section-2.1" data-lt="requests">request</dfn></li>
             <li><dfn data-cite="!RFC7231#section-4">request method</dfn></li>
             <li><dfn data-cite="!RFC7231#section-3">resource representation</dfn></li>
@@ -275,6 +276,43 @@
       </p>
 
       <p>
+      Regardless of which fetch algorithm and which underlying application and
+      transport protocols are used, servicing a <a>network request</a> consists
+      of the following <dfn data-lt="phase">phases</dfn>:
+      </p>
+
+      <ol>
+        <li>
+          <dfn>DNS resolution</dfn>: The user agent uses the Domain Name System
+          [[RFC1034]] to resolve a domain name into an IP address of a
+          <a>server</a> can that service HTTP requests to that domain.
+        </li>
+
+        <li>
+          <dfn>Secure connection establishment</dfn>: The user agent opens a
+          connection to the <a>server</a>, and establishes a secure channel over
+          this connection.
+        </li>
+
+        <li>
+          <dfn>Transmission of request and response</dfn>: Once the secure
+          channel is established, the user agent can transmit the HTTP request,
+          and receive the response from the <a>server</a>.
+        </li>
+      </ol>
+
+      <p>
+      The only mandatory phase is the <a>transmission of request and
+        response</a>; the other phases might not be needed for every <a>network
+        request</a>.  For instance, DNS results can be cached locally in the
+      user agent, eliminating <a>DNS resolution</a> for future requests to the
+      same domain.  Similarly, HTTP <a>persistent connections</a> allow open
+      connections to be shared for multiple requests to the same <a>origin</a>.
+      However, if multiple <a>phases</a> occur, they will occur in the above
+      order.
+      </p>
+
+      <p>
       A <a>network request</a> is <dfn
         data-lt="succeed|succeeded">successful</dfn> if the user agent is able
       to receive a valid HTTP response from the server.
@@ -300,6 +338,28 @@
       </p>
 
       <p>
+      Each <a>network error</a> has a <dfn data-lt-nodefault
+        data-lt="type-phase">phase</dfn>, which describes which <a>phase</a> the
+      error occurred in:
+      </p>
+
+      <dl>
+        <dt><code>dns</code></dt>
+        <dd>the error occurred during <a>DNS resolution</a></dd>
+
+        <dt><code>connection</code></dt>
+        <dd>
+        the error occurred during <a>secure connection establishment</a>
+        </dd>
+
+        <dt><code>application</code></dt>
+        <dd>
+        the error occurred during the <a>transmission of request and
+          response</a>
+        </dd>
+      </dl>
+
+      <p>
       There are several predefined <a>network error</a> <a>types</a> defined in
         <a href="#predefined-network-error-types"></a>.
       </p>
@@ -313,6 +373,12 @@
       whether to collect reports about <a>network requests</a> to an
       <a>origin</a>, and if so, where to send them.  <a>NEL policies</a> are
       delivered to the user agent via HTTP <a>response headers</a>.
+      </p>
+
+      <p>
+      Each <a>NEL policy</a> has a <dfn>received IP address</dfn>, which is the
+      IP address of the <a>server</a> that the user agent received this <a>NEL
+        policy</a> from.
       </p>
 
       <p>
@@ -611,6 +677,12 @@
           </p>
 
           <dl>
+            <dt><a>received IP address</a></dt>
+            <dd>
+            the IP address of the <a>server</a> that the user agent received
+            <var>response</var> from
+            </dd>
+
             <dt><a>origin</a></dt>
             <dd><var>origin</var></dd>
 
@@ -803,6 +875,13 @@
             fetch and when it was completed or aborted by the user agent.
             </dd>
 
+            <dt><code>phase</code></dt>
+            <dd>
+            If <var>request</var> <a>failed</a>, the <a>phase</a> of its
+            <a>network error</a>.  If <var>request</var> <a>succeeded</a>,
+            <code>"application"</code>.
+            </dd>
+
             <dt><code>type</code></dt>
             <dd>
             If <var>request</var> <a>failed</a>, the <a>type</a> of its
@@ -810,6 +889,33 @@
             <code>"ok"</code>.
             </dd>
           </dl>
+        </li>
+
+        <li>
+          If <var>request body</var>'s <code>server_ip</code> property is
+          non-empty, and not equal to <var>policy</var>'s <a>received IP
+            address</a>:
+
+          <ol>
+            <li>
+              Set <var>request body</var>'s <code>phase</code> to
+              <code>dns</code>.
+            </li>
+            <li>
+              Set <var>request body</var>'s <code>type</code> to
+              <code>dns.changed_address</code>.
+            </li>
+            <li>
+              Clear <var>request body</var>'s <code>status_code</code> and
+              <code>elapsed_time</code> properties.
+            </li>
+          </ol>
+        </li>
+
+        <li>
+          If <var>policy</var>'s <a>subdomains</a> flag is <code>include</code>,
+          and <var>request body</var>'s <code>phase</code> property is not
+          <code>dns</code>, abort these steps.
         </li>
 
         <li>
@@ -849,16 +955,40 @@
       and/or one or multiple subgroups.
       </p>
 
-      <dl class="reportTypeGroup">
+      <section>
+      <h2>DNS resolution errors</h2>
+
+      <p>
+      All of the <a>network errors</a> in this section occur during the
+      <a>DNS resolution</a> <a>phase</a>, and therefore have a <a data-lt="type
+      phase">phase</a> of <code>dns</code>.
+      </p>
+
+      <dl>
         <dt><code>dns.unreachable</code></dt>
         <dd>DNS server is unreachable</dd>
         <dt><code>dns.name_not_resolved</code></dt>
         <dd>DNS server responded but is unable to resolve the address</dd>
         <dt><code>dns.failed</code></dt>
         <dd>Request to the DNS server failed due to reasons not covered by previous errors</dd>
+        <dt><code>dns.changed_address</code></dt>
+        <dd>
+        Indicates that the resolved IP address for a request's <a>origin</a> has
+        changed since the corresponding <a>NEL policy</a> was received
+        </dd>
       </dl>
+      </section>
 
-      <dl class="reportTypeGroup">
+      <section>
+      <h2>Secure connection establishment errors</h2>
+
+      <p>
+      All of the <a>network errors</a> in this section occur during the
+      <a>secure connection establishment</a> <a>phase</a>, and therefore have a
+      <a data-lt="type phase">phase</a> of <code>connection</code>.
+      </p>
+
+      <dl>
         <dt><code>tcp.timed_out</code></dt>
         <dd>TCP connection to the server timed out</dd>
 
@@ -884,7 +1014,7 @@
         <dd>The TCP connection failed due to reasons not covered by previous errors</dd>
       </dl>
 
-      <dl class="reportTypeGroup">
+      <dl>
         <dt><code>tls.version_or_cipher_mismatch</code></dt>
         <dd>The TLS connection was aborted due to version or cipher mismatch</dd>
 
@@ -915,8 +1045,18 @@
         <dt><code>tls.failed</code></dt>
         <dd>The TLS connection failed due to reasons not covered by previous errors</dd>
       </dl>
+      </section>
 
-      <dl class="reportTypeGroup">
+      <section>
+      <h2>Transmission of request and response errors</h2>
+
+      <p>
+      All of the <a>network errors</a> in this section occur during the
+      <a>transmission of request and response</a> <a>phase</a>, and therefore
+      have a <a data-lt="type phase">phase</a> of <code>application</code>.
+      </p>
+
+      <dl>
         <dt><code>http.protocol.error</code></dt>
         <dd>The connection was aborted due to an HTTP protocol error</dd>
 
@@ -931,13 +1071,14 @@
 
       </dl>
 
-      <dl class="reportTypeGroup">
+      <dl>
         <dt><code>abandoned</code></dt>
         <dd>User aborted the resource fetch before it is complete</dd>
 
         <dt><code>unknown</code></dt>
         <dd>error type is unknown</dd>
       </dl>
+      </section>
 
     </section>
 
