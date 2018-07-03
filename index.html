@@ -131,6 +131,15 @@
     <section>
       <h2>Dependencies</h2>
       <dl>
+        <dt>DNS</dt>
+        <dd>
+          <p>The following terms are defined in the DNS specification: [[!RFC1034]]</p>
+          <ul>
+            <li><dfn data-cite="!RFC1034#section-3.1">domain name</dfn></li>
+            <li><dfn data-cite="!RFC1034#section-3.1">domain namespace tree</dfn></li>
+            <li><dfn data-cite="!RFC1034#section-5">resolver</dfn></li>
+          </ul>
+        </dd>
         <dt>Fetch</dt>
         <dd>
           <p>The following terms are defined in the Fetch specification: [[!FETCH]]</p>
@@ -171,7 +180,7 @@
             <li><dfn data-cite="!RFC7231#section-3">resource representation</dfn></li>
             <li><dfn data-cite="!RFC7230#section-2.1" data-lt="responses">response</dfn></li>
             <li><dfn data-cite="!RFC7231#section-7" data-lt="response header">response headers</dfn></li>
-            <li><dfn data-cite="!RFC7230#section-2.1">server</dfn></li>
+            <li><dfn data-cite="!RFC7230#section-2.1" data-lt="servers">server</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6">status code</dfn></li>
           </ul>
         </dd>
@@ -903,7 +912,7 @@
             </li>
             <li>
               Set <var>request body</var>'s <code>type</code> to
-              <code>dns.changed_address</code>.
+              <code>dns.address_changed</code>.
             </li>
             <li>
               Clear <var>request body</var>'s <code>status_code</code> and
@@ -971,7 +980,7 @@
         <dd>DNS server responded but is unable to resolve the address</dd>
         <dt><code>dns.failed</code></dt>
         <dd>Request to the DNS server failed due to reasons not covered by previous errors</dd>
-        <dt><code>dns.changed_address</code></dt>
+        <dt><code>dns.address_changed</code></dt>
         <dd>
         Indicates that the resolved IP address for a request's <a>origin</a> has
         changed since the corresponding <a>NEL policy</a> was received
@@ -1112,25 +1121,6 @@
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
-&lt; Report-To: {"group": "network-errors", "max_age": 2592000,
-              "endpoints": [{"url": "https://example.com/upload-reports"}]}
-&lt; NEL: {"report_to": "network-errors", "max_age": 2592000, "include_subdomains": true}
-        </pre>
-
-        <p>
-        This <code>NEL</code> header defines a similar <a>NEL policy</a> to the
-        previous example, instructing the user agent to report network errors
-        about <code>example.com</code> to the <a>endpoint group</a> named
-        <code>network-errors</code>.  Because of the <a>include_subdomains</a>
-        field, this policy also applies to all subdomains of
-        <code>example.com</code>.  </p>
-
-        <pre class="example">
-&gt; GET / HTTP/1.1
-&gt; Host: example.com
-
-&lt; HTTP/1.1 200 OK
-&lt; ...
 &lt; NEL: {"max_age": 0}
         </pre>
 
@@ -1216,6 +1206,215 @@
         </p>
 
       </section>
+
+      <section>
+        <h2>DNS misconfiguration</h2>
+
+        <pre class="example">
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
+
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; Report-To: {"group": "network-errors", "max_age": 2592000,
+              "endpoints": [{"url": "https://example.com/upload-reports"}]}
+&lt; NEL: {"report_to": "network-errors", "max_age": 2592000, "include_subdomains": true}
+        </pre>
+
+        <p>
+        This <code>NEL</code> header allows the owner of
+        <code>example.com</code> to detect when they have misconfigured their
+        DNS servers — for instance, when they have forgotten to add a new
+        resource record resolving <code>new-subdomain.example.com</code> to an
+        IP address.  If a user agent tries to make a request to
+        <code>new-subdomain.example.com</code>, it might generate the following
+        report:
+        </p>
+
+        <pre class="example">
+{
+  "age": 0,
+  "type": "network-error",
+  "url": "https://new-subdomain.example.com/",
+  "body": {
+    "uri": "https://new-subdomain.example.com/",
+    "sampling_fraction": 1.0,
+    "server_ip": "",
+    "protocol": "http/1.1",
+    "method": "GET",
+    "status_code": 0,
+    "elapsed_time": 48,
+    "type": "dns.name_not_resolved"
+  }
+}
+        </pre>
+
+      </section>
+
+      <section>
+        <h2>Origins with multiple IP addresses</h2>
+
+        <p>
+        For <a>origins</a> whose <a>domain name</a> resolves to multiple IP
+        addresses, NEL will sometimes "downgrade" an error report, providing
+        less information about the cause of the error, since it cannot verify
+        that the owner of the <a>origin</a> is the same as the owner of the
+        <a>server</a> handling the <a>request</a>.
+        </p>
+
+        <p>
+        As an example, assume that <code>example.com</code> is handled by three
+        <a>servers</a>, each with a different IP address.  The owner of the
+        service configures DNS to resolve <code>example.com</code> to
+        <code>192.168.0.1</code>, <code>192.168.0.2</code>, and
+        <code>192.168.0.3</code>, and relies on user agents to balance their
+        requests across these three IP addresses.  The service owner delivers
+        the following <a>NEL policy</a>:
+        </p>
+
+        <pre class="example">
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
+
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; Report-To: {"group": "network-errors", "max_age": 2592000,
+              "endpoints": [{"url": "https://example.com/upload-reports"}]}
+&lt; NEL: {"report_to": "network-errors", "max_age": 2592000,
+        "success_fraction": 1.0, "failure_fraction": 1.0}
+        </pre>
+
+        <p>
+        Given the above, consider the following sequence of events:
+        </p>
+
+        <ol>
+          <li>
+            <p>
+            The user agent sends a <a>request</a> to <code>192.168.0.1</code>,
+            and receives a successful <a>response</a> from the <a>server</a>.
+            This response includes the above <a>NEL policy</a>, and the user
+            agent sets the policy's <a>received IP address</a> to
+            <code>192.168.0.1</code>.  Since the <a>received IP address</a>
+            matches the <a>server</a>'s IP address (which it must for any
+            successful request), it generates the following NEL report:
+            </p>
+
+            <pre class="example">
+{
+  "age": 0,
+  "type": "network-error",
+  "url": "https://example.com/",
+  "body": {
+    "uri": "https://example.com/",
+    "sampling_fraction": 1.0,
+    "server_ip": "192.168.0.1",
+    "protocol": "http/1.1",
+    "method": "GET",
+    "status_code": 200,
+    "elapsed_time": 57,
+    "type": "ok"
+  }
+}
+            </pre>
+          </li>
+
+          <li>
+            <p>
+            The user agent sends a new <a>request</a> to
+            <code>192.168.0.2</code>, and receives another successful
+            <a>response</a>.  This response also includes the <a>NEL policy</a>,
+            and the user agent updates the policy's <a>received IP address</a>
+            to <code>192.168.0.2</code>.  Since the <a>received IP address</a>
+            matches the <a>server</a>'s IP address (which it must for any
+            successful request), it generates the following NEL report:
+            </p>
+
+            <pre class="example">
+{
+  "age": 0,
+  "type": "network-error",
+  "url": "https://example.com/",
+  "body": {
+    "uri": "https://example.com/",
+    "sampling_fraction": 1.0,
+    "server_ip": "192.168.0.2",
+    "protocol": "http/1.1",
+    "method": "GET",
+    "status_code": 200,
+    "elapsed_time": 34,
+    "type": "ok"
+  }
+}
+            </pre>
+          </li>
+
+          <li>
+            <p>
+            The user agent then tries to send a <a>request</a> to
+            <code>192.168.0.3</code>, but isn't able to establish a connection
+            to the server.  The user agent still has the <a>NEL policy</a> in
+            the <a>policy cache</a>, and would ideally use this policy to
+            generate a <code>tcp.timed_out</code> report about the <a>failed</a>
+            <a>network request</a>.  However, the because policy's <a>received
+              IP address</a> (<code>192.168.0.2</code>) doesn't match the IP
+            address that this <a>request</a> was sent to, the user agent cannot
+            verify that the server at <code>192.168.0.3</code> is actually owned
+            by the owners of <code>example.com</code>.  The user agent must
+            therefore downgrade the report to <code>dns.address_changed</code>:
+            </p>
+
+            <pre class="example">
+{
+  "age": 0,
+  "type": "network-error",
+  "url": "https://example.com/",
+  "body": {
+    "uri": "https://example.com/",
+    "sampling_fraction": 1.0,
+    "server_ip": "192.168.0.3",
+    "protocol": "http/1.1",
+    "method": "GET",
+    "status_code": 0,
+    "elapsed_time": 62,
+    "type": "dns.address_changed"
+  }
+}
+            </pre>
+          </li>
+
+          <li>
+            <p>
+            The user agent then tries to send another <a>request</a> to
+            <code>192.168.0.1</code>, but once again isn't able to establish a
+            connection to the server.  Even though the user agent received the
+            <a>NEL policy</a> from <code>192.168.0.1</code> at some point in the
+            past, the policy's <a>received IP address</a> only records where it
+            was <em>most recently</em> received from — in this case,
+            <code>192.168.0.2</code>.  The user agent must therefore downgrade
+            the report to <code>dns.address_changed</code>:
+            </p>
+
+            <pre class="example">
+{
+  "age": 0,
+  "type": "network-error",
+  "url": "https://example.com/",
+  "body": {
+    "uri": "https://example.com/",
+    "sampling_fraction": 1.0,
+    "server_ip": "192.168.0.1",
+    "protocol": "http/1.1",
+    "method": "GET",
+    "status_code": 0,
+    "elapsed_time": 59,
+    "type": "dns.address_changed"
+  }
+}
+            </pre>
+          </li>
+        </ol>
+      </section>
     </section>
 
     <section>
@@ -1249,9 +1448,80 @@
     <section>
       <h2>Privacy Considerations</h2>
 
-      <p>NEL provides network error reports that could expose new information about the user's network configuration. For example, an attacker could abuse NEL reporting to probe users network configuration. Also, similar to HSTS, HPKP, and pinned CSP policies, the stored <a>NEL policy</a> could be used as a "supercookie" by setting a distinct policy with a custom (per-user) reporting URI to act as an identififer in combination with (or instead of) HTTP cookies.</p>
+      <p>
+      NEL provides network error reports that could expose new information about
+      the user's network configuration. For example, an attacker could abuse NEL
+      reporting to probe the user's network configuration, or to scan for
+      servers on the user's internal network. Also, similar to HSTS, HPKP, and
+      pinned CSP policies, the stored <a>NEL policy</a> could be used as a
+      "supercookie" by setting a distinct policy with a custom (per-user)
+      reporting URI to act as an identififer in combination with (or instead of)
+      HTTP cookies.
+      </p>
 
-      <p>To mitigate some of the above risks, NEL registration is restricted to <a>trustworthy origins</a>, and delivery of network error reports is similarly restricted to <a>trustworthy origins</a>. This disallows a transient HTTP MITM from trivially abusing NEL as a persistent tracker.</p>
+      <p>
+      To mitigate some of the above risks, NEL registration is restricted to
+      <a>trustworthy origins</a>, and delivery of network error reports is
+      similarly restricted to <a>trustworthy origins</a>. This disallows a
+      transient HTTP MITM from trivially abusing NEL as a persistent
+      tracker.
+      </p>
+
+      <p>
+      NEL is intended to augment existing server-side monitoring.  NEL reports
+      should only be sent to the owner of the service being requested.  For
+      errors that occur during <a>DNS resolution</a>, the user agent MUST ensure
+      that the <a>NEL policy</a> was received from the owner of the <a>domain
+        namespace tree</a> that contains the <a>policy origin</a>.  For errors
+      that occur during <a>secure connection establishment</a> or
+      <a>transmission of request and response</a>, the user agent MUST ensure
+      that the <a>NEL policy</a> was received from the owner of the
+      <a>server</a> that the <a>request</a> was sent to.
+      </p>
+
+      <p>
+      This rationale explains the treatment of the <a>received IP address</a>
+      and <a>subdomains</a> flag of a <a>NEL policy</a>.  By checking that the
+      policy's <a>received IP address</a> matches the IP address of the
+      <a>server</a>, NEL extends the trust boundary of the policy to include not
+      just the policy's <a data-lt="policy origin">origin</a>, but also the
+      specific server that the user agent is communicating with.  This helps
+      prevent (for instance) DNS rebinding attacks, where an attacker delivers a
+      long-lived <a>NEL policy</a> from a server that they own, and then changes
+      their name servers to resolve the <a>policy origin</a> to a server they
+      don't control.  Without the <a>received IP address</a> verification, this
+      would cause user agents to send reports about the second server to the
+      attacker.
+      </p>
+
+      <p>
+      Similarly, <a data-lt="subdomains">subdomain</a> <a>NEL policies</a> are
+      limited, and can only be used to generate reports about subdomains of the
+      <a>policy origin</a> during the <a>DNS resolution</a> phase of a
+      <a>request</a>.  During this phase, there is no <a>server</a> to verify
+      ownership of, and the fact that the policy was received from a superdomain
+      of the <a>request</a>'s <a>origin</a> is enough to establish ownership of
+      the error.  This allows the owners of a particular portion of the
+      <a>domain namespace tree</a> to use NEL to detect <a
+        href="#dns-misconfiguration"></a> errors, while preventing them from
+      using malicious DNS entries to collect information about servers they
+      don't control.
+      </p>
+
+      <p>
+      To prevent information leakage, NEL reports about a <a>request</a> MUST
+      NOT contain any information that is not visible to the <a>server</a> when
+      processing the <a>request</a>.  For errors during <a>DNS resolution</a>, a
+      NEL report MUST only contain information available from DNS itself.  This
+      prevents <a>servers</a> from abusing NEL to collect more information about
+      their users than they already have access to.
+      </p>
+
+      <p class="note">
+      As an example, NEL reports specifically do not contain any information
+      about which DNS <a>resolver</a> was used to resolve a <a>request</a>'s
+      <a>domain name</a> into an IP address.
+      </p>
 
       <p>In addition to above restrictions, the user agents MUST:</p>
 
