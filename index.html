@@ -149,6 +149,7 @@
             <li><dfn data-cite="!FETCH#http-network-fetch">HTTP-network fetch</dfn></li>
             <li><dfn data-cite="!FETCH#http-network-or-cache-fetch">HTTP-network-or-cache fetch</dfn></li>
             <li><dfn data-cite="!FETCH#redirect-status" data-lt="redirects">redirect status</dfn></li>
+            <li><dfn data-cite="!FETCH#concept-response" data-lt="responses">response</dfn></li>
           </ul>
         </dd>
         <dt>HSTS</dt>
@@ -178,7 +179,6 @@
             <li><dfn data-cite="!RFC7230#section-2.1" data-lt="requests">request</dfn></li>
             <li><dfn data-cite="!RFC7231#section-4">request method</dfn></li>
             <li><dfn data-cite="!RFC7231#section-3">resource representation</dfn></li>
-            <li><dfn data-cite="!RFC7230#section-2.1" data-lt="responses">response</dfn></li>
             <li><dfn data-cite="!RFC7231#section-7" data-lt="response header">response headers</dfn></li>
             <li><dfn data-cite="!RFC7230#section-2.1" data-lt="servers">server</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6">status code</dfn></li>
@@ -319,6 +319,11 @@
       connections to be shared for multiple requests to the same <a>origin</a>.
       However, if multiple <a>phases</a> occur, they will occur in the above
       order.
+      </p>
+
+      <p class="ednote">
+      We would like to move the definition of these phases into [[FETCH]] so
+      that they are more reusable.
       </p>
 
       <p>
@@ -690,6 +695,10 @@
             <dd>
             the IP address of the <a>server</a> that the user agent received
             <var>response</var> from
+
+            <p class="ednote">
+            Plumb this through more explicitly in [[FETCH]].
+            </p>
             </dd>
 
             <dt><a>origin</a></dt>
@@ -901,22 +910,26 @@
         </li>
 
         <li>
-          If <var>request body</var>'s <code>server_ip</code> property is
+          If <var>report body</var>'s <code>server_ip</code> property is
           non-empty, and not equal to <var>policy</var>'s <a>received IP
             address</a>:
 
           <ol>
             <li>
-              Set <var>request body</var>'s <code>phase</code> to
-              <code>dns</code>.
-            </li>
+              Set <var>report body</var>'s <code>phase</code> to
+              <code>dns</code>.  </li>
             <li>
-              Set <var>request body</var>'s <code>type</code> to
+              Set <var>report body</var>'s <code>type</code> to
               <code>dns.address_changed</code>.
             </li>
             <li>
-              Clear <var>request body</var>'s <code>status_code</code> and
+              Clear <var>report body</var>'s <code>status_code</code> and
               <code>elapsed_time</code> properties.
+            </li>
+            <li>
+              If the user agent has added any additional fields to <var>report
+                body</var>, clear any that are derived from information not
+              available during <a>DNS resolution</a>.
             </li>
           </ol>
         </li>
