@@ -617,7 +617,7 @@
       <a>policy cache</a> accordingly.
       </p>
 
-      <ol>
+      <ol class="algorithm">
         <li>
           Abort these steps if any of the following conditions are true:
 
@@ -757,7 +757,7 @@
       generate reports for <a>network requests</a> to <var>origin</var>.
       </p>
 
-      <ol>
+      <ol class="algorithm">
 
         <li>
           If there is an entry in the <a>policy cache</a> for <var>origin</var>:
@@ -804,7 +804,7 @@
         policy</a>, and queues it for delivery.
       </p>
 
-      <ol>
+      <ol class="algorithm">
 
         <li>
           If the result of executing the <a>is-origin-trustworthy</a> algorithm
@@ -927,9 +927,9 @@
               <code>elapsed_time</code> properties.
             </li>
             <li>
-              If the user agent has added any additional fields to <var>report
-                body</var>, clear any that are derived from information not
-              available during <a>DNS resolution</a>.
+              Assert: All fields in <var>report body</var> that are derived from
+              information not available during <a>DNS resolution</a> have been
+              cleared.
             </li>
           </ol>
         </li>
@@ -1483,12 +1483,12 @@
       <p>
       NEL is intended to augment existing server-side monitoring.  NEL reports
       should only be sent to the owner of the service being requested.  For
-      errors that occur during <a>DNS resolution</a>, the user agent MUST ensure
-      that the <a>NEL policy</a> was received from the owner of the <a>domain
-        namespace tree</a> that contains the <a>policy origin</a>.  For errors
-      that occur during <a>secure connection establishment</a> or
-      <a>transmission of request and response</a>, the user agent MUST ensure
-      that the <a>NEL policy</a> was received from the owner of the
+      errors that occur during <a>DNS resolution</a>, NEL reports are only
+      generated when the <a>NEL policy</a> was received from the owner of the
+      <a>domain namespace tree</a> that contains the <a>policy origin</a>.  For
+      errors that occur during <a>secure connection establishment</a> or
+      <a>transmission of request and response</a>, NEL reports are only
+      generated when the <a>NEL policy</a> was received from the owner of the
       <a>server</a> that the <a>request</a> was sent to.
       </p>
 
@@ -1522,10 +1522,10 @@
       </p>
 
       <p>
-      To prevent information leakage, NEL reports about a <a>request</a> MUST
-      NOT contain any information that is not visible to the <a>server</a> when
+      To prevent information leakage, NEL reports about a <a>request</a> do not
+      contain any information that is not visible to the <a>server</a> when
       processing the <a>request</a>.  For errors during <a>DNS resolution</a>, a
-      NEL report MUST only contain information available from DNS itself.  This
+      NEL report only contains information available from DNS itself.  This
       prevents <a>servers</a> from abusing NEL to collect more information about
       their users than they already have access to.
       </p>
