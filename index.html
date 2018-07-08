@@ -1107,7 +1107,7 @@
     <section>
       <h2>Privacy Considerations</h2>
 
-      <p>NEL provides network error reports that could expose new information about the user's network configuration. For example, an attacker could abuse NEL reporting to probe users network configuration. Also, similar to HSTS, HPKP, and pinned CSP policies, the stored <a>NEL policy</a> could be used as a "supercookie" by setting a distinct policy with a custom (per-user) reporting URI to act as an identififer in combination with (or instead of) HTTP cookies.</p>
+      <p>NEL provides network error reports that could expose new information about the user's network configuration. For example, an attacker could abuse NEL reporting to probe users network configuration. Also, similar to HSTS, HPKP, and pinned CSP policies, the stored <a>NEL policy</a> could be used as a "supercookie" by setting a distinct policy with a custom (per-user) reporting URI to act as an identifier in combination with (or instead of) HTTP cookies.</p>
 
       <p>To mitigate some of the above risks, NEL registration is restricted to <a>trustworthy origins</a>, and delivery of network error reports is similarly restricted to <a>trustworthy origins</a>. This disallows a transient HTTP MITM from trivially abusing NEL as a persistent tracker.</p>
 
