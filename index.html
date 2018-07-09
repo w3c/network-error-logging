@@ -931,6 +931,20 @@
               cleared.
             </li>
           </ol>
+
+          <p class="note">
+          This step "downgrades" a NEL report if the IP addresses of the
+          <a>server</a> and the <a data-lt="NEL policy">policy</a> don't match.
+          This is a privacy protection, ensuring that NEL reports are only sent
+          to the owner of the service that the report describes.  If the IP
+          addresses don't match, then the user agent can only verify that the
+          <a>NEL policy</a> was sent by the owner of the <a>origin</a>'s
+          <a>domain name</a>; it cannot verify that the policy was sent by the
+          owner of the <a>server</a> this <a>domain name</a> resolves to.  We
+          therefore downgrade the report to only contain information about
+          <a>DNS resolution</a>.  See <a href="#privacy-considerations"></a> for
+          more details.
+          </p>
         </li>
 
         <li>
@@ -1473,10 +1487,10 @@
 
       <p>
       To mitigate some of the above risks, NEL registration is restricted to
-      <a>trustworthy origins</a>, and delivery of network error reports is
-      similarly restricted to <a>trustworthy origins</a>. This disallows a
-      transient HTTP MITM from trivially abusing NEL as a persistent
-      tracker.
+      <a>potentially trustworthy origins</a>, and delivery of network error
+      reports is similarly restricted to <a>potentially trustworthy origins</a>.
+      This disallows a transient HTTP MITM from trivially abusing NEL as a
+      persistent tracker.
       </p>
 
       <p>
