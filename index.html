@@ -227,7 +227,7 @@
           <ul>
             <li>the <dfn data-cite="!SECURE-CONTEXTS#is-origin-trustworthy">"Is
                 origin potentially trustworthy?"</dfn> algorithm</li>
-            <li><dfn data-cite="!SECURE-CONTEXTS#potentially-trustworthy-origin" data-lt="trustworthy origins|potentially trustworthy origin">potentially trustworthy origin</dfn></li>
+            <li><dfn data-cite="!SECURE-CONTEXTS#potentially-trustworthy-origin" data-lt="potentially trustworthy origins">potentially trustworthy origin</dfn></li>
           </ul>
         </dd>
         <dt>URL</dt>
@@ -945,8 +945,8 @@
           <a>domain name</a>; it cannot verify that the policy was sent by the
           owner of the <a>server</a> this <a>domain name</a> resolves to.  We
           therefore downgrade the report to only contain information about
-          <a>DNS resolution</a>.  See <a href="#privacy-considerations"></a> for
-          more details.
+          <a>DNS resolution</a>.  See <a href="#privacy-considerations"></a> and
+          <a href="#origins-with-multiple-ip-addresses"></a> for more details.
           </p>
         </li>
 
@@ -997,9 +997,9 @@
       <h2>DNS resolution errors</h2>
 
       <p>
-      All of the <a>network errors</a> in this section occur during the
-      <a>DNS resolution</a> <a>phase</a>, and therefore have a <a data-lt="type
-      phase">phase</a> of <code>dns</code>.
+      All of the <a>network errors</a> in this section occur during <a>DNS
+        resolution</a>, and therefore have a <a data-lt="type phase">phase</a>
+        of <code>dns</code>.
       </p>
 
       <dl>
@@ -1021,9 +1021,9 @@
       <h2>Secure connection establishment errors</h2>
 
       <p>
-      All of the <a>network errors</a> in this section occur during the
-      <a>secure connection establishment</a> <a>phase</a>, and therefore have a
-      <a data-lt="type phase">phase</a> of <code>connection</code>.
+      All of the <a>network errors</a> in this section occur during <a>secure
+        connection establishment</a>, and therefore have a <a data-lt="type
+        phase">phase</a> of <code>connection</code>.
       </p>
 
       <dl>
@@ -1090,8 +1090,8 @@
 
       <p>
       All of the <a>network errors</a> in this section occur during the
-      <a>transmission of request and response</a> <a>phase</a>, and therefore
-      have a <a data-lt="type phase">phase</a> of <code>application</code>.
+      <a>transmission of request and response</a>, and therefore have a <a
+        data-lt="type phase">phase</a> of <code>application</code>.
       </p>
 
       <dl>
@@ -1405,7 +1405,7 @@
     "protocol": "http/1.1",
     "method": "GET",
     "status_code": 0,
-    "elapsed_time": 62,
+    "elapsed_time": 0,
     "type": "dns.address_changed"
   }
 }
@@ -1436,7 +1436,7 @@
     "protocol": "http/1.1",
     "method": "GET",
     "status_code": 0,
-    "elapsed_time": 59,
+    "elapsed_time": 0,
     "type": "dns.address_changed"
   }
 }
