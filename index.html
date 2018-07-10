@@ -225,7 +225,8 @@
         <dd>
           <p>The following terms are defined in the Secure Contexts specification: [[!SECURE-CONTEXTS]]</p>
           <ul>
-            <li>the <dfn data-cite="!SECURE-CONTEXTS#is-origin-trustworthy">is-origin-trustworthy</dfn> algorithm</li>
+            <li>the <dfn data-cite="!SECURE-CONTEXTS#is-origin-trustworthy">"Is
+                origin potentially trustworthy?"</dfn> algorithm</li>
             <li><dfn data-cite="!SECURE-CONTEXTS#potentially-trustworthy-origin" data-lt="trustworthy origins|potentially trustworthy origin">potentially trustworthy origin</dfn></li>
           </ul>
         </dd>
@@ -622,9 +623,10 @@
 
           <ul>
             <li>
-              The result of executing the <a>is-origin-trustworthy</a> algorithm
-              on <var>request</var>'s <a>origin</a> is <strong>not</strong>
-              <code>Potentially Trustworthy</code>.
+              The result of executing the <a>"Is origin potentially
+                trustworthy?"</a> algorithm on <var>request</var>'s
+              <a>origin</a> is <strong>not</strong> <code>Potentially
+                Trustworthy</code>.
             </li>
 
             <li>
@@ -806,9 +808,10 @@
       <ol class="algorithm">
 
         <li>
-          If the result of executing the <a>is-origin-trustworthy</a> algorithm
-          on <var>request</var>'s <a>origin</a> is <strong>not</strong>
-          <code>Potentially Trustworthy</code>, abort these steps.
+          If the result of executing the <a>"Is origin potentially
+            trustworthy?"</a> algorithm on <var>request</var>'s <a>origin</a> is
+          <strong>not</strong> <code>Potentially Trustworthy</code>, abort these
+          steps.
         </li>
 
         <li>
