@@ -337,21 +337,6 @@
       A <a>network request</a> is <dfn data-lt="fail">failed</dfn> if it is not
       <a>successful</a>.
       </p>
-
-      <p>
-      <a>Network error reports</a> are <strong>NOT</strong> <a>visible to
-        <code>ReportingObserver</code>s</a>.
-      </p>
-
-      <p class="note">
-      <a>Network error reports</a> are not <a>visible to
-        <code>ReportingObserver</code>s</a> because they are only intended to be
-      visible to the administrator or owner of the server <em>receiving</em> the
-      requests.  If they were <a>visible to <code>ReportingObserver</code>s</a>,
-      then the reports would also be visible to the <em>originator</em> of the
-      request.  For cross-origin requests, this could leak information about the
-      server's network configuration to parties outside of its control.
-      </p>
     </section>
 
     <section>
@@ -392,6 +377,35 @@
       <p>
       There are several predefined <a>network error</a> <a>types</a> defined in
         <a href="#predefined-network-error-types"></a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>Network error reports</h2>
+
+      <p>
+      A <dfn data-lt="network error reports">network error report</dfn> is a <a
+        data-cite="!REPORTING">Reporting API</a> <a>report</a> that describes a
+      <a>network error</a>.
+      </p>
+
+      <p>
+      <a>Network error reports</a> have a <a>report type</a> of
+      <code>network-error</code>.
+      </p>
+      <p>
+      <a>Network error reports</a> are <strong>NOT</strong> <a>visible to
+        <code>ReportingObserver</code>s</a>.
+      </p>
+
+      <p class="note">
+      <a>Network error reports</a> are not <a>visible to
+        <code>ReportingObserver</code>s</a> because they are only intended to be
+      visible to the administrator or owner of the server <em>receiving</em> the
+      requests.  If they were <a>visible to <code>ReportingObserver</code>s</a>,
+      then the reports would also be visible to the <em>originator</em> of the
+      request.  For cross-origin requests, this could leak information about the
+      server's network configuration to parties outside of its control.
       </p>
     </section>
 
