@@ -172,7 +172,8 @@
           <p>The following terms are defined in the HTTP specification: [[!RFC7230]], [[!RFC7231]], [[!RFC7234]]</p>
           <ul>
             <li><dfn data-cite="!RFC7231#section-6.3.1" data-lt="200 response">200 status code</dfn></li>
-            <li><dfn data-cite="!RFC7231#section-6.6">5xx status code</dfn></li>
+            <li><dfn data-cite="!RFC7231#section-6.5" data-lt="4xx">4xx status code</dfn></li>
+            <li><dfn data-cite="!RFC7231#section-6.6" data-lt="5xx">5xx status code</dfn></li>
             <li><dfn data-cite="!RFC7234">local cache</dfn></li>
             <li><dfn data-cite="!RFC7230#section-6.3">persistent connections</dfn></li>
             <li><dfn data-cite="!RFC7230#section-2.1" data-lt="requests">request</dfn></li>
@@ -330,12 +331,20 @@
       <p>
       A <a>network request</a> is <dfn
         data-lt="succeed|succeeded">successful</dfn> if the user agent is able
-      to receive a valid HTTP response from the server.
+      to receive a valid HTTP response from the server, and that response does
+      not have a <a>4xx</a> or <a>5xx</a> status code.
       </p>
 
       <p>
-      A <a>network request</a> is <dfn data-lt="fail">failed</dfn> if it is not
-      <a>successful</a>.
+      A <a>network request</a> is <dfn data-lt="fail|failures">failed</dfn> if
+      it is not <a>successful</a>.
+      </p>
+
+      <p class="note">
+      Note that HTTP error responses (i.e., those with a <a>4xx</a> or
+      <a>5xx</a> status code) are considered <a>failures</a>, so that they are
+      subject to a <a>NEL policy</a>'s <a>failure sampling rate</a> instead of
+      its <a>successful sampling rate</a>.
       </p>
     </section>
 
@@ -1125,6 +1134,12 @@
       </p>
 
       <dl>
+        <dt><code>http.error</code></dt>
+        <dd>
+        The user agent successfully received a response, but it had a <a>4xx</a>
+        or <a>5xx</a> status code
+        </dd>
+
         <dt><code>http.protocol.error</code></dt>
         <dd>The connection was aborted due to an HTTP protocol error</dd>
 
