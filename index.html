@@ -944,9 +944,10 @@
         </li>
 
         <li>
-          If <var>report body</var>'s <code>server_ip</code> property is
-          non-empty, and not equal to <var>policy</var>'s <a>received IP
-            address</a>:
+          If <var>report body</var>'s <code>phase</code> property is not
+          <code>dns</code>, and <var>report body</var>'s <code>server_ip</code>
+          property is non-empty and not equal to <var>policy</var>'s <a>received
+          IP address</a>:
 
           <ol>
             <li>
@@ -983,9 +984,11 @@
         </li>
 
         <li>
-          If <var>policy</var>'s <a>subdomains</a> flag is <code>include</code>,
-          and <var>request body</var>'s <code>phase</code> property is not
-          <code>dns</code>, abort these steps.
+          If <var>origin</var> is not equal to <var>policy</var>'s <a
+          data-lt="policy origin">origin</a>, <var>policy</var>'s
+          <a>subdomains</a> flag is <code>include</code>, and <var>report
+          body</var>'s <code>phase</code> property is not <code>dns</code>,
+          abort these steps.
         </li>
 
         <li>
