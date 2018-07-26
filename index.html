@@ -1332,8 +1332,8 @@
         As an example, assume that <code>example.com</code> is handled by three
         <a>servers</a>, each with a different IP address.  The owner of the
         service configures DNS to resolve <code>example.com</code> to
-        <code>192.168.0.1</code>, <code>192.168.0.2</code>, and
-        <code>192.168.0.3</code>, and relies on user agents to balance their
+        <code>192.0.2.1</code>, <code>192.0.2.2</code>, and
+        <code>192.0.2.3</code>, and relies on user agents to balance their
         requests across these three IP addresses.  The service owner delivers
         the following <a>NEL policy</a>:
         </p>
@@ -1357,11 +1357,11 @@
         <ol>
           <li>
             <p>
-            The user agent sends a <a>request</a> to <code>192.168.0.1</code>,
+            The user agent sends a <a>request</a> to <code>192.0.2.1</code>,
             and receives a successful <a>response</a> from the <a>server</a>.
             This response includes the above <a>NEL policy</a>, and the user
             agent sets the policy's <a>received IP address</a> to
-            <code>192.168.0.1</code>.  Since the <a>received IP address</a>
+            <code>192.0.2.1</code>.  Since the <a>received IP address</a>
             matches the <a>server</a>'s IP address (which it must for any
             successful request), it generates the following NEL report:
             </p>
@@ -1373,7 +1373,7 @@
   "url": "https://example.com/",
   "body": {
     "sampling_fraction": 1.0,
-    "server_ip": "192.168.0.1",
+    "server_ip": "192.0.2.1",
     "protocol": "http/1.1",
     "method": "GET",
     "status_code": 200,
@@ -1387,10 +1387,10 @@
           <li>
             <p>
             The user agent sends a new <a>request</a> to
-            <code>192.168.0.2</code>, and receives another successful
+            <code>192.0.2.2</code>, and receives another successful
             <a>response</a>.  This response also includes the <a>NEL policy</a>,
             and the user agent updates the policy's <a>received IP address</a>
-            to <code>192.168.0.2</code>.  Since the <a>received IP address</a>
+            to <code>192.0.2.2</code>.  Since the <a>received IP address</a>
             matches the <a>server</a>'s IP address (which it must for any
             successful request), it generates the following NEL report:
             </p>
@@ -1402,7 +1402,7 @@
   "url": "https://example.com/",
   "body": {
     "sampling_fraction": 1.0,
-    "server_ip": "192.168.0.2",
+    "server_ip": "192.0.2.2",
     "protocol": "http/1.1",
     "method": "GET",
     "status_code": 200,
@@ -1416,14 +1416,14 @@
           <li>
             <p>
             The user agent then tries to send a <a>request</a> to
-            <code>192.168.0.3</code>, but isn't able to establish a connection
+            <code>192.0.2.3</code>, but isn't able to establish a connection
             to the server.  The user agent still has the <a>NEL policy</a> in
             the <a>policy cache</a>, and would ideally use this policy to
             generate a <code>tcp.timed_out</code> report about the <a>failed</a>
             <a>network request</a>.  However, the because policy's <a>received
-              IP address</a> (<code>192.168.0.2</code>) doesn't match the IP
+              IP address</a> (<code>192.0.2.2</code>) doesn't match the IP
             address that this <a>request</a> was sent to, the user agent cannot
-            verify that the server at <code>192.168.0.3</code> is actually owned
+            verify that the server at <code>192.0.2.3</code> is actually owned
             by the owners of <code>example.com</code>.  The user agent must
             therefore downgrade the report to <code>dns.address_changed</code>:
             </p>
@@ -1435,7 +1435,7 @@
   "url": "https://example.com/",
   "body": {
     "sampling_fraction": 1.0,
-    "server_ip": "192.168.0.3",
+    "server_ip": "192.0.2.3",
     "protocol": "http/1.1",
     "method": "GET",
     "status_code": 0,
@@ -1449,12 +1449,12 @@
           <li>
             <p>
             The user agent then tries to send another <a>request</a> to
-            <code>192.168.0.1</code>, but once again isn't able to establish a
+            <code>192.0.2.1</code>, but once again isn't able to establish a
             connection to the server.  Even though the user agent received the
-            <a>NEL policy</a> from <code>192.168.0.1</code> at some point in the
+            <a>NEL policy</a> from <code>192.0.2.1</code> at some point in the
             past, the policy's <a>received IP address</a> only records where it
             was <em>most recently</em> received from — in this case,
-            <code>192.168.0.2</code>.  The user agent must therefore downgrade
+            <code>192.0.2.2</code>.  The user agent must therefore downgrade
             the report to <code>dns.address_changed</code>:
             </p>
 
@@ -1465,7 +1465,7 @@
   "url": "https://example.com/",
   "body": {
     "sampling_fraction": 1.0,
-    "server_ip": "192.168.0.1",
+    "server_ip": "192.0.2.1",
     "protocol": "http/1.1",
     "method": "GET",
     "status_code": 0,
