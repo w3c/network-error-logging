@@ -106,6 +106,7 @@
   "server_ip": "123.122.121.120",
   "protocol": "http/1.1",
   "elapsed_time": 321,
+  "phase": "connection",
   "type": "tcp.aborted"
 }
       </pre></dd>
@@ -1227,6 +1228,7 @@
     "method": "GET",
     "status_code": 200,
     "elapsed_time": 823,
+    "phase": "application",
     "type": "http.protocol.error"
   }
 }
@@ -1257,6 +1259,7 @@
     "method": "GET",
     "status_code": 0,
     "elapsed_time": 143,
+    "phase": "dns",
     "type": "dns.name_not_resolved"
   }
 }
@@ -1313,6 +1316,7 @@
     "method": "GET",
     "status_code": 0,
     "elapsed_time": 48,
+    "phase": "dns",
     "type": "dns.name_not_resolved"
   }
 }
@@ -1381,6 +1385,7 @@
     "method": "GET",
     "status_code": 200,
     "elapsed_time": 57,
+    "phase": "application",
     "type": "ok"
   }
 }
@@ -1410,6 +1415,7 @@
     "method": "GET",
     "status_code": 200,
     "elapsed_time": 34,
+    "phase": "application",
     "type": "ok"
   }
 }
@@ -1443,6 +1449,7 @@
     "method": "GET",
     "status_code": 0,
     "elapsed_time": 0,
+    "phase": "dns",
     "type": "dns.address_changed"
   }
 }
@@ -1473,6 +1480,7 @@
     "method": "GET",
     "status_code": 0,
     "elapsed_time": 0,
+    "phase": "dns",
     "type": "dns.address_changed"
   }
 }
