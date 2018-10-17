@@ -1,5 +1,8 @@
- {
-    "group":      ["45211"]
-,   "contacts":   ["plehegar"]
-,   "shortName":  "network-error-logging"
+{
+  "group": 45211,
+  "contacts": [
+    "plehegar"
+  ],
+  "shortName": "network-error-logging",
+  "repo-type": "rec-track"
 }
