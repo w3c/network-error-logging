@@ -145,10 +145,17 @@
           <ul>
             <li><dfn data-cite="!FETCH#concept-request-client">client</dfn></li>
             <li><dfn data-cite="!FETCH#cors-preflight-request">CORS-preflight request</dfn></li>
+            <li><dfn data-cite="!FETCH#extract-header-list-values">extract header list values</dfn></li>
+            <li><dfn data-cite="!FETCH#header-list-contains">header list contains</dfn></li>
+            <li><dfn data-cite="!FETCH#concept-header-name">header name</dfn></li>
+            <li><dfn data-cite="!FETCH#concept-header-value">header value</dfn></li>
             <li><dfn data-cite="!FETCH#http-network-fetch">HTTP-network fetch</dfn></li>
             <li><dfn data-cite="!FETCH#http-network-or-cache-fetch">HTTP-network-or-cache fetch</dfn></li>
             <li><dfn data-cite="!FETCH#redirect-status" data-lt="redirects">redirect status</dfn></li>
+            <li><dfn data-cite="!FETCH#concept-request-header-list">request header list</dfn></li>
             <li><dfn data-cite="!FETCH#concept-response" data-lt="responses">response</dfn></li>
+            <li><dfn data-cite="!FETCH#concept-response-header-list">response header list</dfn></li>
+            <li><dfn data-cite="!FETCH#concept-response-trailer">response trailer</dfn></li>
           </ul>
         </dd>
         <dt>HSTS</dt>
@@ -446,6 +453,14 @@
       <p>
 
       <p>
+      Each <a>NEL policy</a> has a list of <dfn data-lt-noDefault
+      data-lt="policy request headers">request headers</dfn> and a list of <dfn
+      data-lt-noDefault data-lt="policy response headers">response
+      headers</dfn>, each of which is a list of
+      header names.
+      </p>
+
+      <p>
       Each <a>NEL policy</a> has a <dfn>reporting group</dfn>, which is the name
       of the Reporting <a>endpoint group</a> that reports for this policy will
       be sent to.
@@ -644,6 +659,28 @@
         <em>all</em> <a>failed</a> <a>network requests</a> for this origin.
         </p>
       </section>
+
+      <section>
+        <h2>The <code>request_headers</code> member</h2>
+
+        <p>
+        The OPTIONAL <dfn><code>request_headers</code></dfn> member defines the
+        list of <a data-lt="policy request headers">request headers</a> that
+        will be included in <a>network error reports</a> about this
+        <a>origin</a>.  If present, its value MUST be a list of strings.
+        </p>
+      </section>
+
+      <section>
+        <h2>The <code>response_headers</code> member</h2>
+
+        <p>
+        The OPTIONAL <dfn><code>response_headers</code></dfn> member defines the
+        list of <a data-lt="policy response headers">response headers</a> that
+        will be included in <a>network error reports</a> about this
+        <a>origin</a>.  If present, its value MUST be a list of strings.
+        </p>
+      </section>
     </section>
 
     <section>
@@ -725,6 +762,18 @@
         </li>
 
         <li>
+          If <var>item</var> has a member named <a>request_headers</a>, whose
+          value is not a list, or if any element of that list is not a string,
+          abort these steps.
+        </li>
+
+        <li>
+          If <var>item</var> has a member named <a>response_headers</a>, whose
+          value is not a list, or if any element of that list is not a string,
+          abort these steps.
+        </li>
+
+        <li>
           <p>
           Let <var>policy</var> be a new <a>NEL policy</a> whose properties are
           set as follows:
@@ -749,6 +798,16 @@
             <code>include</code> if <var>item</var> has a member named
             <a>include_subdomains</a> whose value is <code>true</code>,
             <code>exclude</code> otherwise
+            </dd>
+
+            <dt><a data-lt="policy request headers">request headers</a></dt>
+            <dd>
+            the value of <var>item</var>'s <a>request_headers</a> member
+            </dd>
+
+            <dt><a data-lt="policy response headers">response headers</a></dt>
+            <dd>
+            the value of <var>item</var>'s <a>response_headers</a> member
             </dd>
 
             <dt><a>reporting group</a></dt>
@@ -828,6 +887,124 @@
 
         <li>
           Return <code>no policy</code>.
+        </li>
+
+      </ol>
+
+    </section>
+
+    <section>
+      <h2>Extract request headers</h2>
+
+      <p>
+      Given a <a>network request</a> (<var>request</var>) and a <a>NEL
+        policy</a> (<var>policy</var>), this algorithm extracts header values
+      from the request as instructed by the policy.
+      </p>
+
+      <ol class="algorithm">
+
+        <li>
+          Let <var>headers</var> be a new empty ECMAScript object.
+        </li>
+
+        <li>
+          For each <var>header name</var> in <var>policy</var>'s <a
+          data-lt="policy request headers">request headers</a> list:
+
+          <ol>
+            <li>
+              If <var>request</var>'s <a data-lt="request header list">header
+                list</a> does not <a data-lt="header list contains">contain</a>
+              <var>header name</var>, skip to the next <var>header name</var> in
+              the list.
+            </li>
+
+            <li>
+              Let <var>values</var> be an empty ECMAScript list.
+            </li>
+
+            <li>
+              For each <var>header</var> in <var>request</var>'s <a
+                data-lt="request header list">header list</a> whose <a
+                data-lt="header name">name</a> is <var>header name</var>, append
+              <var>header</var>'s <a data-lt="header value">value</a> to
+              <var>values</var>.
+            </li>
+
+            <li>
+              Add a new property to <var>headers</var> whose name is <var>header
+                name</var> and whose value is <var>values</var>.
+            </li>
+          </ol>
+        </li>
+
+        <li>
+          Return <var>headers</var>.
+        </li>
+
+      </ol>
+
+    </section>
+
+    <section>
+      <h2>Extract response headers</h2>
+
+      <p>
+      Given a <a>response</a> (<var>response</var>) and a <a>NEL policy</a>
+      (<var>policy</var>), this algorithm extracts header values from the
+      response as instructed by the policy.
+      </p>
+
+      <ol class="algorithm">
+
+        <li>
+          Let <var>headers</var> be a new empty ECMAScript object.
+        </li>
+
+        <li>
+          For each <var>header name</var> in <var>policy</var>'s <a
+          data-lt="policy response headers">response headers</a> list:
+
+          <ol>
+            <li>
+              If <var>response</var>'s <a data-lt="response header list">header
+                list</a> does not <a data-lt="header list contains">contain</a>
+              <var>header name</var>, AND <var>response</var>'s <a
+                data-lt="response trailer">trailer</a> does not <a
+                data-lt="header list contains">contain</a> <var>header
+                name</var>, skip to the next <var>header name</var> in the list.
+            </li>
+
+            <li>
+              Let <var>values</var> be an empty ECMAScript list.
+            </li>
+
+            <li>
+              For each <var>header</var> in <var>response</var>'s <a
+                data-lt="response header list">header list</a> whose <a
+                data-lt="header name">name</a> is <var>header name</var>, append
+              <var>header</var>'s <a data-lt="header value">value</a> to
+              <var>values</var>.
+            </li>
+
+            <li>
+              For each <var>header</var> in <var>response</var>'s <a
+                data-lt="response trailer">trailer</a> whose <a data-lt="header
+                name">name</a> is <var>header name</var>, append
+              <var>header</var>'s <a data-lt="header value">value</a> to
+              <var>values</var>.
+            </li>
+
+            <li>
+              Add a new property to <var>headers</var> whose name is <var>header
+                name</var> and whose value is <var>values</var>.
+            </li>
+          </ol>
+        </li>
+
+        <li>
+          Return <var>headers</var>.
         </li>
 
       </ol>
@@ -916,6 +1093,18 @@
             <dt><code>method</code></dt>
             <dd><var>request</var>'s <a>request method</a>.</dd>
 
+            <dt><code>request_headers</code></dt>
+            <dd>
+            The result of executing <a href="#extract-request-headers"></a> on
+            <var>request</var> and <var>policy</var>.
+            </dd>
+
+            <dt><code>response_headers</code></dt>
+            <dd>
+            The result of executing <a href="#extract-response-headers"></a> on
+            <var>response</var> and <var>policy</var>.
+            </dd>
+
             <dt><code>status_code</code></dt>
             <dd>
             The <a>status code</a> of the HTTP response, if available.
@@ -959,7 +1148,8 @@
               <code>dns.address_changed</code>.
             </li>
             <li>
-              Clear <var>report body</var>'s <code>status_code</code> and
+              Clear <var>report body</var>'s <code>request_headers</code>,
+              <code>response_headers</code>, <code>status_code</code>, and
               <code>elapsed_time</code> properties.
             </li>
             <li>
@@ -1226,6 +1416,8 @@
     "server_ip": "123.122.121.120",
     "protocol": "h2",
     "method": "GET",
+    "request_headers": {},
+    "response_headers": {},
     "status_code": 200,
     "elapsed_time": 823,
     "phase": "application",
@@ -1257,6 +1449,8 @@
     "server_ip": "",
     "protocol": "",
     "method": "GET",
+    "request_headers": {},
+    "response_headers": {},
     "status_code": 0,
     "elapsed_time": 143,
     "phase": "dns",
@@ -1314,10 +1508,70 @@
     "server_ip": "",
     "protocol": "http/1.1",
     "method": "GET",
+    "request_headers": {},
+    "response_headers": {},
     "status_code": 0,
     "elapsed_time": 48,
     "phase": "dns",
     "type": "dns.name_not_resolved"
+  }
+}
+        </pre>
+
+      </section>
+
+      <section>
+        <h2>Distributed tracing</h2>
+
+        <pre class="example">
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
+&gt; TraceParent: 00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01
+
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; Report-To: {"group": "network-errors", "max_age": 2592000,
+              "endpoints": [{"url": "https://example.com/upload-reports"}]}
+&lt; NEL: {"report_to": "network-errors", "max_age": 2592000, "include_subdomains": true,
+        "request_headers": ["TraceParent"]}
+        </pre>
+
+        <p>
+        In this example, the owner of <code>example.com</code> makes requests to
+        several backend services when generating the response for an incoming
+        end user request, and uses a distributed tracing framework to correlate
+        events about all of these requests together.  The tracing framework
+        relies on the browser generating a unique trace ID for each outgoing
+        request, placing it in the request's <code>TraceParent</code> header.
+        </p>
+
+        <p>
+        By including a <a>request_headers</a> field in the <code>NEL</code>
+        header for this domain, the browser will include a copy of the request's
+        <code>TraceParent</code> header in any NEL report that it creates for
+        that request:
+        </p>
+
+        <pre class="example">
+{
+  "age": 0,
+  "type": "network-error",
+  "url": "https://new-subdomain.example.com/",
+  "body": {
+    "sampling_fraction": 1.0,
+    "server_ip": "",
+    "protocol": "http/1.1",
+    "method": "GET",
+    "request_headers": {
+      "TraceParent": [
+        "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
+      ]
+    },
+    "response_headers": {},
+    "status_code": 200,
+    "elapsed_time": 39,
+    "phase": "application",
+    "type": "ok"
   }
 }
         </pre>
@@ -1383,6 +1637,8 @@
     "server_ip": "192.0.2.1",
     "protocol": "http/1.1",
     "method": "GET",
+    "request_headers": {},
+    "response_headers": {},
     "status_code": 200,
     "elapsed_time": 57,
     "phase": "application",
@@ -1413,6 +1669,8 @@
     "server_ip": "192.0.2.2",
     "protocol": "http/1.1",
     "method": "GET",
+    "request_headers": {},
+    "response_headers": {},
     "status_code": 200,
     "elapsed_time": 34,
     "phase": "application",
@@ -1447,6 +1705,8 @@
     "server_ip": "192.0.2.3",
     "protocol": "http/1.1",
     "method": "GET",
+    "request_headers": {},
+    "response_headers": {},
     "status_code": 0,
     "elapsed_time": 0,
     "phase": "dns",
@@ -1478,6 +1738,8 @@
     "server_ip": "192.0.2.1",
     "protocol": "http/1.1",
     "method": "GET",
+    "request_headers": {},
+    "response_headers": {},
     "status_code": 0,
     "elapsed_time": 0,
     "phase": "dns",
