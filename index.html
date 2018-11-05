@@ -147,7 +147,7 @@
             <li><dfn data-cite="!FETCH#cors-preflight-request">CORS-preflight request</dfn></li>
             <li><dfn data-cite="!FETCH#extract-header-list-values">extract header list values</dfn></li>
             <li><dfn data-cite="!FETCH#header-list-contains">header list contains</dfn></li>
-            <li><dfn data-cite="!FETCH#concept-header-name">header name</dfn></li>
+            <li><dfn data-cite="!FETCH#concept-header-name" data-lt="header names">header name</dfn></li>
             <li><dfn data-cite="!FETCH#concept-header-value">header value</dfn></li>
             <li><dfn data-cite="!FETCH#http-network-fetch">HTTP-network fetch</dfn></li>
             <li><dfn data-cite="!FETCH#http-network-or-cache-fetch">HTTP-network-or-cache fetch</dfn></li>
@@ -176,11 +176,13 @@
         </dd>
         <dt>HTTP</dt>
         <dd>
-          <p>The following terms are defined in the HTTP specification: [[!RFC7230]], [[!RFC7231]], [[!RFC7234]]</p>
+          <p>The following terms are defined in the HTTP specification: [[!RFC7230]], [[!RFC7231]], [[RFC7232]], [[!RFC7234]]</p>
           <ul>
             <li><dfn data-cite="!RFC7231#section-6.3.1" data-lt="200 response">200 status code</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6.5" data-lt="4xx">4xx status code</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6.6" data-lt="5xx">5xx status code</dfn></li>
+            <li><dfn data-cite="RFC7232#section-2.3"><code>ETag</code></dfn></li>
+            <li><dfn data-cite="RFC7232#section-3.2"><code>If-None-Match</code></dfn></li>
             <li><dfn data-cite="!RFC7234">local cache</dfn></li>
             <li><dfn data-cite="!RFC7230#section-6.3">persistent connections</dfn></li>
             <li><dfn data-cite="!RFC7230#section-2.1" data-lt="requests">request</dfn></li>
@@ -456,8 +458,7 @@
       Each <a>NEL policy</a> has a list of <dfn data-lt-noDefault
       data-lt="policy request headers">request headers</dfn> and a list of <dfn
       data-lt-noDefault data-lt="policy response headers">response
-      headers</dfn>, each of which is a list of
-      header names.
+      headers</dfn>, each of which is a list of <a>header names</a>.
       </p>
 
       <p>
@@ -665,9 +666,11 @@
 
         <p>
         The OPTIONAL <dfn><code>request_headers</code></dfn> member defines the
-        list of <a data-lt="policy request headers">request headers</a> that
-        will be included in <a>network error reports</a> about this
-        <a>origin</a>.  If present, its value MUST be a list of strings.
+        list of <a data-lt="policy request headers">request headers</a> whose <a
+          data-lt="header name">names</a> and <a data-lt="header
+          value">values</a> will be included in <a>network error reports</a>
+        about this <a>origin</a>.  If present, its value MUST be a list of
+        strings.
         </p>
       </section>
 
@@ -676,9 +679,11 @@
 
         <p>
         The OPTIONAL <dfn><code>response_headers</code></dfn> member defines the
-        list of <a data-lt="policy response headers">response headers</a> that
-        will be included in <a>network error reports</a> about this
-        <a>origin</a>.  If present, its value MUST be a list of strings.
+        list of <a data-lt="policy response headers">response headers</a> whose
+        <a data-lt="header name">names</a> and <a data-lt="header
+          value">values</a> will be included in <a>network error reports</a>
+        about this <a>origin</a>.  If present, its value MUST be a list of
+        strings.
         </p>
       </section>
     </section>
@@ -1521,60 +1526,153 @@
       </section>
 
       <section>
-        <h2>Distributed tracing</h2>
+        <h2>Monitoring cache validation</h2>
 
         <pre class="example">
 &gt; GET / HTTP/1.1
 &gt; Host: example.com
-&gt; TraceParent: 00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01
 
 &lt; HTTP/1.1 200 OK
 &lt; ...
 &lt; Report-To: {"group": "network-errors", "max_age": 2592000,
               "endpoints": [{"url": "https://example.com/upload-reports"}]}
-&lt; NEL: {"report_to": "network-errors", "max_age": 2592000, "include_subdomains": true,
-        "request_headers": ["TraceParent"]}
+&lt; NEL: {"report_to": "network-errors", "max_age": 2592000, "success_fraction": 1.0,
+        "request_headers": ["If-None-Match"], "response_headers": ["ETag"]}
+&lt; ETag: 01234abcd
         </pre>
 
         <p>
-        In this example, the owner of <code>example.com</code> makes requests to
-        several backend services when generating the response for an incoming
-        end user request, and uses a distributed tracing framework to correlate
-        events about all of these requests together.  The tracing framework
-        relies on the browser generating a unique trace ID for each outgoing
-        request, placing it in the request's <code>TraceParent</code> header.
+        In this example, the owner of <code>example.com</code> uses
+        <a><code>ETag</code></a> response headers to identify different versions
+        of the resources hosted on the server.  User agents can then use
+        <a><code>If-None-Match</code></a> request headers to inform the server
+        which version of a resource is presently cached client-side, allowing
+        the server to avoid generating and sending the content of the resource
+        if the client's existing copy is up to date.
         </p>
 
         <p>
-        By including a <a>request_headers</a> field in the <code>NEL</code>
-        header for this domain, the browser will include a copy of the request's
-        <code>TraceParent</code> header in any NEL report that it creates for
-        that request:
+        By including <a>request_headers</a> and <a>response_headers</a> fields
+        in the <code>NEL</code> header for this domain, the browser will include
+        a copy of the <a><code>If-None-Match</code></a> request header and
+        <a><code>ETag</code></a> response header in any NEL report that it
+        creates for that request, allowing the site owner to track the
+        effectiveness of their caching policies.
         </p>
 
-        <pre class="example">
+        <p>
+        Given the above, consider the following sequence of events:
+        </p>
+
+        <ol>
+          <li>
+            <p>
+            The user agent sends a <a>request</a> to <code>example.com</code>,
+            and receives a successful <a>response</a> from the <a>server</a>,
+            with an <a><code>ETag</code></a> header indicating the version of
+            the resource.  The user agent will generate the following NEL
+            report:
+            </p>
+
+            <pre class="example">
 {
   "age": 0,
   "type": "network-error",
-  "url": "https://new-subdomain.example.com/",
+  "url": "https://example.com/",
   "body": {
     "sampling_fraction": 1.0,
-    "server_ip": "",
+    "server_ip": "192.0.2.1",
     "protocol": "http/1.1",
     "method": "GET",
-    "request_headers": {
-      "TraceParent": [
-        "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
-      ]
+    "request_headers": {},
+    "response_headers": {
+      "ETag": ["01234abcd"]
     },
-    "response_headers": {},
     "status_code": 200,
-    "elapsed_time": 39,
+    "elapsed_time": 1392,
     "phase": "application",
     "type": "ok"
   }
 }
-        </pre>
+            </pre>
+          </li>
+
+          <li>
+            <p>
+            Some time later, the user agent sends another <a>request</a> to
+            <code>example.com</code>.  The user agent still has a copy of the
+            original resource in its local cache, and includes its version in a
+            <a><code>If-None-Match</code></a> request header.  The server checks
+            this version, notices that it is still current, and sends a
+            <a>304</a> response informing the user agent that its cached copy of
+            the resource is still valid.  The user agent will generate the
+            following report:
+            </p>
+
+            <pre class="example">
+{
+  "age": 0,
+  "type": "network-error",
+  "url": "https://example.com/",
+  "body": {
+    "sampling_fraction": 1.0,
+    "server_ip": "192.0.2.1",
+    "protocol": "http/1.1",
+    "method": "GET",
+    "request_headers": {
+      "If-None-Match": ["01234abcd"]
+    },
+    "response_headers": {
+      "ETag": ["01234abcd"]
+    },
+    "status_code": 304,
+    "elapsed_time": 45,
+    "phase": "application",
+    "type": "ok"
+  }
+}
+            </pre>
+          </li>
+
+          <li>
+            <p>
+            Even later, the user agent sends yet another <a>request</a> to
+            <code>example.com</code>.  The user agent still has the same copy of the
+            resource in its local cache, and includes its version in a
+            <a><code>If-None-Match</code></a> request header, as in the previous
+            example.  However, this time the server notices that there is a new
+            version of the resource available.  It generates the content of this
+            resource, and sends it to the client, with the new version encoded
+            in a new <a><code>ETag</code></a> response header value.  The user
+            agent will generate the following report:
+            </p>
+
+            <pre class="example">
+{
+  "age": 0,
+  "type": "network-error",
+  "url": "https://example.com/",
+  "body": {
+    "sampling_fraction": 1.0,
+    "server_ip": "192.0.2.1",
+    "protocol": "http/1.1",
+    "method": "GET",
+    "request_headers": {
+      "If-None-Match": ["01234abcd"]
+    },
+    "response_headers": {
+      "ETag": ["56789ef01"]
+    },
+    "status_code": 200,
+    "elapsed_time": 935,
+    "phase": "application",
+    "type": "ok"
+  }
+}
+            </pre>
+          </li>
+
+        </ol>
 
       </section>
 
