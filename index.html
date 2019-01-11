@@ -1022,9 +1022,10 @@
 
       <p>
       Given a <a>network request</a> (<var>request</var>) and its corresponding
-      <a>response</a> (<var>response</var>), this algorithm generates a report
-      about <var>request</var> if instructed to by any matching <a>NEL
-        policy</a>, and queues it for delivery.
+      <a>response</a> (<var>response</var>) and an OPTIONAL ECMAScript object
+      (<var>additional body</var>), this algorithm generates a report about
+      <var>request</var> if instructed to by any matching <a>NEL policy</a>, and
+      queues it for delivery.
       </p>
 
       <ol class="algorithm">
@@ -1137,6 +1138,10 @@
             <code>"ok"</code>.
             </dd>
           </dl>
+        </li>
+        <li>
+          If <var>additional body</var> is present, set each properties of
+          <var>additional body</var> to <var>report body</var>.
         </li>
 
         <li>
