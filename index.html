@@ -529,6 +529,58 @@
       </ul>
     </section>
 
+    <section data-dfn-for="AdditionalReportBody"data-link-for="AdditionalReportBody">
+      <h2>Additional report body</h2>
+
+      <p>
+      An <dfn>AdditionalReportBody</dfn> is a WebIDL dictionary defined by this
+      IDL.
+      </p>
+
+      <pre class="idl">
+        dictionary AdditionalReportBody {
+          ByteString? phase;
+          ByteString? type;
+          long? elapsed_time;
+          ByteString? outer_url;
+          ByteString? inner_url;
+          ByteString? cert_url;
+        };
+      </pre>
+      <dl>
+        <dt><dfn>phase</dfn></dt>
+        <dd>
+        The OPTINAL <var>phase</var> member is used to override the
+        <code>phase</code> property of <var>report body</var>.
+        </dd>
+        <dt><dfn>type</dfn></dt>
+        <dd>
+        The OPTINAL <var>type</var> member is used to override the
+        <code>type</code> property of <var>report body</var>.
+        </dd>
+        <dt><dfn>elapsed_time</dfn></dt>
+        <dd>
+        The OPTINAL <var>elapsed_time</var> member is used to override the
+        <code>elapsed_time</code> property of <var>report body</var>.
+        </dd>
+        <dt><dfn>outer_url</dfn></dt>
+        <dd>
+        The OPTINAL <var>outer_url</var> member is used to append the URL of
+        outer request of signed exchange to <var>report body</var>.
+        </dd>
+        <dt><dfn>inner_url</dfn></dt>
+        <dd>
+        The OPTINAL <var>inner_url</var> member is used to append the URL of
+        inner request of signed exchange to <var>report body</var>.
+        </dd>
+        <dt><dfn>cert_url</dfn></dt>
+        <dd>
+        The OPTINAL <var>cert_url</var> member is used to append the URL of
+        certificate of signed exchange to <var>report body</var>.
+        </dd>
+      </dl>
+    </section>
+
   </section>
 
   <section>
@@ -1022,10 +1074,10 @@
 
       <p>
       Given a <a>network request</a> (<var>request</var>) and its corresponding
-      <a>response</a> (<var>response</var>) and an OPTIONAL ECMAScript object
-      (<var>additional body</var>), this algorithm generates a report about
-      <var>request</var> if instructed to by any matching <a>NEL policy</a>, and
-      queues it for delivery.
+      <a>response</a> (<var>response</var>) and an OPTIONAL
+      <a>AdditionalReportBody</a> object (<var>additional body</var>), this
+      algorithm generates a report about <var>request</var> if instructed to by
+      any matching <a>NEL policy</a>, and queues it for delivery.
       </p>
 
       <ol class="algorithm">
@@ -1140,7 +1192,7 @@
           </dl>
         </li>
         <li>
-          If <var>additional body</var> is present, set each properties of
+          If <var>additional body</var> is present, set each members of
           <var>additional body</var> to <var>report body</var>.
         </li>
 
