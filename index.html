@@ -1024,7 +1024,8 @@
       Given a <a>network request</a> (<var>request</var>) and its corresponding
       <a>response</a> (<var>response</var>), this algorithm generates a report
       about <var>request</var> if instructed to by any matching <a>NEL
-        policy</a>.
+        policy</a>, and returns the report and the NEL policy. Otherwise this
+      algorithm returns null.
       </p>
 
       <ol class="algorithm">
@@ -1198,8 +1199,10 @@
       <h2 id="deliver-a-network-report" data-dfn-type="dfn"
           data-export>Deliver a network report</h2>
       <p>
-      Given a ECMAScript object (<var>report body</var>) and its matching
-      <a>NEL policy</a> (<var>policy</var>) and <a>network request</a>
+      Given a ECMAScript object (<var>report body</var>, usually returned from
+      <a href="#generate-a-network-error-report">Generate a network error
+        report</a> and then augmented by the calling specification) and its
+      matching <a>NEL policy</a> (<var>policy</var>) and <a>network request</a>
       (<var>request</var>), this algorithm queues the report for delivery.
       </p>
 
