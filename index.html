@@ -1024,7 +1024,8 @@
       Given a <a>network request</a> (<var>request</var>) and its corresponding
       <a>response</a> (<var>response</var>), this algorithm generates a report
       about <var>request</var> if instructed to by any matching <a>NEL
-        policy</a>, and queues it for delivery.
+        policy</a>, and returns the report and the NEL policy. Otherwise this
+      algorithm returns null.
       </p>
 
       <ol class="algorithm">
@@ -1032,8 +1033,8 @@
         <li>
           If the result of executing the <a>"Is origin potentially
             trustworthy?"</a> algorithm on <var>request</var>'s <a>origin</a> is
-          <strong>not</strong> <code>Potentially Trustworthy</code>, abort these
-          steps.
+          <strong>not</strong> <code>Potentially Trustworthy</code>, return
+          null.
         </li>
 
         <li>
@@ -1043,7 +1044,7 @@
         <li>
           Let <var>policy</var> be the result of executing <a
             href="#choose-a-policy-for-an-origin"></a> on <var>origin</var>.  If
-          <var>policy</var> is <code>no policy</code>, abort these steps.
+          <var>policy</var> is <code>no policy</code>, return null.
         </li>
 
         <li>
@@ -1064,7 +1065,7 @@
         <li>
           Decide whether or not to report on this request.  Let <var>roll</var>
           be a random number between 0.0 and 1.0, inclusive. If <var>roll</var>
-          ≥ <var>sampling rate</var>, abort these steps.
+          ≥ <var>sampling rate</var>, return null.
         </li>
 
         <li>
@@ -1185,9 +1186,27 @@
           data-lt="policy origin">origin</a>, <var>policy</var>'s
           <a>subdomains</a> flag is <code>include</code>, and <var>report
           body</var>'s <code>phase</code> property is not <code>dns</code>,
-          abort these steps.
+          return null.
         </li>
 
+        <li>
+          Return <var>report body</var> and <var>policy</var>.
+        </li>
+      </ol>
+
+    </section>
+    <section>
+      <h2 id="deliver-a-network-report" data-dfn-type="dfn"
+          data-export>Deliver a network report</h2>
+      <p>
+      Given a ECMAScript object (<var>report body</var>, usually returned from
+      <a href="#generate-a-network-error-report">Generate a network error
+        report</a> and then augmented by the calling specification) and its
+      matching <a>NEL policy</a> (<var>policy</var>) and <a>network request</a>
+      (<var>request</var>), this algorithm queues the report for delivery.
+      </p>
+
+      <ol class="algorithm">
         <li>
           <p><a data-cite="!REPORTING#queue-report">Queue the report for delivery</a> via the Reporting API. [[!REPORTING]]</p>
 
@@ -1205,7 +1224,6 @@
           </dl>
         </li>
       </ol>
-
     </section>
   </section>
 
