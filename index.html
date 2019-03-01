@@ -103,7 +103,7 @@
 {
   "referrer": "https://referrer.com/",
   "sampling_fraction": 1.0,
-  "server_ip": "123.122.121.120",
+  "server_ip": "192.0.2.42",
   "protocol": "http/1.1",
   "elapsed_time": 321,
   "phase": "connection",
@@ -1437,7 +1437,7 @@
   "body": {
     "sampling_fraction": 0.5,
     "referrer": "http://example.com/",
-    "server_ip": "123.122.121.120",
+    "server_ip": "2001:DB8:0:0:0:0:0:42",
     "protocol": "h2",
     "method": "GET",
     "request_headers": {},
@@ -1453,7 +1453,7 @@
         <p>
         This report indicates that the user agent attempted to navigate from
         <code>example.com</code> to <code>www.example.com</code>, which
-        successfully resolved to <code>123.122.121.120</code>.  However, while
+        successfully resolved to <code>2001:DB8::42</code>.  However, while
         the user agent received a <a>200 response</a> from the server via the
         HTTP/2 (<code>h2</code>) protocol, it encountered a protocol error in
         the exchange and was forced to abandon the navigation.  The user agent
