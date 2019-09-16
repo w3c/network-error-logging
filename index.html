@@ -96,7 +96,7 @@
 
     <p>Existing methods (such as synthetic monitoring) provide a partial solution by placing monitoring nodes in predetermined geographic locations, but require additional infrastructure investments, and cannot provide truly global and near real-time availability data for real end users.</p>
 
-    <p>Network Error Logging (NEL) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report network errors for a given origin.  A web application opts into using NEL by supplying a <a>NEL</a> HTTP response header field that describes the desired <a>NEL policy</a>. This policy instructs the user agent to log information about requests to that origin, and to attempt to deliver that information to a group of endpoints previously configured using the Reporting API [[!REPORTING]].  As the name implies, NEL reports are primarily used to describe <em>errors</em>. However, in order to determine <em>rates</em> of errors across different client populations, we must also know how many <em>successful</em> requests are occurring; these successful requests can also be reported via the NEL mechanism.</p>
+    <p>Network Error Logging (NEL) addresses this need by defining a mechanism enabling web applications to declare a reporting policy that can be used by the user agent to report network errors for a given origin.  A web application opts into using NEL by supplying a <a>NEL</a> HTTP response header field that describes the desired <a>NEL policy</a>. This policy instructs the user agent to log information about requests to that origin, and to attempt to deliver that information to a group of endpoints previously configured using the [[[REPORTING]].  As the name implies, NEL reports are primarily used to describe <em>errors</em>. However, in order to determine <em>rates</em> of errors across different client populations, we must also know how many <em>successful</em> requests are occurring; these successful requests can also be reported via the NEL mechanism.</p>
 
     <p>For example, if the user agent fails to fetch a resource from <code>https://www.example.com</code> due to an aborted TCP connection, the user agent would queue the following report via the Reporting API:</p>
 
@@ -129,10 +129,7 @@
     </p>
   </section>
 
-  <section>
-    <h2>Conformance requirements</h2>
-    <p>All diagrams, examples, and notes in this specification are non-normative, as are all sections explicitly marked non-normative.  Everything else in this specification is normative.</p>
-    <p>The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in the normative parts of this document are to be interpreted as described in [[!RFC2119]].</p>
+  <section id="conformance">
     <p>Requirements phrased in the imperative as part of algorithms (such as "strip any leading space characters" or "return false and abort these steps") are to be interpreted with the meaning of the key word ("must", "should", "may", etc) used in introducing the algorithm.</p>
     <p>Some conformance requirements are phrased as requirements on attributes, methods or objects. Such requirements are to be interpreted as requirements on the user agent.</p>
     <p>Conformance requirements phrased as algorithms or specific steps may be implemented in any manner, so long as the end result is equivalent. (In particular, the algorithms defined in this specification are intended to be easy to follow, and not intended to be performant.)</p>
@@ -141,7 +138,7 @@
       <dl>
         <dt>DNS</dt>
         <dd>
-          <p>The following terms are defined in the DNS specification: [[!RFC1034]]</p>
+          <p>The following terms are defined in the DNS specification: [[RFC1034]]</p>
           <ul>
             <li><dfn data-cite="!RFC1034#section-3.1">domain name</dfn></li>
             <li><dfn data-cite="!RFC1034#section-3.1">domain namespace tree</dfn></li>
@@ -150,7 +147,7 @@
         </dd>
         <dt>Fetch</dt>
         <dd>
-          <p>The following terms are defined in the Fetch specification: [[!FETCH]]</p>
+          <p>The following terms are defined in the Fetch specification: [[FETCH]]</p>
           <ul>
             <li><dfn data-cite="!FETCH#concept-request-client">client</dfn></li>
             <li><dfn data-cite="!FETCH#cors-preflight-request">CORS-preflight request</dfn></li>
@@ -169,14 +166,14 @@
         </dd>
         <dt>HSTS</dt>
         <dd>
-          <p>The following terms are defined in the HSTS specification: [[!RFC6797]]</p>
+          <p>The following terms are defined in the HSTS specification: [[RFC6797]]</p>
           <ul>
             <li><dfn data-cite="!RFC6797#section-8.2">superdomain match</dfn></li>
           </ul>
         </dd>
         <dt>HTML</dt>
         <dd>
-          <p>The following terms are defined in the HTML specification: [[!HTML]]</p>
+          <p>The following terms are defined in the HTML specification: [[HTML]]</p>
           <ul>
             <li><dfn data-cite="!HTML#navigate" data-lt="navigation">navigate</dfn></li>
             <li><dfn data-cite="!HTML#navigator.online"><code>navigator.onLine</code></dfn></li>
@@ -185,14 +182,13 @@
         </dd>
         <dt>HTTP</dt>
         <dd>
-          <p>The following terms are defined in the HTTP specification: [[!RFC7230]], [[!RFC7231]], [[RFC7232]], [[!RFC7234]]</p>
+          <p>The following terms are defined in the HTTP specification: [[RFC7230]], [[RFC7231]], [[RFC7232]], [[RFC7234]]</p>
           <ul>
             <li><dfn data-cite="!RFC7231#section-6.3.1" data-lt="200 response">200 status code</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6.5" data-lt="4xx">4xx status code</dfn></li>
             <li><dfn data-cite="!RFC7231#section-6.6" data-lt="5xx">5xx status code</dfn></li>
             <li><dfn data-cite="RFC7232#section-2.3"><code>ETag</code></dfn></li>
             <li><dfn data-cite="RFC7232#section-3.2"><code>If-None-Match</code></dfn></li>
-            <li><dfn data-cite="!RFC7234">local cache</dfn></li>
             <li><dfn data-cite="!RFC7230#section-6.3">persistent connections</dfn></li>
             <li><dfn data-cite="!RFC7230#section-2.1" data-lt="requests">request</dfn></li>
             <li><dfn data-cite="!RFC7231#section-4">request method</dfn></li>
@@ -204,28 +200,28 @@
         </dd>
         <dt>HTTP JSON field values</dt>
         <dd>
-          <p>The following terms are defined in the HTTP-JFV specification: [[!HTTP-JFV]]</p>
+          <p>The following terms are defined in the HTTP-JFV specification: [[HTTP-JFV]]</p>
           <ul>
             <li><dfn data-cite="!HTTP-JFV#json-field-value">json-field-value</dfn></li>
           </ul>
         </dd>
         <dt>JSON</dt>
         <dd>
-          <p>The following terms are defined in the JSON specification: [[!RFC7159]]</p>
+          <p>The following terms are defined in the JSON specification: [[RFC7159]]</p>
           <ul>
             <li><dfn data-cite="!RFC7159#section-4">JSON object</dfn></li>
           </ul>
         </dd>
         <dt>Referrer Policy</dt>
         <dd>
-          <p>The following terms are defined in the Referrer Policy specification: [[!REFERRER-POLICY]]</p>
+          <p>The following terms are defined in the Referrer Policy specification: [[REFERRER-POLICY]]</p>
           <ul>
             <li><dfn data-cite="!REFERRER-POLICY#referrer-policy">referrer policy</dfn></li>
           </ul>
         </dd>
         <dt>Reporting API</dt>
         <dd>
-          <p>The following terms are defined in the Reporting API specification: [[!REPORTING]]</p>
+          <p>The following terms are defined in the Reporting API specification: [[REPORTING]]</p>
           <ul>
             <li><dfn data-cite="!REPORTING#endpoint-group">endpoint group</dfn></li>
             <li><dfn data-cite="!REPORTING#report" data-lt="reports">report</dfn></li>
@@ -236,14 +232,14 @@
         </dd>
         <dt>Resource Timing</dt>
         <dd>
-          <p>The following terms are defined in the Resource Timing specification: [[!RESOURCE-TIMING-2]]</p>
+          <p>The following terms are defined in the Resource Timing specification: [[RESOURCE-TIMING-2]]</p>
           <ul>
             <li><dfn data-cite="!RESOURCE-TIMING-2#dom-performanceresourcetiming-nexthopprotocol">network protocol</dfn></li>
           </ul>
         </dd>
         <dt>Secure Contexts</dt>
         <dd>
-          <p>The following terms are defined in the Secure Contexts specification: [[!SECURE-CONTEXTS]]</p>
+          <p>The following terms are defined in the Secure Contexts specification: [[SECURE-CONTEXTS]]</p>
           <ul>
             <li>the <dfn data-cite="!SECURE-CONTEXTS#is-origin-trustworthy">"Is
                 origin potentially trustworthy?"</dfn> algorithm</li>
@@ -252,7 +248,7 @@
         </dd>
         <dt>URL</dt>
         <dd>
-          <p>The following terms are defined in the URL specification: [[!URL]]</p>
+          <p>The following terms are defined in the URL specification: [[URL]]</p>
           <ul>
             <li><dfn data-cite="!URL#concept-url-fragment">fragment</dfn></li>
             <li><dfn data-cite="!URL#concept-host">host</dfn></li>
@@ -275,8 +271,8 @@
       </p>
 
       <p>
-      If the user agent can service a <a>request</a> out of a <a>local
-        cache</a>, that <a>request</a> MUST NOT result in a <a>network
+      If the user agent can service a <a>request</a> out of a local
+        cache, that <a>request</a> MUST NOT result in a <a>network
         request</a>.
       </p>
 
@@ -411,8 +407,7 @@
       <h2>Network error reports</h2>
 
       <p>
-      A <dfn data-lt="network error reports">network error report</dfn> is a <a
-        data-cite="!REPORTING">Reporting API</a> <a>report</a> that describes a
+      A <dfn data-lt="network error reports">network error report</dfn> is a [[[REPORTING]]] <a>report</a> that describes a
       <a>network error</a>.
       </p>
 
@@ -1217,7 +1212,7 @@
 
       <ol class="algorithm">
         <li>
-          <p><a data-cite="!REPORTING#queue-report">Queue the report for delivery</a> via the Reporting API. [[!REPORTING]]</p>
+          <p><a data-cite="!REPORTING#queue-report">Queue the report for delivery</a> via the Reporting API. [[REPORTING]]</p>
 
           <dl>
             <dt>type</dt>
@@ -1433,7 +1428,7 @@
         This section contains example <a>network error</a> <a>reports</a> the
         user agent might queue when a network error is encountered for an
         <a>origin</a> with a registered <a>NEL policy</a>.  We show the full
-        report payload that would be created by the [[!REPORTING]] API when
+        report payload that would be created by the [[REPORTING]] API when
         uploading the report; the payload's <code>body</code> field contains the
         <a>network error</a> <a>report body</a>.
         </p>
@@ -1632,7 +1627,7 @@
             original resource in its local cache, and includes its version in a
             <a><code>If-None-Match</code></a> request header.  The server checks
             this version, notices that it is still current, and sends a
-            <a>304</a> response informing the user agent that its cached copy of
+            `304` response informing the user agent that its cached copy of
             the resource is still valid.  The user agent will generate the
             following report:
             </p>
@@ -1991,7 +1986,7 @@
         <li>Refuse to process Set-Cookie response headers when delivering network error reports.</li>
       </ul>
 
-      <p>When deploying NEL the developer SHOULD consider privacy implications of NEL reports delivered to the specified collectors. For example, reports may contain URLs with sensitive data (e.g. "Capability URLs") that may need special precautions (see [[!CAPABILITY-URLS]]), and may require the developer to operate their own NEL collectors to prevent reporting of such URLs to third parties.</p>
+      <p>When deploying NEL the developer SHOULD consider privacy implications of NEL reports delivered to the specified collectors. For example, reports may contain URLs with sensitive data (e.g. "Capability URLs") that may need special precautions (see [[CAPABILITY-URLS]]), and may require the developer to operate their own NEL collectors to prevent reporting of such URLs to third parties.</p>
     </section>
 
     <section>
@@ -2014,7 +2009,6 @@
         </dl>
       </section>
     </section>
-
   <section class="appendix">
     <h2>Acknowledgments</h2>
     <p>This document reuses text from the [[CSP]] and [[RFC6797]] specification, as permitted by the licenses of those specifications. Additionally, sincere thanks to Julia Tuttle, Chris Bentzel, Todd Reifsteck, Aaron Heady, and Mark Nottingham for their helpful comments and contributions to this work.</p>
