@@ -42,6 +42,14 @@
       company: "Microsoft",
       retiredDate: "2014-02-01",
     }],
+    localBiblio: {
+      "NETWORK-REPORTING": {
+        title: "Network Reporting API",
+        href: "https://w3c.github.io/reporting/network-reporting.html",
+        status: "ED",
+        publisher: "W3C",
+      },
+    },
   };
   </script>
   <style>
@@ -185,6 +193,13 @@
           <p>The following terms are defined in the JSON specification: [[RFC7159]]</p>
           <ul>
             <li><dfn data-cite="!RFC7159#section-4">JSON object</dfn></li>
+          </ul>
+        </dd>
+        <dt>Network Reporting API</dt>
+        <dd>
+          <p>The following terms are defined in the Network Reporting API specification: [[NETWORK-REPORTING]]</p>
+          <ul>
+            <li><dfn data-cite="!NETWORK-REPORTING#generate-a-network-report">Generate a network report</dfn></li>
           </ul>
         </dd>
         <dt>Referrer Policy</dt>
@@ -1204,7 +1219,7 @@
 
       <ol class="algorithm">
         <li>
-          <p><a data-cite="!REPORTING#queue-report">Queue the report for delivery</a> via the Reporting API. [[REPORTING]]</p>
+          <p><a>Generate a network report</a> given these parameters:</p>
 
           <dl>
             <dt>type</dt>
@@ -1213,10 +1228,6 @@
             <dd><var>report body</var></dd>
             <dt>endpoint group</dt>
             <dd><var>policy</var>'s <a>reporting group</a></dd>
-            <dt>settings</dt>
-            <dd><var>request</var>'s <a data-cite="!HTML#environment-settings-object">environment settings object</a></dd>
-            <dt>url</dt>
-            <dd><var>request</var>'s URL</dd>
           </dl>
         </li>
       </ol>
