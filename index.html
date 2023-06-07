@@ -124,12 +124,14 @@
           <ul>
             <li><dfn data-cite="!FETCH#concept-request-client">client</dfn></li>
             <li><dfn data-cite="!FETCH#cors-preflight-request">CORS-preflight request</dfn></li>
+            <li><dfn data-cite="!FETCH#determine-the-network-partition-key">determine the network partition key</dfn></li>
             <li><dfn data-cite="!FETCH#extract-header-list-values">extract header list values</dfn></li>
             <li><dfn data-cite="!FETCH#header-list-contains">header list contains</dfn></li>
             <li><dfn data-cite="!FETCH#concept-header-name" data-lt="header names">header name</dfn></li>
             <li><dfn data-cite="!FETCH#concept-header-value">header value</dfn></li>
             <li><dfn data-cite="!FETCH#http-network-fetch">HTTP-network fetch</dfn></li>
             <li><dfn data-cite="!FETCH#http-network-or-cache-fetch">HTTP-network-or-cache fetch</dfn></li>
+            <li><dfn data-cite="!FETCH#network-partition-key">network partition key</dfn></li>
             <li><dfn data-cite="!FETCH#redirect-status" data-lt="redirects">redirect status</dfn></li>
             <li><dfn data-cite="!FETCH#concept-request-header-list">request header list</dfn></li>
             <li><dfn data-cite="!FETCH#concept-response" data-lt="responses">response</dfn></li>
@@ -490,7 +492,7 @@
       <p>
       A conformant user agent MUST provide a <dfn>policy cache</dfn>, which is a
       storage mechanism that maintains a set of <a>NEL policies</a>, keyed by
-      their <a data-lt="policy origin">origins</a>.
+      (<a>network partition key</a>, <a>origin</a>) tuples.
       </p>
 
       <p>
@@ -501,7 +503,8 @@
 
       <ul>
         <li>Insert, update, and delete <a>NEL policies</a>.</li>
-        <li>Retrieve the <a>NEL policy</a>, if any, for an <a>origin</a>.</li>
+        <li>Retrieve the <a>NEL policy</a>, if any, for a given <a>origin</a>
+        and <a>network partition key</a>.</li>
         <li>Clear the cache.</li>
       </ul>
     </section>
@@ -700,6 +703,11 @@
         </li>
 
         <li>
+          Let <var>key</var> be the result of calling <a>determine the network
+          partition key</a>, given <var>request</var>.
+        </li>
+
+        <li>
           Let <var>header</var> be the value of the <a>response header</a> whose
           name is <code>NEL</code>.
         </li>
@@ -818,9 +826,9 @@
 
         <li>
           If there is already an entry in the <a>policy cache</a> for
-          <var>origin</var>, replace it with <var>policy</var>; otherwise,
-          insert <var>policy</var> into the <a>policy cache</a> for
-          <var>origin</var>.
+          (<var>key</var>, <var>origin</var>), replace it with 
+          <var>policy</var>; otherwise, insert <var>policy</var> into the
+          <a>policy cache</a> for (<var>key</var>, <var>origin</var>).
         </li>
 
       </ol>
@@ -831,18 +839,28 @@
     <h2>Report delivery</h2>
 
     <section>
-      <h2>Choose a policy for an origin</h2>
+      <h2>Choose a policy for a request</h2>
 
       <p>
-      Given an <a>origin</a> (<var>origin</var>), this algorithm determines
-      which <a>NEL policy</a> in the <a>policy cache</a> should be used to
-      generate reports for <a>network requests</a> to <var>origin</var>.
+      Given a <a>network request</a> (<var>request</var>), this algorithm
+      determines which <a>NEL policy</a> in the <a>policy cache</a> should be
+      used to generate reports for that <a>network request</a>.
       </p>
 
       <ol class="algorithm">
 
         <li>
-          If there is an entry in the <a>policy cache</a> for <var>origin</var>:
+          Let <var>origin</var> be <var>request</var>'s <a>origin</a>.
+        </li>
+
+        <li>
+          Let <var>key</var> be the result of calling <a>determine the network
+          partition key</a>, given <var>request</var>.
+        </li>
+
+        <li>
+          If there is an entry in the <a>policy cache</a> for (<var>key</var>,
+          <var>origin</var>):
           <ol>
             <li>Let <var>policy</var> be that entry.</li>
             <li>If <var>policy</var> is not <a>expired</a>, return it.</li>
@@ -855,8 +873,8 @@
 
           <ol>
             <li>
-              If there is an entry in the <a>policy cache</a> for <var>parent
-                origin</var>:
+              If there is an entry in the <a>policy cache</a> for
+              (<var>key</var>, <var>parent origin</var>):
               <ol>
                 <li>Let <var>policy</var> be that entry.</li>
                 <li>
@@ -1021,7 +1039,7 @@
 
         <li>
           Let <var>policy</var> be the result of executing <a
-            href="#choose-a-policy-for-an-origin"></a> on <var>origin</var>.  If
+            href="#choose-a-policy-for-a-request"></a> on <var>request</var>. If
           <var>policy</var> is <code>no policy</code>, return null.
         </li>
 
@@ -1895,6 +1913,13 @@
       reports is similarly restricted to <a>potentially trustworthy origins</a>.
       This disallows a transient HTTP MITM from trivially abusing NEL as a
       persistent tracker.
+      </p>
+
+      <p>
+      Additionally, the NEL <a>policy cache</a> is partitioned using the
+      <a>network partition key</a>, so that a <a>NEL policy</a> stored for a
+      site in one embedding context will not be used in a different context
+      (for instance, when embedded by a different top-level site.)
       </p>
 
       <p>
