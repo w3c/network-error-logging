@@ -1137,6 +1137,22 @@
         </li>
 
         <li>
+          If <var>origin</var> is not equal to <var>policy</var>'s <a
+          data-lt="policy origin">origin</a>, <var>policy</var>'s
+          <a>subdomains</a> flag is <code>include</code>, and <var>report
+          body</var>'s <code>phase</code> property is not <code>dns</code>,
+          return null.
+
+          <p class="note">
+          This step ensures that <a data-lt="subdomains">subdomain</a> <a>NEL
+          policies</a> can only be used to generate reports about subdomains of
+          the <a>policy origin</a> during the <a>DNS resolution</a> phase of a
+          <a>request</a>. See <a href="#privacy-considerations"></a> for more
+          details.
+          </p>
+        </li>
+
+        <li>
           If <var>report body</var>'s <code>phase</code> property is not
           <code>dns</code>, and <var>report body</var>'s <code>server_ip</code>
           property is non-empty and not equal to <var>policy</var>'s <a>received
@@ -1175,14 +1191,6 @@
           <a>DNS resolution</a>.  See <a href="#privacy-considerations"></a> and
           <a href="#origins-with-multiple-ip-addresses"></a> for more details.
           </p>
-        </li>
-
-        <li>
-          If <var>origin</var> is not equal to <var>policy</var>'s <a
-          data-lt="policy origin">origin</a>, <var>policy</var>'s
-          <a>subdomains</a> flag is <code>include</code>, and <var>report
-          body</var>'s <code>phase</code> property is not <code>dns</code>,
-          return null.
         </li>
 
         <li>
