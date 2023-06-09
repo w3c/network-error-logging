@@ -144,7 +144,6 @@
             <li><dfn data-cite="!FETCH#concept-request-header-list">request header list</dfn></li>
             <li><dfn data-cite="!FETCH#concept-response" data-lt="responses">response</dfn></li>
             <li><dfn data-cite="!FETCH#concept-response-header-list">response header list</dfn></li>
-            <li><dfn data-cite="!FETCH#concept-response-trailer">response trailer</dfn></li>
           </ul>
         </dd>
         <dt>HSTS</dt>
@@ -985,11 +984,9 @@
           <ol>
             <li>
               If <var>response</var>'s <a data-lt="response header list">header
-                list</a> does not <a data-lt="header list contains">contain</a>
-              <var>header name</var>, AND <var>response</var>'s <a
-                data-lt="response trailer">trailer</a> does not <a
-                data-lt="header list contains">contain</a> <var>header
-                name</var>, skip to the next <var>header name</var> in the list.
+              list</a> does not <a data-lt="header list contains">contain</a>
+              <var>header name</var>, skip to the next <var>header name</var> in
+              the list.
             </li>
 
             <li>
@@ -1000,14 +997,6 @@
               For each <var>header</var> in <var>response</var>'s <a
                 data-lt="response header list">header list</a> whose <a
                 data-lt="header name">name</a> is <var>header name</var>, append
-              <var>header</var>'s <a data-lt="header value">value</a> to
-              <var>values</var>.
-            </li>
-
-            <li>
-              For each <var>header</var> in <var>response</var>'s <a
-                data-lt="response trailer">trailer</a> whose <a data-lt="header
-                name">name</a> is <var>header name</var>, append
               <var>header</var>'s <a data-lt="header value">value</a> to
               <var>values</var>.
             </li>
