@@ -472,6 +472,11 @@
       </p>
 
       <p>
+      A <a>NEL policy</a> is <dfn>stale</dfn> if its <a>creation</a> plus
+      172800 seconds (48 hours) represents a time in the past.
+      </p>
+
+      <p>
       A <a>NEL policy</a> is <dfn>expired</dfn> if its <a>creation</a> plus its
       <a>ttl</a> represents a time in the past.
       </p>
@@ -1206,6 +1211,11 @@
           <a>DNS resolution</a>.  See <a href="#privacy-considerations"></a> and
           <a href="#origins-with-multiple-ip-addresses"></a> for more details.
           </p>
+        </li>
+
+        <li>
+          If <var>policy</var> is <a>stale</a>, then delete <var>policy</var>
+          from the <a>policy cache</a>.
         </li>
 
         <li>
