@@ -1998,10 +1998,10 @@
       NEL report only contains information available from DNS itself.  This
       prevents <a>servers</a> from abusing NEL to collect more information about
       their users than they already have access to. Note that NEL reports will
-      include a web site's public IP address in the <a>server_ip</a> field,
-      which may not always be known to the service which generates the NEL
-      header, for example if it is behind a load balancer or other transparent
-      MitM proxy.
+      include a web site's public IP address in the <a>report body</a>'s
+      <code>server_ip</code> field, which may not always be known to the service
+      which generates the NEL header, for example if it is behind a load
+      balancer or other transparent MitM proxy.
       </p>
 
       <p class="note">
