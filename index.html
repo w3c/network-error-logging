@@ -324,19 +324,19 @@
       </ol>
 
       <p>
-      The only mandatory phase is the <a>transmission of request and
-        response</a>; the other phases might not be needed for every <a>network
-        request</a>.  For instance, DNS results can be cached locally in the
-      user agent, eliminating <a>DNS resolution</a> for future requests to the
-      same domain.  Similarly, HTTP <a>persistent connections</a> allow open
-      connections to be shared for multiple requests to the same <a>origin</a>.
-      However, if multiple <a>phases</a> occur, they will occur in the above
-      order.
+      The only mandatory <a>phase</a> is the <a>transmission of request and
+      response</a>; the other <a>phases</a> might not be needed for every
+      <a>network request</a>.  For instance, DNS results can be cached locally
+      in the user agent, eliminating <a>DNS resolution</a> for future requests
+      to the same domain.  Similarly, HTTP <a>persistent connections</a> allow
+      open connections to be shared for multiple requests to the same
+      <a>origin</a>.  However, if multiple <a>phases</a> occur, they will occur
+      in the above order.
       </p>
 
       <p class="ednote">
-      We would like to move the definition of these phases into [[FETCH]] so
-      that they are more reusable.
+      We would like to move the definition of these <a>phases</a> into [[FETCH]]
+      so that they are more reusable.
       </p>
 
       <p>
@@ -1141,9 +1141,9 @@
 
             <dt><code>phase</code></dt>
             <dd>
-            If <var>request</var> <a>failed</a>, the <a>phase</a> of its
-            <a>network error</a>.  If <var>request</var> <a>succeeded</a>,
-            <code>"application"</code>.
+            If <var>request</var> <a>failed</a>, the
+            <a data-lt="type-phase">phase</a> of its <a>network error</a>.  If
+            <var>request</var> <a>succeeded</a>, <code>"application"</code>.
             </dd>
 
             <dt><code>type</code></dt>
@@ -1165,9 +1165,9 @@
           <p class="note">
           This step ensures that <a data-lt="subdomains">subdomain</a> <a>NEL
           policies</a> can only be used to generate reports about subdomains of
-          the <a>policy origin</a> during the <a>DNS resolution</a> phase of a
-          <a>request</a>. See <a href="#privacy-considerations"></a> for more
-          details.
+          the <a>policy origin</a> during the <a>DNS resolution</a> <a>phase</a>
+          of a <a>request</a>. See <a href="#privacy-considerations"></a> for
+          more details.
           </p>
         </li>
 
@@ -1274,7 +1274,7 @@
 
       <p>
       All of the <a>network errors</a> in this section occur during <a>DNS
-        resolution</a>, and therefore have a <a data-lt="type phase">phase</a>
+        resolution</a>, and therefore have a <a data-lt="type-phase">phase</a>
         of <code>dns</code>.
       </p>
 
@@ -1298,8 +1298,8 @@
 
       <p>
       All of the <a>network errors</a> in this section occur during <a>secure
-        connection establishment</a>, and therefore have a <a data-lt="type
-        phase">phase</a> of <code>connection</code>.
+        connection establishment</a>, and therefore have a
+        <a data-lt="type-phase">phase</a> of <code>connection</code>.
       </p>
 
       <dl>
@@ -1367,7 +1367,7 @@
       <p>
       All of the <a>network errors</a> in this section occur during the
       <a>transmission of request and response</a>, and therefore have a <a
-        data-lt="type phase">phase</a> of <code>application</code>.
+        data-lt="type-phase">phase</a> of <code>application</code>.
       </p>
 
       <dl>
@@ -1980,12 +1980,12 @@
       <p>
       Similarly, <a data-lt="subdomains">subdomain</a> <a>NEL policies</a> are
       limited, and can only be used to generate reports about subdomains of the
-      <a>policy origin</a> during the <a>DNS resolution</a> phase of a
-      <a>request</a>.  During this phase, there is no <a>server</a> to verify
-      ownership of, and the fact that the policy was received from a superdomain
-      of the <a>request</a>'s <a>origin</a> is enough to establish ownership of
-      the error.  This allows the owners of a particular portion of the
-      <a>domain namespace tree</a> to use NEL to detect <a
+      <a>policy origin</a> during the <a>DNS resolution</a> <a>phase</a> of a
+      <a>request</a>.  During this <a>phase</a>, there is no <a>server</a> to
+      verify ownership of, and the fact that the policy was received from a
+      superdomain of the <a>request</a>'s <a>origin</a> is enough to establish
+      ownership of the error.  This allows the owners of a particular portion of
+      the <a>domain namespace tree</a> to use NEL to detect <a
         href="#dns-misconfiguration"></a> errors, while preventing them from
       using malicious DNS entries to collect information about servers they
       don't control.
