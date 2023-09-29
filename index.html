@@ -249,8 +249,10 @@
           <p>The following terms are defined in the URL specification: [[URL]]</p>
           <ul>
             <li><dfn data-cite="!URL#concept-url-fragment">fragment</dfn></li>
-            <li><dfn data-cite="!URL#concept-host">host</dfn></li>
+            <li><dfn data-cite="!URL#concept-url-path">path</dfn></li>
+            <li><dfn data-cite="!URL#concept-url-query">query</dfn></li>
             <li><dfn data-cite="!URL#concept-url">URL</dfn></li>
+            <li><dfn data-cite="!URL#concept-url-serializer">URL serializer</dfn></li>
           </ul>
         </dd>
       </dl>
@@ -1089,21 +1091,49 @@
           following properties: [[ECMA-262]]
 
           <dl>
-            <dt><code>referrer</code></dt>
-            <dd>
-            <var>request</var>'s referrer, as determined by the <a>referrer
-              policy</a> associated with its <a>client</a>.
-            </dd>
-
             <dt><code>sampling_fraction</code></dt>
             <dd><var>sampling rate</var></dd>
 
+            <dt><code>elapsed_time</code></dt>
+            <dd>
+            The elapsed number of milliseconds between the start of the resource
+            fetch and when it was completed or aborted by the user agent.
+            </dd>
+
+            <dt><code>phase</code></dt>
+            <dd>
+            If <var>request</var> <a>failed</a>, the
+            <a data-lt="type-phase">phase</a> of its <a>network error</a>.  If
+            <var>request</var> <a>succeeded</a>, <code>"application"</code>.
+            </dd>
+
+            <dt><code>type</code></dt>
+            <dd>
+            If <var>request</var> <a>failed</a>, the <a>type</a> of its
+            <a>network error</a>.  If <var>request</var> <a>succeeded</a>,
+            <code>"ok"</code>.
+            </dd>
+          </dl>
+        </li>
+
+        <li>
+          If <var>report body</var>'s <code>phase</code> property is not
+          <code>dns</code>, append the following properties to <var>report
+          body</var>:
+          <dl>
             <dt><code>server_ip</code></dt>
-            <dd>The IP address of the <a>server</a> to which the user agent sent the request, if available. Otherwise, an empty string.
-            <ul>
-              <li>A host identified by an IPv4 address is represented in dotted-decimal notation (a sequence of four decimal numbers in the range 0 to 255, separated by "."). [[RFC1123]]</li>
-              <li>A host identified by an IPv6 address is represented as an ordered list of eight 16-bit pieces (a sequence of `x:x:x:x:x:x:x:x`, where the 'x's are one to four hexadecimal digits of the eight 16-bit pieces of the address). [[RFC4291]] </li>
-            </ul>
+            <dd>The IP address of the <a>server</a> to which the user agent sent
+              the request, if available. Otherwise, an empty string.
+              <ul>
+                <li>A host identified by an IPv4 address is represented in
+                  dotted-decimal notation (a sequence of four decimal numbers in
+                  the range 0 to 255, separated by "."). [[RFC1123]]</li>
+                <li>A host identified by an IPv6 address is represented as an
+                  ordered list of eight 16-bit pieces (a sequence of
+                  `x:x:x:x:x:x:x:x`, where the 'x's are one to four hexadecimal
+                  digits of the eight 16-bit pieces of the address). [[RFC4291]]
+                </li>
+              </ul>
             </dd>
 
             <dt><code>protocol</code></dt>
@@ -1111,6 +1141,19 @@
             The <a>network protocol</a>  used to fetch the resource as
             identified by the ALPN Protocol ID, if available. Otherwise,
             <code>""</code>.
+            </dd>
+          </dl>
+        </li>
+
+        <li>
+          If <var>report body</var>'s <code>phase</code> property is not
+          <code>dns</code> or <code>connection</code>, append the following
+          properties to <var>report body</var>:
+          <dl>
+            <dt><code>referrer</code></dt>
+            <dd>
+            <var>request</var>'s referrer, as determined by the <a>referrer
+              policy</a> associated with its <a>client</a>.
             </dd>
 
             <dt><code>method</code></dt>
@@ -1132,26 +1175,6 @@
             <dd>
             The <a>status code</a> of the HTTP response, if available.
             Otherwise, <code>0</code>.
-            </dd>
-
-            <dt><code>elapsed_time</code></dt>
-            <dd>
-            The elapsed number of milliseconds between the start of the resource
-            fetch and when it was completed or aborted by the user agent.
-            </dd>
-
-            <dt><code>phase</code></dt>
-            <dd>
-            If <var>request</var> <a>failed</a>, the
-            <a data-lt="type-phase">phase</a> of its <a>network error</a>.  If
-            <var>request</var> <a>succeeded</a>, <code>"application"</code>.
-            </dd>
-
-            <dt><code>type</code></dt>
-            <dd>
-            If <var>request</var> <a>failed</a>, the <a>type</a> of its
-            <a>network error</a>.  If <var>request</var> <a>succeeded</a>,
-            <code>"ok"</code>.
             </dd>
           </dl>
         </li>
@@ -1237,6 +1260,22 @@
 
       <ol class="algorithm">
         <li>
+          <p>Let <var>url</var> be <var>request</var>'s URL.</p>
+        </li>
+        <li>
+          <p>Clear <var>url</var>'s <a>fragment</a>.</p>
+        </li>
+        <li>
+          <p>
+          If <var>report body</var>'s <code>phase</code> property is
+          <code>dns</code> or <code>connection</code>:</p>
+          <ol>
+            <li>
+              <p>Clear <var>url</var>'s <a>path</a> and <a>query</a>.</p>
+            </li>
+          </ol>
+        </li>
+        <li>
           <p><a>Generate a network report</a> given these parameters:</p>
 
           <dl>
@@ -1246,8 +1285,13 @@
             <dd><var>report body</var></dd>
             <dt>endpoint group</dt>
             <dd><var>policy</var>'s <a>reporting group</a></dd>
+            <dt>url</dt>
+            <dd>The result of running the <a>URL serializer</a> on
+              <var>url</var>.
+            </dd>
           </dl>
         </li>
+
       </ol>
     </section>
   </section>
