@@ -11,6 +11,7 @@
     github: "https://github.com/w3c/network-error-logging/",
     shortname: "network-error-logging",
     specStatus: "ED",
+    xref: ["network-reporting", "fetch", "hr-time", "html", "referrer-policy", "reporting", "resource-timing", "secure-contexts", "url"],  
     editors: [{
       name: "Douglas Creager",
       url: "https://dcreager.net/",
@@ -43,14 +44,6 @@
       company: "Microsoft",
       retiredDate: "2014-02-01",
     }],
-    localBiblio: {
-      "NETWORK-REPORTING": {
-        title: "Network Reporting API",
-        href: "https://w3c.github.io/reporting/network-reporting.html",
-        status: "ED",
-        publisher: "W3C",
-      },
-    },
   };
   </script>
   <style>
@@ -115,148 +108,6 @@
     <p>Requirements phrased in the imperative as part of algorithms (such as "strip any leading space characters" or "return false and abort these steps") are to be interpreted with the meaning of the key word ("must", "should", "may", etc) used in introducing the algorithm.</p>
     <p>Some conformance requirements are phrased as requirements on attributes, methods or objects. Such requirements are to be interpreted as requirements on the user agent.</p>
     <p>Conformance requirements phrased as algorithms or specific steps may be implemented in any manner, so long as the end result is equivalent. (In particular, the algorithms defined in this specification are intended to be easy to follow, and not intended to be performant.)</p>
-    <section>
-      <h2>Dependencies</h2>
-      <dl>
-        <dt>DNS</dt>
-        <dd>
-          <p>The following terms are defined in the DNS specification: [[RFC1034]]</p>
-          <ul>
-            <li><dfn data-cite="!RFC1034#section-3.1">domain name</dfn></li>
-            <li><dfn data-cite="!RFC1034#section-3.1">domain namespace tree</dfn></li>
-            <li><dfn data-cite="!RFC1034#section-5">resolver</dfn></li>
-          </ul>
-        </dd>
-        <dt>Fetch</dt>
-        <dd>
-          <p>The following terms are defined in the Fetch specification: [[FETCH]]</p>
-          <ul>
-            <li><dfn data-cite="!FETCH#concept-request-client">client</dfn></li>
-            <li><dfn data-cite="!FETCH#cors-preflight-request">CORS-preflight request</dfn></li>
-            <li><dfn data-cite="!FETCH#determine-the-network-partition-key">determine the network partition key</dfn></li>
-            <li><dfn data-cite="!FETCH#extract-header-list-values">extract header list values</dfn></li>
-            <li><dfn data-cite="!FETCH#header-list-contains">header list contains</dfn></li>
-            <li><dfn data-cite="!FETCH#concept-header-name" data-lt="header names">header name</dfn></li>
-            <li><dfn data-cite="!FETCH#concept-header-value">header value</dfn></li>
-            <li><dfn data-cite="!FETCH#http-network-fetch">HTTP-network fetch</dfn></li>
-            <li><dfn data-cite="!FETCH#http-network-or-cache-fetch">HTTP-network-or-cache fetch</dfn></li>
-            <li><dfn data-cite="!FETCH#network-partition-key">network partition key</dfn></li>
-            <li><dfn data-cite="!FETCH#redirect-status" data-lt="redirects">redirect status</dfn></li>
-            <li><dfn data-cite="!FETCH#concept-request-header-list">request header list</dfn></li>
-            <li><dfn data-cite="!FETCH#concept-response" data-lt="responses">response</dfn></li>
-            <li><dfn data-cite="!FETCH#concept-response-header-list">response header list</dfn></li>
-          </ul>
-        </dd>
-        <dt>High Resolution Time</dt>
-        <dd>
-          <p>The following terms are defined in the High Resolution Time specification: [[HR-TIME]]</p>
-          <ul>
-            <li><dfn data-cite="!HR-TIME#dfn-current-wall-time">current wall time</dfn></li>
-            <li><dfn data-cite="!HR-TIME#dfn-duration-from">duration from</dfn></li>
-          </ul>
-        </dd>
-        <dt>HSTS</dt>
-        <dd>
-          <p>The following terms are defined in the HSTS specification: [[RFC6797]]</p>
-          <ul>
-            <li><dfn data-cite="!RFC6797#section-8.2">superdomain match</dfn></li>
-          </ul>
-        </dd>
-        <dt>HTML</dt>
-        <dd>
-          <p>The following terms are defined in the HTML specification: [[HTML]]</p>
-          <ul>
-            <li><dfn data-cite="!HTML#navigate" data-lt="navigation">navigate</dfn></li>
-            <li><dfn data-cite="!HTML#navigator.online"><code>navigator.onLine</code></dfn></li>
-            <li>resource <dfn data-cite="!HTML#origin" data-lt="origins">origin</dfn></li>
-          </ul>
-        </dd>
-        <dt>HTTP</dt>
-        <dd>
-          <p>The following terms are defined in the HTTP specification: [[RFC7230]], [[RFC7231]], [[RFC7232]], [[RFC7234]]</p>
-          <ul>
-            <li><dfn data-cite="!RFC7231#section-6.3.1" data-lt="200 response">200 status code</dfn></li>
-            <li><dfn data-cite="!RFC7231#section-6.5" data-lt="4xx">4xx status code</dfn></li>
-            <li><dfn data-cite="!RFC7231#section-6.6" data-lt="5xx">5xx status code</dfn></li>
-            <li><dfn data-cite="RFC7232#section-2.3"><code>ETag</code></dfn></li>
-            <li><dfn data-cite="RFC7232#section-3.2"><code>If-None-Match</code></dfn></li>
-            <li><dfn data-cite="!RFC7230#section-6.3">persistent connections</dfn></li>
-            <li><dfn data-cite="!RFC7230#section-2.1" data-lt="requests">request</dfn></li>
-            <li><dfn data-cite="!RFC7231#section-4">request method</dfn></li>
-            <li><dfn data-cite="!RFC7231#section-3">resource representation</dfn></li>
-            <li><dfn data-cite="!RFC7231#section-7" data-lt="response header">response headers</dfn></li>
-            <li><dfn data-cite="!RFC7230#section-2.1" data-lt="servers">server</dfn></li>
-            <li><dfn data-cite="!RFC7231#section-6">status code</dfn></li>
-          </ul>
-        </dd>
-        <dt>HTTP JSON field values</dt>
-        <dd>
-          <p>The following terms are defined in the HTTP-JFV specification: [[HTTP-JFV]]</p>
-          <ul>
-            <li><dfn data-cite="!HTTP-JFV#json-field-value">json-field-value</dfn></li>
-          </ul>
-        </dd>
-        <dt>JSON</dt>
-        <dd>
-          <p>The following terms are defined in the JSON specification: [[RFC7159]]</p>
-          <ul>
-            <li><dfn data-cite="!RFC7159#section-4">JSON object</dfn></li>
-          </ul>
-        </dd>
-        <dt>Network Reporting API</dt>
-        <dd>
-          <p>The following terms are defined in the Network Reporting API specification: [[NETWORK-REPORTING]]</p>
-          <ul>
-            <li><dfn data-cite="!NETWORK-REPORTING#endpoint-group">endpoint group</dfn></li>
-            <li><dfn data-cite="!NETWORK-REPORTING#generate-a-network-report">Generate a network report</dfn></li>
-          </ul>
-        </dd>
-        <dt>Referrer Policy</dt>
-        <dd>
-          <p>The following terms are defined in the Referrer Policy specification: [[REFERRER-POLICY]]</p>
-          <ul>
-            <li><dfn data-cite="!REFERRER-POLICY#referrer-policy">referrer policy</dfn></li>
-          </ul>
-        </dd>
-        <dt>Reporting API</dt>
-        <dd>
-          <p>The following terms are defined in the Reporting API specification: [[REPORTING]]</p>
-          <ul>
-            <li><dfn data-cite="!REPORTING#report" data-lt="reports">report</dfn></li>
-            <li><dfn data-cite="!REPORTING#report-body">report body</dfn></li>
-            <li><dfn data-cite="!REPORTING#report-type">report type</dfn></li>
-            <li><dfn data-cite="!REPORTING#visible-to-reportingobservers">visible to <code>ReportingObserver</code>s</dfn></li>
-          </ul>
-        </dd>
-        <dt>Resource Timing</dt>
-        <dd>
-          <p>The following terms are defined in the Resource Timing specification: [[RESOURCE-TIMING-2]]</p>
-          <ul>
-            <li><dfn data-cite="!RESOURCE-TIMING-2#dom-performanceresourcetiming-nexthopprotocol">network protocol</dfn></li>
-          </ul>
-        </dd>
-        <dt>Secure Contexts</dt>
-        <dd>
-          <p>The following terms are defined in the Secure Contexts specification: [[SECURE-CONTEXTS]]</p>
-          <ul>
-            <li>the <dfn data-cite="!SECURE-CONTEXTS#is-origin-trustworthy">"Is
-                origin potentially trustworthy?"</dfn> algorithm</li>
-            <li><dfn data-cite="!SECURE-CONTEXTS#potentially-trustworthy-origin" data-lt="potentially trustworthy origins">potentially trustworthy origin</dfn></li>
-          </ul>
-        </dd>
-        <dt>URL</dt>
-        <dd>
-          <p>The following terms are defined in the URL specification: [[URL]]</p>
-          <ul>
-            <li><dfn data-cite="!URL#concept-url-fragment">fragment</dfn></li>
-            <li><dfn data-cite="!URL#concept-url-path">path</dfn></li>
-            <li><dfn data-cite="!URL#concept-url-query">query</dfn></li>
-            <li><dfn data-cite="!URL#concept-url">URL</dfn></li>
-            <li><dfn data-cite="!URL#concept-url-serializer">URL serializer</dfn></li>
-          </ul>
-        </dd>
-      </dl>
-    </section>
   </section>
 
   <section>
@@ -267,7 +118,7 @@
 
       <p>
       A <dfn data-lt="network requests">network request</dfn> occurs when the
-      user agent must use the network to service a single <a>request</a>.
+      user agent must use the network to service a single <dfn data-cite="RFC7230#section-2.1">request</dfn>.
       </p>
 
       <p>
@@ -277,14 +128,14 @@
       </p>
 
       <p>
-      If the user agent follows <a>redirects</a> as part of a <a>navigation</a>,
+      If the user agent follows [=redirect status|redirects=] as part of a [=navigate|navigation=],
       there MUST be separate <a>network requests</a> for each <a>request</a> in
       the redirect chain.
       </p>
 
       <p>
       A <a>request</a> MUST NOT result in a <a>network request</a> if the user
-      agent is known to be offline (i.e., when <a>navigator.onLine</a> returns
+      agent is known to be offline (i.e., when <code>navigator.</code>{{NavigatorOnLine/onLine}} returns
       <code>false</code>).
       </p>
 
@@ -297,7 +148,7 @@
       <p class="note">
       For user agents that service <a>requests</a> according to the [[FETCH]]
       standard, a <a>network request</a> corresponds to one execution of the
-      <a>HTTP-network fetch</a> algorithm.
+      <a data-cite="FETCH#http-network-fetch">HTTP-network fetch</a> algorithm.
       </p>
 
       <p>
@@ -310,7 +161,7 @@
         <li>
           <dfn>DNS resolution</dfn>: The user agent uses the Domain Name System
           [[RFC1034]] to resolve a domain name into an IP address of a
-          <a>server</a> can that service HTTP requests to that domain.
+          <dfn data-cite="RFC7230#section-2.1">server</dfn> can that service HTTP requests to that domain.
         </li>
 
         <li>
@@ -331,7 +182,7 @@
       response</a>; the other <a>phases</a> might not be needed for every
       <a>network request</a>.  For instance, DNS results can be cached locally
       in the user agent, eliminating <a>DNS resolution</a> for future requests
-      to the same domain.  Similarly, HTTP <a>persistent connections</a> allow
+      to the same domain.  Similarly, HTTP <a data-cite="RFC7230#section-6.3">persistent connections</a> allow
       open connections to be shared for multiple requests to the same
       <a>origin</a>.  However, if multiple <a>phases</a> occur, they will occur
       in the above order.
@@ -346,7 +197,7 @@
       A <a>network request</a> is <dfn
         data-lt="succeed|succeeded">successful</dfn> if the user agent is able
       to receive a valid HTTP response from the server, and that response does
-      not have a <a>4xx</a> or <a>5xx</a> status code.
+      not have a <dfn data-cite="RFC7231#section-6.5">4xx</dfn> or <dfn data-cite="!RFC7231#section-6.6">5xx</dfn> status code.
       </p>
 
       <p>
@@ -438,7 +289,7 @@
       A <dfn data-lt="NEL policies|NEL policy" data-export id="dfn-nel-policies">NEL policy</dfn> instructs a
       user agent whether to collect reports about <a>network requests</a> to an
       <a>origin</a>, and if so, where to send them.  <a>NEL policies</a> are
-      delivered to the user agent via HTTP <a>response headers</a>.
+      delivered to the user agent via HTTP <dfn data-cite="RFC7231#section-7">response headers</dfn>.
       </p>
 
       <p>
@@ -565,7 +416,7 @@
 
       <p>
       The header's value is interpreted as an array of JSON objects, as defined
-      by <a>json-field-value</a>. Each object in the array defines an <a>NEL
+      by <a data-cite="HTTP-JFV#json-field-value">json-field-value</a>. Each object in the array defines an <a>NEL
         policy</a> for the origin. The user agent MUST process the first valid
       policy in the array and ignore any additional policies in the array.
       </p>
@@ -717,8 +568,8 @@
 
           <ul>
             <li>
-              The result of executing the <a>"Is origin potentially
-                trustworthy?"</a> algorithm on <var>request</var>'s
+              The result of executing the "<a>Is origin potentially
+                trustworthy?</a>" algorithm on <var>request</var>'s
               <a>origin</a> is <strong>not</strong> <code>Potentially
                 Trustworthy</code>.
             </li>
@@ -900,7 +751,7 @@
         </li>
 
         <li>
-          For each <var>parent origin</var> that is a <a>superdomain match</a>
+          For each <var>parent origin</var> that is a <a data-cite="!RFC6797#section-8.2">superdomain match</a>
           of <var>origin</var>:
 
           <ol>
@@ -947,8 +798,8 @@
 
           <ol>
             <li>
-              If <var>request</var>'s <a data-lt="request header list">header
-                list</a> does not <a data-lt="header list contains">contain</a>
+              If <var>request</var>'s [=request/header
+                list=] does not [=header list/contain=]
               <var>header name</var>, skip to the next <var>header name</var> in
               the list.
             </li>
@@ -958,8 +809,8 @@
             </li>
 
             <li>
-              For each <var>header</var> in <var>request</var>'s <a
-                data-lt="request header list">header list</a> whose <a
+              For each <var>header</var> in <var>request</var>'s 
+              [=request/header list=] whose <a
                 data-lt="header name">name</a> is <var>header name</var>, append
               <var>header</var>'s <a data-lt="header value">value</a> to
               <var>values</var>.
@@ -1001,8 +852,8 @@
 
           <ol>
             <li>
-              If <var>response</var>'s <a data-lt="response header list">header
-              list</a> does not <a data-lt="header list contains">contain</a>
+              If <var>response</var>'s [=response/header list=]
+              does not [=header list/contain=]
               <var>header name</var>, skip to the next <var>header name</var> in
               the list.
             </li>
@@ -1012,8 +863,8 @@
             </li>
 
             <li>
-              For each <var>header</var> in <var>response</var>'s <a
-                data-lt="response header list">header list</a> whose <a
+              For each <var>header</var> in <var>response</var>'s 
+              [=response/header list=] whose <a
                 data-lt="header name">name</a> is <var>header name</var>, append
               <var>header</var>'s <a data-lt="header value">value</a> to
               <var>values</var>.
@@ -1049,8 +900,8 @@
       <ol class="algorithm">
 
         <li>
-          If the result of executing the <a>"Is origin potentially
-            trustworthy?"</a> algorithm on <var>request</var>'s <a>origin</a> is
+          If the result of executing the "<a>Is origin potentially
+            trustworthy?</a>" algorithm on <var>request</var>'s <a>origin</a> is
           <strong>not</strong> <code>Potentially Trustworthy</code>, return
           null.
         </li>
@@ -1138,7 +989,7 @@
 
             <dt><code>protocol</code></dt>
             <dd>
-            The <a>network protocol</a>  used to fetch the resource as
+            The <a data-cite="RESOURCE-TIMING-2#dom-performanceresourcetiming-nexthopprotocol">network protocol</a>  used to fetch the resource as
             identified by the ALPN Protocol ID, if available. Otherwise,
             <code>""</code>.
             </dd>
@@ -1153,11 +1004,11 @@
             <dt><code>referrer</code></dt>
             <dd>
             <var>request</var>'s referrer, as determined by the <a>referrer
-              policy</a> associated with its <a>client</a>.
+              policy</a> associated with its [=request/client=].
             </dd>
 
             <dt><code>method</code></dt>
-            <dd><var>request</var>'s <a>request method</a>.</dd>
+            <dd><var>request</var>'s <a data-cite="RFC7231#section-4">request method</a>.</dd>
 
             <dt><code>request_headers</code></dt>
             <dd>
@@ -1173,7 +1024,7 @@
 
             <dt><code>status_code</code></dt>
             <dd>
-            The <a>status code</a> of the HTTP response, if available.
+            The <a data-cite="RFC7231#section-6">status code</a> of the HTTP response, if available.
             Otherwise, <code>0</code>.
             </dd>
           </dl>
@@ -1228,7 +1079,7 @@
           to the owner of the service that the report describes.  If the IP
           addresses don't match, then the user agent can only verify that the
           <a>NEL policy</a> was sent by the owner of the <a>origin</a>'s
-          <a>domain name</a>; it cannot verify that the policy was sent by the
+          <dfn  data-cite="RFC1034#section-3.1">domain name</dfn>; it cannot verify that the policy was sent by the
           owner of the <a>server</a> this <a>domain name</a> resolves to.  We
           therefore downgrade the report to only contain information about
           <a>DNS resolution</a>.  See <a href="#privacy-considerations"></a> and
@@ -1263,7 +1114,7 @@
           <p>Let <var>url</var> be <var>request</var>'s URL.</p>
         </li>
         <li>
-          <p>Clear <var>url</var>'s <a>fragment</a>.</p>
+          <p>Clear <var>url</var>'s [=url/fragment=].</p>
         </li>
         <li>
           <p>
@@ -1271,7 +1122,7 @@
           <code>dns</code> or <code>connection</code>:</p>
           <ol>
             <li>
-              <p>Clear <var>url</var>'s <a>path</a> and <a>query</a>.</p>
+              <p>Clear <var>url</var>'s [=url/path=] and [=url/query=].</p>
             </li>
           </ol>
         </li>
@@ -1495,7 +1346,7 @@
         <a>origin</a> with a registered <a>NEL policy</a>.  We show the full
         report payload that would be created by the [[REPORTING]] API when
         uploading the report; the payload's <code>body</code> field contains the
-        <a>network error</a> <a>report body</a>.
+        <a>network error</a> [=report/body|report body=].
         </p>
 
         <pre class="example">
@@ -1523,7 +1374,7 @@
         This report indicates that the user agent attempted to navigate from
         <code>example.com</code> to <code>www.example.com</code>, which
         successfully resolved to <code>2001:DB8::42</code>.  However, while
-        the user agent received a <a>200 response</a> from the server via the
+        the user agent received a <a data-cite="!RFC7231#section-6.3.1">200 response</a> from the server via the
         HTTP/2 (<code>h2</code>) protocol, it encountered a protocol error in
         the exchange and was forced to abandon the navigation.  The user agent
         aborted the navigation 823 milliseconds after it started.  Finally, the
@@ -1631,9 +1482,9 @@
 
         <p>
         In this example, the owner of <code>example.com</code> uses
-        <a><code>ETag</code></a> response headers to identify different versions
+        <dfn data-cite="RFC7232#section-2.3"><code>ETag</code></dfn> response headers to identify different versions
         of the resources hosted on the server.  User agents can then use
-        <a><code>If-None-Match</code></a> request headers to inform the server
+        <dfn data-cite="RFC7232#section-3.2"><code>If-None-Match</code></dfn> request headers to inform the server
         which version of a resource is presently cached client-side, allowing
         the server to avoid generating and sending the content of the resource
         if the client's existing copy is up to date.
@@ -2000,7 +1851,7 @@
       should only be sent to the owner of the service being requested.  For
       errors that occur during <a>DNS resolution</a>, NEL reports are only
       generated when the <a>NEL policy</a> was received from the owner of the
-      <a>domain namespace tree</a> that contains the <a>policy origin</a>.  For
+      <dfn data-cite="RFC1034#section-3.1">domain namespace tree</dfn> that contains the <a>policy origin</a>.  For
       errors that occur during <a>secure connection establishment</a> or
       <a>transmission of request and response</a>, NEL reports are only
       generated when the <a>NEL policy</a> was received from the owner of the
@@ -2047,7 +1898,7 @@
 
       <p class="note">
       As an example, NEL reports specifically do not contain any information
-      about which DNS <a>resolver</a> was used to resolve a <a>request</a>'s
+      about which DNS <a data-cite="RFC1034#section-5">resolver</a> was used to resolve a <a>request</a>'s
       <a>domain name</a> into an IP address.
       </p>
 
@@ -2081,6 +1932,7 @@
         </dl>
       </section>
     </section>
+  <section id="index"></section>
   <section class="appendix">
     <h2>Acknowledgments</h2>
     <p>This document reuses text from the [[CSP]] and [[RFC6797]] specification, as permitted by the licenses of those specifications. Additionally, sincere thanks to Julia Tuttle, Chris Bentzel, Todd Reifsteck, Aaron Heady, and Mark Nottingham for their helpful comments and contributions to this work.</p>
