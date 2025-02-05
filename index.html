@@ -338,14 +338,14 @@
 
       <p>
       A <a>NEL policy</a> is <dfn>stale</dfn> if the <a>duration from</a> its
-      <a>creation</a> to the <a>current wall time</a> is greater than 172800
-      seconds (48 hours).
+      <a>creation</a> to the [=wall clock=]'s [=wall clock/unsafe current time=]
+      is greater than 172800 seconds (48 hours).
       </p>
 
       <p>
       A <a>NEL policy</a> is <dfn>expired</dfn> if the <a>duration from</a> its
-      <a>creation</a> to the <a>current wall time</a> is greater than its
-      <a>ttl</a> (in seconds).
+      <a>creation</a> to the [=wall clock=]'s [=wall clock/unsafe current time=]
+      is greater than its <a>ttl</a> (in seconds).
       </p>
     </section>
 
@@ -695,7 +695,7 @@
             <dd>the value of <var>item</var>'s <a>max_age</a> member</dd>
 
             <dt><a>creation</a></dt>
-            <dd>the <a>current wall time</a></dd>
+            <dd>the [=wall clock=]'s [=wall clock/unsafe current time=]</dd>
 
             <dt><a>successful sampling rate</a></dt>
             <dd>
@@ -1902,7 +1902,7 @@
       NEL report only contains information available from DNS itself.  This
       prevents <a>servers</a> from abusing NEL to collect more information about
       their users than they already have access to. Note that NEL reports will
-      include a web site's public IP address in the <a>report body</a>'s
+      include a web site's public IP address in the [=report/body|report body=]'s
       <code>server_ip</code> field, which may not always be known to the service
       which generates the NEL header, for example if it is behind a load
       balancer or other transparent MitM proxy.
