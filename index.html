@@ -290,8 +290,8 @@
 
       <p>
       Each <a>NEL policy</a> has a <dfn>received IP address</dfn>, which is the
-      IP address of the <a>server</a> that the user agent received this <a>NEL
-        policy</a> from.
+      [=IP address=] of the <a>server</a> that the user agent received this
+      <a>NEL policy</a> from.
       </p>
 
       <p>
@@ -583,7 +583,8 @@
 
         <li>
           Let <var>key</var> be the result of calling <a>determine the network
-          partition key</a>, given <var>request</var>.
+          partition key</a>, given <var>request</var>'s
+          [=request/reserved client=].
         </li>
 
         <li>
@@ -652,7 +653,7 @@
           <dl>
             <dt><a>received IP address</a></dt>
             <dd>
-            the IP address of the <a>server</a> that the user agent received
+            the [=IP address=] of the <a>server</a> that the user agent received
             <var>response</var> from
 
             <p class="ednote">
@@ -734,7 +735,8 @@
 
         <li>
           Let <var>key</var> be the result of calling <a>determine the network
-          partition key</a>, given <var>request</var>.
+          partition key</a>, given <var>request</var>'s'
+          [=request/reserved client=].
         </li>
 
         <li>
@@ -806,10 +808,9 @@
 
             <li>
               For each <var>header</var> in <var>request</var>'s
-              [=request/header list=] whose <a
-                data-lt="header name">name</a> is <var>header name</var>, append
-              <var>header</var>'s <a data-lt="header value">value</a> to
-              <var>values</var>.
+              [=request/header list=] whose <a data-lt="header name">name</a>
+              is <var>header name</var>, append <var>header</var>'s
+              <a data-lt="header value">value</a> to <var>values</var>.
             </li>
 
             <li>
