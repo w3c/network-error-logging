@@ -12,7 +12,7 @@
     github: "https://github.com/w3c/network-error-logging/",
     shortname: "network-error-logging",
     specStatus: "ED",
-    xref: ["network-reporting", "fetch", "hr-time", "html", "referrer-policy", "reporting", "resource-timing", "secure-contexts", "url"],  
+    xref: ["network-reporting", "fetch", "hr-time", "html", "referrer-policy", "reporting", "resource-timing", "secure-contexts", "url"],
     editors: [{
       name: "Douglas Creager",
       url: "https://dcreager.net/",
@@ -117,7 +117,8 @@
 
       <p>
       A <dfn data-lt="network requests">network request</dfn> occurs when the
-      user agent must use the network to service a single <dfn data-cite="RFC7230#section-2.1">request</dfn>.
+      user agent must use the network to service a single
+      <dfn data-cite="RFC9110#core.semantics">request</dfn>.
       </p>
 
       <p>
@@ -160,7 +161,8 @@
         <li>
           <dfn>DNS resolution</dfn>: The user agent uses the Domain Name System
           [[RFC1034]] to resolve a domain name into an IP address of a
-          <dfn data-cite="RFC7230#section-2.1">server</dfn> can that service HTTP requests to that domain.
+          <dfn data-cite="RFC9110#core.semantics">server</dfn> can that service
+          HTTP requests to that domain.
         </li>
 
         <li>
@@ -179,11 +181,12 @@
       <p>
       The only mandatory <a>phase</a> is the <a>transmission of request and
       response</a>; the other <a>phases</a> might not be needed for every
-      <a>network request</a>.  For instance, DNS results can be cached locally
+      <a>network request</a>. For instance, DNS results can be cached locally
       in the user agent, eliminating <a>DNS resolution</a> for future requests
-      to the same domain.  Similarly, HTTP <a data-cite="RFC7230#section-6.3">persistent connections</a> allow
-      open connections to be shared for multiple requests to the same
-      <a>origin</a>.  However, if multiple <a>phases</a> occur, they will occur
+      to the same domain. Similarly, HTTP
+      <a data-cite="RFC9112#persistent.connections">persistent connections</a>
+      allow open connections to be shared for multiple requests to the same
+      <a>origin</a>. However, if multiple <a>phases</a> occur, they will occur
       in the above order.
       </p>
 
@@ -196,7 +199,8 @@
       A <a>network request</a> is <dfn
         data-lt="succeed|succeeded">successful</dfn> if the user agent is able
       to receive a valid HTTP response from the server, and that response does
-      not have a <dfn data-cite="RFC7231#section-6.5">4xx</dfn> or <dfn data-cite="!RFC7231#section-6.6">5xx</dfn> status code.
+      not have a <dfn data-cite="RFC9110#status.4xx">4xx</dfn> or
+      <dfn data-cite="RFC9110#status.5xx">5xx</dfn> status code.
       </p>
 
       <p>
@@ -285,10 +289,11 @@
       <h2>NEL policies</h2>
 
       <p>
-      A <dfn data-lt="NEL policies|NEL policy" data-export id="dfn-nel-policies">NEL policy</dfn> instructs a
-      user agent whether to collect reports about <a>network requests</a> to an
-      <a>origin</a>, and if so, where to send them.  <a>NEL policies</a> are
-      delivered to the user agent via HTTP <dfn data-cite="RFC7231#section-7">response headers</dfn>.
+      A <dfn data-lt="NEL policies|NEL policy" data-export id="dfn-nel-policies">NEL policy</dfn>
+      instructs a user agent whether to collect reports about
+      <a>network requests</a> to an <a>origin</a>, and if so, where to send them.
+      <a>NEL policies</a> are delivered to the user agent via HTTP
+      <dfn data-cite="RFC9110#fields">response headers</dfn>.
       </p>
 
       <p>
@@ -333,14 +338,14 @@
 
       <p>
       A <a>NEL policy</a> is <dfn>stale</dfn> if the <a>duration from</a> its
-      <a>creation</a> to the <a>current wall time</a> is greater than 172800
-      seconds (48 hours).
+      <a>creation</a> to the [=wall clock=]'s [=wall clock/unsafe current time=]
+      is greater than 172800 seconds (48 hours).
       </p>
 
       <p>
       A <a>NEL policy</a> is <dfn>expired</dfn> if the <a>duration from</a> its
-      <a>creation</a> to the <a>current wall time</a> is greater than its
-      <a>ttl</a> (in seconds).
+      <a>creation</a> to the [=wall clock=]'s [=wall clock/unsafe current time=]
+      is greater than its <a>ttl</a> (in seconds).
       </p>
     </section>
 
@@ -479,10 +484,10 @@
         <p>
         The OPTIONAL <dfn><code>include_subdomains</code></dfn> member is a
         boolean that enables this <a>NEL policy</a> for all subdomains of this
-        origin (to an unlimited subdomain depth).  If no member named 
-        <code>include_subdomains</code> is present in the object, or its value 
-        is not <code>true</code>, the <a>NEL policy</a> will not be enabled 
-        for subdomains.  
+        origin (to an unlimited subdomain depth).  If no member named
+        <code>include_subdomains</code> is present in the object, or its value
+        is not <code>true</code>, the <a>NEL policy</a> will not be enabled
+        for subdomains.
         </p>
 
         <p class="note">
@@ -690,7 +695,7 @@
             <dd>the value of <var>item</var>'s <a>max_age</a> member</dd>
 
             <dt><a>creation</a></dt>
-            <dd>the <a>current wall time</a></dd>
+            <dd>the [=wall clock=]'s [=wall clock/unsafe current time=]</dd>
 
             <dt><a>successful sampling rate</a></dt>
             <dd>
@@ -708,7 +713,7 @@
 
         <li>
           If there is already an entry in the <a>policy cache</a> for
-          (<var>key</var>, <var>origin</var>), replace it with 
+          (<var>key</var>, <var>origin</var>), replace it with
           <var>policy</var>; otherwise, insert <var>policy</var> into the
           <a>policy cache</a> for (<var>key</var>, <var>origin</var>).
         </li>
@@ -808,7 +813,7 @@
             </li>
 
             <li>
-              For each <var>header</var> in <var>request</var>'s 
+              For each <var>header</var> in <var>request</var>'s
               [=request/header list=] whose <a
                 data-lt="header name">name</a> is <var>header name</var>, append
               <var>header</var>'s <a data-lt="header value">value</a> to
@@ -862,7 +867,7 @@
             </li>
 
             <li>
-              For each <var>header</var> in <var>response</var>'s 
+              For each <var>header</var> in <var>response</var>'s
               [=response/header list=] whose <a
                 data-lt="header name">name</a> is <var>header name</var>, append
               <var>header</var>'s <a data-lt="header value">value</a> to
@@ -1007,7 +1012,9 @@
             </dd>
 
             <dt><code>method</code></dt>
-            <dd><var>request</var>'s <a data-cite="RFC7231#section-4">request method</a>.</dd>
+            <dd><var>request</var>'s
+              <a data-cite="RFC9110#method">request method</a>.
+            </dd>
 
             <dt><code>request_headers</code></dt>
             <dd>
@@ -1023,8 +1030,8 @@
 
             <dt><code>status_code</code></dt>
             <dd>
-            The <a data-cite="RFC7231#section-6">status code</a> of the HTTP response, if available.
-            Otherwise, <code>0</code>.
+            The <a data-cite="RFC9110#status.code">status code</a> of the HTTP
+            response, if available. Otherwise, <code>0</code>.
             </dd>
           </dl>
         </li>
@@ -1373,12 +1380,12 @@
         This report indicates that the user agent attempted to navigate from
         <code>example.com</code> to <code>www.example.com</code>, which
         successfully resolved to <code>2001:DB8::42</code>.  However, while
-        the user agent received a <a data-cite="!RFC7231#section-6.3.1">200 response</a> from the server via the
-        HTTP/2 (<code>h2</code>) protocol, it encountered a protocol error in
-        the exchange and was forced to abandon the navigation.  The user agent
-        aborted the navigation 823 milliseconds after it started.  Finally, the
-        user agent sent this report immediately after the network error was
-        encountered – i.e. the report age is 0.
+        the user agent received a <a data-cite="!RFC9110#status.200">200 response</a>
+        from the server via the HTTP/2 (<code>h2</code>) protocol, it
+        encountered a protocol error in the exchange and was forced to abandon
+        the navigation.  The user agent aborted the navigation 823 milliseconds
+        after it started.  Finally, the user agent sent this report immediately
+        after the network error was encountered – i.e. the report age is 0.
         </p>
 
         <pre class="example">
@@ -1481,12 +1488,14 @@
 
         <p>
         In this example, the owner of <code>example.com</code> uses
-        <dfn data-cite="RFC7232#section-2.3"><code>ETag</code></dfn> response headers to identify different versions
-        of the resources hosted on the server.  User agents can then use
-        <dfn data-cite="RFC7232#section-3.2"><code>If-None-Match</code></dfn> request headers to inform the server
-        which version of a resource is presently cached client-side, allowing
-        the server to avoid generating and sending the content of the resource
-        if the client's existing copy is up to date.
+        <dfn data-cite="RFC9110#field.etag"><code>ETag</code></dfn> response
+        headers to identify different versions of the resources hosted on the
+        server. User agents can then use
+        <dfn data-cite="RFC9110#field.if-none-match"><code>If-None-Match</code></dfn>
+        request headers to inform the server which version of a resource is
+        presently cached client-side, allowing the server to avoid generating
+        and sending the content of the resource if the client's existing copy is
+        up to date.
         </p>
 
         <p>
@@ -1893,7 +1902,7 @@
       NEL report only contains information available from DNS itself.  This
       prevents <a>servers</a> from abusing NEL to collect more information about
       their users than they already have access to. Note that NEL reports will
-      include a web site's public IP address in the <a>report body</a>'s
+      include a web site's public IP address in the [=report/body|report body=]'s
       <code>server_ip</code> field, which may not always be known to the service
       which generates the NEL header, for example if it is behind a load
       balancer or other transparent MitM proxy.
