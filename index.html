@@ -117,19 +117,8 @@
 
       <p>
       A <dfn data-lt="network requests">network request</dfn> occurs when the
-      [=user agent=] attempts to [=fetch=] a resource over the network for a
-      given [=request=].
-      </p>
-
-      <p>
-      If the user agent can service a [=request=] out of a local cache, that
-      [=request=] MUST NOT result in a <a>network request</a>.
-      </p>
-
-      <p>
-      If the user agent follows [=redirect status|redirects=] as part of a
-      [=navigate|navigation=], there MUST be separate <a>network requests</a>
-      for each <a>request</a> in the redirect chain.
+      [=user agent=] attempts to [=HTTP-network fetch=] a resource over the
+      network for a given [=request=].
       </p>
 
       <p>
