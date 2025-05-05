@@ -133,6 +133,12 @@
       [=CORS-preflight request=] MUST result in its own <a>network request</a>.
       </p>
 
+      <p class="note">
+      For user agents that service <a>requests</a> according to the [[FETCH]]
+      standard, a <a>network request</a> corresponds to one execution of the
+      <a data-cite="FETCH#http-network-fetch">HTTP-network fetch</a> algorithm.
+      </p>
+
       <p>
       Regardless of which fetch algorithm and which underlying application and
       transport protocols are used, servicing a <a>network request</a> consists
