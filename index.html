@@ -12,7 +12,7 @@
     github: "https://github.com/w3c/network-error-logging/",
     shortname: "network-error-logging",
     specStatus: "ED",
-    xref: ["network-reporting", "fetch", "hr-time", "html", "referrer-policy", "reporting", "resource-timing", "secure-contexts", "url"],
+    xref: ["network-reporting", "fetch", "hr-time", "html", "infra", "mixed-content", "referrer-policy", "reporting", "resource-timing", "secure-contexts", "url"],
     editors: [{
       name: "Douglas Creager",
       url: "https://dcreager.net/",
@@ -117,32 +117,20 @@
 
       <p>
       A <dfn data-lt="network requests">network request</dfn> occurs when the
-      user agent must use the network to service a single
-      <dfn data-cite="RFC9110#core.semantics">request</dfn>.
+      [=user agent=] attempts to <a data-cite="fetch#http-network-fetch">HTTP-network fetch</a>
+      a resource over the network for a given [=request=].
       </p>
 
       <p>
-      If the user agent can service a <a>request</a> out of a local
-        cache, that <a>request</a> MUST NOT result in a <a>network
-        request</a>.
+      A [=request=] MUST NOT result in a <a>network request</a> if the user
+      agent is known to be offline (i.e., when <code>navigator.</code>
+      {{NavigatorOnLine/onLine}} returns <code>false</code>).
       </p>
 
       <p>
-      If the user agent follows [=redirect status|redirects=] as part of a [=navigate|navigation=],
-      there MUST be separate <a>network requests</a> for each <a>request</a> in
-      the redirect chain.
-      </p>
-
-      <p>
-      A <a>request</a> MUST NOT result in a <a>network request</a> if the user
-      agent is known to be offline (i.e., when <code>navigator.</code>{{NavigatorOnLine/onLine}} returns
-      <code>false</code>).
-      </p>
-
-      <p>
-      A <a>request</a> MUST NOT result in a <a>network request</a> if it is
-      blocked due to mixed content or CORS failures.  Any <a>CORS-preflight
-        request</a> MUST result in its own <a>network request</a>.
+      A [=request=] MUST NOT result in a <a>network request</a> if it is
+      blocked due to [=mixed content=] or [=CORS protocol|CORS=] failures. Any
+      [=CORS-preflight request=] MUST result in its own <a>network request</a>.
       </p>
 
       <p class="note">
@@ -160,9 +148,9 @@
       <ol>
         <li>
           <dfn>DNS resolution</dfn>: The user agent uses the Domain Name System
-          [[RFC1034]] to resolve a domain name into an IP address of a
+          [[RFC1034]] to resolve a domain name into an [=IP address=] of a
           <dfn data-cite="RFC9110#core.semantics">server</dfn> can that service
-          HTTP requests to that domain.
+          HTTP [=requests=] to that domain.
         </li>
 
         <li>
@@ -173,8 +161,8 @@
 
         <li>
           <dfn>Transmission of request and response</dfn>: Once the secure
-          channel is established, the user agent can transmit the HTTP request,
-          and receive the response from the <a>server</a>.
+          channel is established, the user agent can transmit the HTTP
+          [=request=], and receive the [=response=] from the <a>server</a>.
         </li>
       </ol>
 
@@ -186,8 +174,8 @@
       to the same domain. Similarly, HTTP
       <a data-cite="RFC9112#persistent.connections">persistent connections</a>
       allow open connections to be shared for multiple requests to the same
-      <a>origin</a>. However, if multiple <a>phases</a> occur, they will occur
-      in the above order.
+      [=network partition key=]. However, if multiple <a>phases</a> occur, they
+      will occur in the above order.
       </p>
 
       <p class="ednote">
@@ -298,8 +286,8 @@
 
       <p>
       Each <a>NEL policy</a> has a <dfn>received IP address</dfn>, which is the
-      IP address of the <a>server</a> that the user agent received this <a>NEL
-        policy</a> from.
+      [=IP address=] of the <a>server</a> that the user agent received this
+      <a>NEL policy</a> from.
       </p>
 
       <p>
@@ -412,7 +400,7 @@
       <p>
       The <dfn><code>NEL</code></dfn> <a>response header</a> is used to
       communicate an <a>origin</a>'s <a>NEL policy</a> to the user agent.  The
-      ABNF (Augmented Backus-Naur Form) syntax for the <a>NEL</a> header is as
+      ABNF (Augmented Backus-Naur Form) [[RFC5234]] syntax for the <a>NEL</a> header is as
       follows:
       </p>
 
@@ -591,7 +579,8 @@
 
         <li>
           Let <var>key</var> be the result of calling <a>determine the network
-          partition key</a>, given <var>request</var>.
+          partition key</a>, given <var>request</var>'s
+          [=request/reserved client=].
         </li>
 
         <li>
@@ -660,7 +649,7 @@
           <dl>
             <dt><a>received IP address</a></dt>
             <dd>
-            the IP address of the <a>server</a> that the user agent received
+            the [=IP address=] of the <a>server</a> that the user agent received
             <var>response</var> from
 
             <p class="ednote">
@@ -742,7 +731,8 @@
 
         <li>
           Let <var>key</var> be the result of calling <a>determine the network
-          partition key</a>, given <var>request</var>.
+          partition key</a>, given <var>request</var>'s'
+          [=request/reserved client=].
         </li>
 
         <li>
@@ -814,10 +804,9 @@
 
             <li>
               For each <var>header</var> in <var>request</var>'s
-              [=request/header list=] whose <a
-                data-lt="header name">name</a> is <var>header name</var>, append
-              <var>header</var>'s <a data-lt="header value">value</a> to
-              <var>values</var>.
+              [=request/header list=] whose <a data-lt="header name">name</a>
+              is <var>header name</var>, append <var>header</var>'s
+              <a data-lt="header value">value</a> to <var>values</var>.
             </li>
 
             <li>
