@@ -302,13 +302,6 @@
       <p>
 
       <p>
-      Each <a>NEL policy</a> has a list of <dfn data-lt-noDefault
-      data-lt="policy request headers">request headers</dfn> and a list of <dfn
-      data-lt-noDefault data-lt="policy response headers">response
-      headers</dfn>, each of which is a list of <a>header names</a>.
-      </p>
-
-      <p>
       Each <a>NEL policy</a> has a <dfn>reporting group</dfn>, which is the name
       of the Reporting <a>endpoint group</a> that reports for this policy will
       be sent to.
@@ -516,32 +509,6 @@
         <em>all</em> <a>failed</a> <a>network requests</a> for this origin.
         </p>
       </section>
-
-      <section>
-        <h2>The <code>request_headers</code> member</h2>
-
-        <p>
-        The OPTIONAL <dfn><code>request_headers</code></dfn> member defines the
-        list of <a data-lt="policy request headers">request headers</a> whose <a
-          data-lt="header name">names</a> and <a data-lt="header
-          value">values</a> will be included in <a>network error reports</a>
-        about this <a>origin</a>.  If present, its value MUST be a list of
-        strings.
-        </p>
-      </section>
-
-      <section>
-        <h2>The <code>response_headers</code> member</h2>
-
-        <p>
-        The OPTIONAL <dfn><code>response_headers</code></dfn> member defines the
-        list of <a data-lt="policy response headers">response headers</a> whose
-        <a data-lt="header name">names</a> and <a data-lt="header
-          value">values</a> will be included in <a>network error reports</a>
-        about this <a>origin</a>.  If present, its value MUST be a list of
-        strings.
-        </p>
-      </section>
     </section>
 
     <section>
@@ -629,18 +596,6 @@
         </li>
 
         <li>
-          If <var>item</var> has a member named <a>request_headers</a>, whose
-          value is not a list, or if any element of that list is not a string,
-          abort these steps.
-        </li>
-
-        <li>
-          If <var>item</var> has a member named <a>response_headers</a>, whose
-          value is not a list, or if any element of that list is not a string,
-          abort these steps.
-        </li>
-
-        <li>
           <p>
           Let <var>policy</var> be a new <a>NEL policy</a> whose properties are
           set as follows:
@@ -665,16 +620,6 @@
             <code>include</code> if <var>item</var> has a member named
             <a>include_subdomains</a> whose value is <code>true</code>,
             <code>exclude</code> otherwise
-            </dd>
-
-            <dt><a data-lt="policy request headers">request headers</a></dt>
-            <dd>
-            the value of <var>item</var>'s <a>request_headers</a> member
-            </dd>
-
-            <dt><a data-lt="policy response headers">response headers</a></dt>
-            <dd>
-            the value of <var>item</var>'s <a>response_headers</a> member
             </dd>
 
             <dt><a>reporting group</a></dt>
@@ -765,113 +710,6 @@
 
         <li>
           Return <code>no policy</code>.
-        </li>
-
-      </ol>
-
-    </section>
-
-    <section>
-      <h2>Extract request headers</h2>
-
-      <p>
-      Given a <a>network request</a> (<var>request</var>) and a <a>NEL
-        policy</a> (<var>policy</var>), this algorithm extracts header values
-      from the request as instructed by the policy.
-      </p>
-
-      <ol class="algorithm">
-
-        <li>
-          Let <var>headers</var> be a new empty ECMAScript object.
-        </li>
-
-        <li>
-          For each <var>header name</var> in <var>policy</var>'s <a
-          data-lt="policy request headers">request headers</a> list:
-
-          <ol>
-            <li>
-              If <var>request</var>'s [=request/header
-                list=] does not [=header list/contain=]
-              <var>header name</var>, skip to the next <var>header name</var> in
-              the list.
-            </li>
-
-            <li>
-              Let <var>values</var> be an empty ECMAScript list.
-            </li>
-
-            <li>
-              For each <var>header</var> in <var>request</var>'s
-              [=request/header list=] whose <a data-lt="header name">name</a>
-              is <var>header name</var>, append <var>header</var>'s
-              <a data-lt="header value">value</a> to <var>values</var>.
-            </li>
-
-            <li>
-              Add a new property to <var>headers</var> whose name is <var>header
-                name</var> and whose value is <var>values</var>.
-            </li>
-          </ol>
-        </li>
-
-        <li>
-          Return <var>headers</var>.
-        </li>
-
-      </ol>
-
-    </section>
-
-    <section>
-      <h2>Extract response headers</h2>
-
-      <p>
-      Given a <a>response</a> (<var>response</var>) and a <a>NEL policy</a>
-      (<var>policy</var>), this algorithm extracts header values from the
-      response as instructed by the policy.
-      </p>
-
-      <ol class="algorithm">
-
-        <li>
-          Let <var>headers</var> be a new empty ECMAScript object.
-        </li>
-
-        <li>
-          For each <var>header name</var> in <var>policy</var>'s <a
-          data-lt="policy response headers">response headers</a> list:
-
-          <ol>
-            <li>
-              If <var>response</var>'s [=response/header list=]
-              does not [=header list/contain=]
-              <var>header name</var>, skip to the next <var>header name</var> in
-              the list.
-            </li>
-
-            <li>
-              Let <var>values</var> be an empty ECMAScript list.
-            </li>
-
-            <li>
-              For each <var>header</var> in <var>response</var>'s
-              [=response/header list=] whose <a
-                data-lt="header name">name</a> is <var>header name</var>, append
-              <var>header</var>'s <a data-lt="header value">value</a> to
-              <var>values</var>.
-            </li>
-
-            <li>
-              Add a new property to <var>headers</var> whose name is <var>header
-                name</var> and whose value is <var>values</var>.
-            </li>
-          </ol>
-        </li>
-
-        <li>
-          Return <var>headers</var>.
         </li>
 
       </ol>
@@ -1005,18 +843,6 @@
               <a data-cite="RFC9110#method">request method</a>.
             </dd>
 
-            <dt><code>request_headers</code></dt>
-            <dd>
-            The result of executing <a href="#extract-request-headers"></a> on
-            <var>request</var> and <var>policy</var>.
-            </dd>
-
-            <dt><code>response_headers</code></dt>
-            <dd>
-            The result of executing <a href="#extract-response-headers"></a> on
-            <var>response</var> and <var>policy</var>.
-            </dd>
-
             <dt><code>status_code</code></dt>
             <dd>
             The <a data-cite="RFC9110#status.code">status code</a> of the HTTP
@@ -1056,8 +882,7 @@
               <code>dns.address_changed</code>.
             </li>
             <li>
-              Clear <var>report body</var>'s <code>request_headers</code>,
-              <code>response_headers</code>, <code>status_code</code>, and
+              Clear <var>report body</var>'s <code>status_code</code>, and
               <code>elapsed_time</code> properties.
             </li>
             <li>
@@ -1355,8 +1180,6 @@
     "server_ip": "2001:DB8:0:0:0:0:0:42",
     "protocol": "h2",
     "method": "GET",
-    "request_headers": {},
-    "response_headers": {},
     "status_code": 200,
     "elapsed_time": 823,
     "phase": "application",
@@ -1388,8 +1211,6 @@
     "server_ip": "",
     "protocol": "",
     "method": "GET",
-    "request_headers": {},
-    "response_headers": {},
     "status_code": 0,
     "elapsed_time": 143,
     "phase": "dns",
@@ -1447,8 +1268,6 @@
     "server_ip": "",
     "protocol": "http/1.1",
     "method": "GET",
-    "request_headers": {},
-    "response_headers": {},
     "status_code": 0,
     "elapsed_time": 48,
     "phase": "dns",
@@ -1456,159 +1275,6 @@
   }
 }
         </pre>
-
-      </section>
-
-      <section>
-        <h2>Monitoring cache validation</h2>
-
-        <pre class="example">
-&gt; GET / HTTP/1.1
-&gt; Host: example.com
-
-&lt; HTTP/1.1 200 OK
-&lt; ...
-&lt; Report-To: {"group": "network-errors", "max_age": 2592000,
-              "endpoints": [{"url": "https://example.com/upload-reports"}]}
-&lt; NEL: {"report_to": "network-errors", "max_age": 2592000, "success_fraction": 1.0,
-        "request_headers": ["If-None-Match"], "response_headers": ["ETag"]}
-&lt; ETag: 01234abcd
-        </pre>
-
-        <p>
-        In this example, the owner of <code>example.com</code> uses
-        <dfn data-cite="RFC9110#field.etag"><code>ETag</code></dfn> response
-        headers to identify different versions of the resources hosted on the
-        server. User agents can then use
-        <dfn data-cite="RFC9110#field.if-none-match"><code>If-None-Match</code></dfn>
-        request headers to inform the server which version of a resource is
-        presently cached client-side, allowing the server to avoid generating
-        and sending the content of the resource if the client's existing copy is
-        up to date.
-        </p>
-
-        <p>
-        By including <a>request_headers</a> and <a>response_headers</a> fields
-        in the <code>NEL</code> header for this domain, the browser will include
-        a copy of the <a><code>If-None-Match</code></a> request header and
-        <a><code>ETag</code></a> response header in any NEL report that it
-        creates for that request, allowing the site owner to track the
-        effectiveness of their caching policies.
-        </p>
-
-        <p>
-        Given the above, consider the following sequence of events:
-        </p>
-
-        <ol>
-          <li>
-            <p>
-            The user agent sends a <a>request</a> to <code>example.com</code>,
-            and receives a successful <a>response</a> from the <a>server</a>,
-            with an <a><code>ETag</code></a> header indicating the version of
-            the resource.  The user agent will generate the following NEL
-            report:
-            </p>
-
-            <pre class="example">
-{
-  "age": 0,
-  "type": "network-error",
-  "url": "https://example.com/",
-  "body": {
-    "sampling_fraction": 1.0,
-    "server_ip": "192.0.2.1",
-    "protocol": "http/1.1",
-    "method": "GET",
-    "request_headers": {},
-    "response_headers": {
-      "ETag": ["01234abcd"]
-    },
-    "status_code": 200,
-    "elapsed_time": 1392,
-    "phase": "application",
-    "type": "ok"
-  }
-}
-            </pre>
-          </li>
-
-          <li>
-            <p>
-            Some time later, the user agent sends another <a>request</a> to
-            <code>example.com</code>.  The user agent still has a copy of the
-            original resource in its local cache, and includes its version in a
-            <a><code>If-None-Match</code></a> request header.  The server checks
-            this version, notices that it is still current, and sends a
-            `304` response informing the user agent that its cached copy of
-            the resource is still valid.  The user agent will generate the
-            following report:
-            </p>
-
-            <pre class="example">
-{
-  "age": 0,
-  "type": "network-error",
-  "url": "https://example.com/",
-  "body": {
-    "sampling_fraction": 1.0,
-    "server_ip": "192.0.2.1",
-    "protocol": "http/1.1",
-    "method": "GET",
-    "request_headers": {
-      "If-None-Match": ["01234abcd"]
-    },
-    "response_headers": {
-      "ETag": ["01234abcd"]
-    },
-    "status_code": 304,
-    "elapsed_time": 45,
-    "phase": "application",
-    "type": "ok"
-  }
-}
-            </pre>
-          </li>
-
-          <li>
-            <p>
-            Even later, the user agent sends yet another <a>request</a> to
-            <code>example.com</code>.  The user agent still has the same copy of the
-            resource in its local cache, and includes its version in a
-            <a><code>If-None-Match</code></a> request header, as in the previous
-            example.  However, this time the server notices that there is a new
-            version of the resource available.  It generates the content of this
-            resource, and sends it to the client, with the new version encoded
-            in a new <a><code>ETag</code></a> response header value.  The user
-            agent will generate the following report:
-            </p>
-
-            <pre class="example">
-{
-  "age": 0,
-  "type": "network-error",
-  "url": "https://example.com/",
-  "body": {
-    "sampling_fraction": 1.0,
-    "server_ip": "192.0.2.1",
-    "protocol": "http/1.1",
-    "method": "GET",
-    "request_headers": {
-      "If-None-Match": ["01234abcd"]
-    },
-    "response_headers": {
-      "ETag": ["56789ef01"]
-    },
-    "status_code": 200,
-    "elapsed_time": 935,
-    "phase": "application",
-    "type": "ok"
-  }
-}
-            </pre>
-          </li>
-
-        </ol>
 
       </section>
 
@@ -1671,8 +1337,6 @@
     "server_ip": "192.0.2.1",
     "protocol": "http/1.1",
     "method": "GET",
-    "request_headers": {},
-    "response_headers": {},
     "status_code": 200,
     "elapsed_time": 57,
     "phase": "application",
@@ -1703,8 +1367,6 @@
     "server_ip": "192.0.2.2",
     "protocol": "http/1.1",
     "method": "GET",
-    "request_headers": {},
-    "response_headers": {},
     "status_code": 200,
     "elapsed_time": 34,
     "phase": "application",
@@ -1739,8 +1401,6 @@
     "server_ip": "192.0.2.3",
     "protocol": "http/1.1",
     "method": "GET",
-    "request_headers": {},
-    "response_headers": {},
     "status_code": 0,
     "elapsed_time": 0,
     "phase": "dns",
@@ -1772,8 +1432,6 @@
     "server_ip": "192.0.2.1",
     "protocol": "http/1.1",
     "method": "GET",
-    "request_headers": {},
-    "response_headers": {},
     "status_code": 0,
     "elapsed_time": 0,
     "phase": "dns",
