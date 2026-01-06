@@ -2,9 +2,10 @@
 Title: Network Error Logging
 Shortname: network-error-logging
 Level: 1
-Status: ED
+Status: WD
 Group: webperf
 URL: https://w3c.github.io/network-error-logging/
+TR: https://www.w3.org/TR/network-error-logging/
 Repository: w3c/network-error-logging
 Editor: Douglas Creager, GitHub, https://dcreager.net/, w3cid 103120
 Editor: Ian Clelland, Google, w3cid 76841
@@ -532,32 +533,32 @@ Examples {#examples}
 Sample Policy Definitions {#sample-policy-definitions}
 -------------------------
 
-<div class="example">
-```
-> GET / HTTP/1.1
-> Host: example.com
+<div class="example" highlight="http" id="example-nel-policy-registration">
+<pre>
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
 
-< HTTP/1.1 200 OK
-< ...
-< Report-To: {"group": "network-errors", "max_age": 2592000,
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; Report-To: {"group": "network-errors", "max_age": 2592000,
               "endpoints": [{"url": "https://example.com/upload-reports"}]}
-< NEL: {"report_to": "network-errors", "max_age": 2592000}
-```
+&lt; NEL: {"report_to": "network-errors", "max_age": 2592000}
+</pre>
 </div>
 
 This `NEL` header defines a [=NEL policy=], instructing the user agent to report network errors about `example.com` to the [=endpoint group=] named `network-errors`. The policy applies for 2592000 seconds (30 days).
 
 Note that above registration will only succeed if the response is communicated from a [=potentially trustworthy origin=].
 
-<div class="example">
-```
-> GET / HTTP/1.1
-> Host: example.com
+<div class="example" highlight="http" id="example-nel-policy-removal">
+<pre>
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
 
-< HTTP/1.1 200 OK
-< ...
-< NEL: {"max_age": 0}
-```
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; NEL: {"max_age": 0}
+</pre>
 </div>
 
 This `NEL` header instructs the user agent to remove any existing [=NEL policy=] for `example.com`.
@@ -567,8 +568,8 @@ Sample Network Error Reports {#sample-network-error-reports}
 
 This section contains example [=network error=] [=reports=] the user agent might queue when a network error is encountered for an [=origin=] with a registered [=NEL policy=]. We show the full report payload that would be created by the [[REPORTING]] API when uploading the report; the payload's `body` field contains the [=network error=] [=report/body|report body=].
 
-<div class="example">
-<xmp highlight="json">
+<div class="example" id="example-report-protocol-error">
+<pre highlight="json">
 {
   "age": 0,
   "type": "network-error",
@@ -585,13 +586,13 @@ This section contains example [=network error=] [=reports=] the user agent might
     "type": "http.protocol.error"
   }
 }
-</xmp>
+</pre>
 </div>
 
 This report indicates that the user agent attempted to navigate from `example.com` to `www.example.com`, which successfully resolved to `2001:DB8::42`. However, while the user agent received a 200 response from the server via the HTTP/2 (`h2`) protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. The user agent aborted the navigation 823 milliseconds after it started. Finally, the user agent sent this report immediately after the network error was encountered – i.e. the report age is 0.
 
-<div class="example">
-<xmp highlight="json">
+<div class="example" id="example-report-dns-failure">
+<pre highlight="json">
 {
   "age": 0,
   "type": "network-error",
@@ -608,7 +609,7 @@ This report indicates that the user agent attempted to navigate from `example.co
     "type": "dns.name_not_resolved"
   }
 }
-</xmp>
+</pre>
 </div>
 
 The above report indicates that the user agent attempted to fetch `https://widget.com/thing.js` from `https://www.example.com/`. However, the user agent was unable to resolve the DNS name (`widget.com`) and the request was aborted by the user agent after 143 milliseconds. Because a previous request to `widget.com` delivered a valid [=NEL policy=], the user agent generates a [=network error=] [=report=] for this request. The report was uploaded immediately after the [=network error=] was encountered – i.e. the report age is 0.
@@ -616,23 +617,23 @@ The above report indicates that the user agent attempted to fetch `https://widge
 DNS misconfiguration {#dns-misconfiguration}
 --------------------
 
-<div class="example">
-```
-> GET / HTTP/1.1
-> Host: example.com
+<div class="example" id="example-nel-policy-subdomains">
+<pre highlight="http">
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
 
-< HTTP/1.1 200 OK
-< ...
-< Report-To: {"group": "network-errors", "max_age": 2592000,
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; Report-To: {"group": "network-errors", "max_age": 2592000,
               "endpoints": [{"url": "https://example.com/upload-reports"}]}
-< NEL: {"report_to": "network-errors", "max_age": 2592000, "include_subdomains": true}
-```
+&lt; NEL: {"report_to": "network-errors", "max_age": 2592000, "include_subdomains": true}
+</pre>
 </div>
 
 This `NEL` header allows the owner of `example.com` to detect when they have misconfigured their DNS servers — for instance, when they have forgotten to add a new resource record resolving `new-subdomain.example.com` to an IP address. If a user agent tries to make a request to `new-subdomain.example.com`, it might generate the following report:
 
-<div class="example">
-<xmp highlight="json">
+<div class="example" id="example-report-subdomain-dns-failure">
+<pre highlight="json">
 {
   "age": 0,
   "type": "network-error",
@@ -648,7 +649,7 @@ This `NEL` header allows the owner of `example.com` to detect when they have mis
     "type": "dns.name_not_resolved"
   }
 }
-</xmp>
+</pre>
 </div>
 
 Origins with multiple IP addresses {#origins-with-multiple-ip-addresses}
@@ -658,26 +659,26 @@ For [=origins=] whose [=domain name=] resolves to multiple IP addresses, NEL wil
 
 As an example, assume that `example.com` is handled by three [=servers=], each with a different IP address. The owner of the service configures DNS to resolve `example.com` to `192.0.2.1`, `192.0.2.2`, and `192.0.2.3`, and relies on user agents to balance their requests across these three IP addresses. The service owner delivers the following [=NEL policy=]:
 
-<div class="example">
-```
-> GET / HTTP/1.1
-> Host: example.com
+<div class="example" id="example-nel-policy-multi-ip">
+<pre highlight="http">
+&gt; GET / HTTP/1.1
+&gt; Host: example.com
 
-< HTTP/1.1 200 OK
-< ...
-< Report-To: {"group": "network-errors", "max_age": 2592000,
+&lt; HTTP/1.1 200 OK
+&lt; ...
+&lt; Report-To: {"group": "network-errors", "max_age": 2592000,
               "endpoints": [{"url": "https://example.com/upload-reports"}]}
-< NEL: {"report_to": "network-errors", "max_age": 2592000,
+&lt; NEL: {"report_to": "network-errors", "max_age": 2592000,
         "success_fraction": 1.0, "failure_fraction": 1.0}
-```
+</pre>
 </div>
 
 Given the above, consider the following sequence of events:
 
 1. The user agent sends a [=request=] to `192.0.2.1`, and receives a successful [=response=] from the [=server=]. This response includes the above [=NEL policy=], and the user agent sets the policy's [=received IP address=] to `192.0.2.1`. Since the [=received IP address=] matches the [=server=]'s IP address (which it must for any successful request), it generates the following NEL report:
 
-    <div class="example">
-    <xmp highlight="json">
+    <div class="example" id="example-report-success-ip1">
+    <pre highlight="json">
     {
       "age": 0,
       "type": "network-error",
@@ -693,13 +694,13 @@ Given the above, consider the following sequence of events:
         "type": "ok"
       }
     }
-    </xmp>
+    </pre>
     </div>
 
 2. The user agent sends a new [=request=] to `192.0.2.2`, and receives another successful [=response=]. This response also includes the [=NEL policy=], and the user agent updates the policy's [=received IP address=] to `192.0.2.2`. Since the [=received IP address=] matches the [=server=]'s IP address (which it must for any successful request), it generates the following NEL report:
 
-    <div class="example">
-    <xmp highlight="json">
+    <div class="example" id="example-report-success-ip2">
+    <pre highlight="json">
     {
       "age": 0,
       "type": "network-error",
@@ -715,13 +716,13 @@ Given the above, consider the following sequence of events:
         "type": "ok"
       }
     }
-    </xmp>
+    </pre>
     </div>
 
 3. The user agent then tries to send a [=request=] to `192.0.2.3`, but isn't able to establish a connection to the server. The user agent still has the [=NEL policy=] in the [=policy cache=], and would ideally use this policy to generate a `tcp.timed_out` report about the [=failed=] [=network request=]. However, the because policy's [=received IP address=] (`192.0.2.2`) doesn't match the IP address that this [=request=] was sent to, the user agent cannot verify that the server at `192.0.2.3` is actually owned by the owners of `example.com`. The user agent must therefore downgrade the report to `dns.address_changed`:
 
-    <div class="example">
-    <xmp highlight="json">
+    <div class="example" id="example-report-downgrade-ip3">
+    <pre highlight="json">
     {
       "age": 0,
       "type": "network-error",
@@ -737,13 +738,13 @@ Given the above, consider the following sequence of events:
         "type": "dns.address_changed"
       }
     }
-    </xmp>
+    </pre>
     </div>
 
 4. The user agent then tries to send another [=request=] to `192.0.2.1`, but once again isn't able to establish a connection to the server. Even though the user agent received the [=NEL policy=] from `192.0.2.1` at some point in the past, the policy's [=received IP address=] only records where it was *most recently* received from — in this case, `192.0.2.2`. The user agent must therefore downgrade the report to `dns.address_changed`:
 
-    <div class="example">
-    <xmp highlight="json">
+    <div class="example" id="example-report-downgrade-ip1">
+    <pre highlight="json">
     {
       "age": 0,
       "type": "network-error",
@@ -759,7 +760,7 @@ Given the above, consider the following sequence of events:
         "type": "dns.address_changed"
       }
     }
-    </xmp>
+    </pre>
     </div>
 
 Use cases {#use-cases}
