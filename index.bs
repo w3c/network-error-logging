@@ -7,8 +7,10 @@ Group: webperf
 URL: https://w3c.github.io/network-error-logging/
 TR: https://www.w3.org/TR/network-error-logging/
 Repository: w3c/network-error-logging
-Editor: Douglas Creager, GitHub, https://dcreager.net/, w3cid 103120
-Editor: Ian Clelland, Google, w3cid 76841
+Editor: Andy Luhrs, Microsoft
+Editor: Guohui Deng, Microsoft
+Former Editor: Douglas Creager, GitHub, https://dcreager.net/
+Former Editor: Ian Clelland, Google
 Former Editor: Ilya Grigorik, Google, https://www.igvita.com/
 Former Editor: Julia Tuttle, Google
 Former Editor: Arvind Jain, Google
