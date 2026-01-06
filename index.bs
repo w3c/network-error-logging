@@ -837,4 +837,3 @@ Acknowledgments {#acknowledgments}
 
 This document reuses text from the [[CSP]] and [[RFC6797]] specification, as permitted by the licenses of those specifications. Additionally, sincere thanks to Julia Tuttle, Chris Bentzel, Todd Reifsteck, Aaron Heady, and Mark Nottingham for their helpful comments and contributions to this work.
 
-
