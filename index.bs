@@ -266,6 +266,8 @@ Note: To ensure delivery of NEL reports, the [=server=] should ensure that the R
 
 The OPTIONAL <dfn>`include_subdomains`</dfn> member is a boolean that enables this [=NEL policy=] for all subdomains of this origin (to an unlimited subdomain depth). If no member named `include_subdomains` is present in the object, or its value is not `true`, the [=NEL policy=] will not be enabled for subdomains.
 
+Note: When this flag is enabled, NEL reports for subdomains will only be generated for errors during the [=DNS resolution=] [=phase=]. Errors during other phases (such as [=secure connection establishment=] or [=transmission of request and response=]) will not generate reports for subdomains. This limitation exists because the user agent cannot verify that the owner of the parent domain also controls the server handling requests for the subdomain. See [[#privacy-considerations]] for more details.
+
 Note: To ensure delivery of NEL reports for subdomains, the application should ensure that the Reporting [=endpoint group=] is also configured with `include_subdomains` enabled. If the Reporting policy is not, and there is not a separate Reporting policy for a given subdomain, NEL reports for that subdomain will not be delivered, even if the NEL policy includes the subdomain.
 
 ### The `success_fraction` member ### {#success-fraction-member}
