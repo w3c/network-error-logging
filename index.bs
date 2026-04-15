@@ -40,10 +40,10 @@ urlPrefix: https://www.w3.org/TR/secure-contexts/; spec: SECURE-CONTEXTS
     type: dfn
         text: potentially trustworthy origin; url: potentially-trustworthy-origin
         text: Is origin potentially trustworthy?; url: is-origin-trustworthy
-urlPrefix: https://w3c.github.io/hr-time/; spec: HR-TIME
+urlPrefix: https://www.w3.org/TR/hr-time-3/; spec: HR-TIME
     type: dfn
         text: wall clock; url: dfn-wall-clock
-        text: unsafe current time; url: dfn-unsafe-current-time
+        text: unsafe current time; url: wall-clock-unsafe-current-time
         text: duration from; url: dfn-duration-from
 urlPrefix: https://w3c.github.io/webappsec-mixed-content/; spec: MIXED-CONTENT
     type: dfn
