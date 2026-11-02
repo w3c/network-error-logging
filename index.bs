@@ -128,7 +128,7 @@ Concepts {#concepts}
 Network requests {#network-requests}
 ----------------
 
-A <dfn>network request</dfn> occurs when the [=user agent=] attempts to [=HTTP-network fetch=] a resource over the network for a given [=request=].
+A <dfn oldids="dfn-network-requests">network request</dfn> occurs when the [=user agent=] attempts to [=HTTP-network fetch=] a resource over the network for a given [=request=].
 
 A [=request=] MUST NOT result in a [=network request=] if the user agent is known to be offline (i.e., when `navigator.`{{NavigatorOnLine/onLine}} returns `false`).
 
@@ -136,32 +136,32 @@ A [=request=] MUST NOT result in a [=network request=] if it is blocked due to [
 
 Note: For user agents that service [=requests=] according to the [[FETCH]] standard, a [=network request=] corresponds to one execution of the [=HTTP-network fetch=] algorithm.
 
-Regardless of which fetch algorithm and which underlying application and transport protocols are used, servicing a [=network request=] consists of the following <dfn lt="phase">phases</dfn>:
+Regardless of which fetch algorithm and which underlying application and transport protocols are used, servicing a [=network request=] consists of the following <dfn lt="phase" oldids="dfn-phase">phases</dfn>:
 
-1. <dfn>DNS resolution</dfn>: The user agent uses the Domain Name System [[RFC1034]] to resolve a domain name into an [=IP address=] of a <dfn data-cite="RFC9110#core.semantics">server</dfn> that can service HTTP [=requests=] to that domain.
+1. <dfn oldids="dfn-dns-resolution">DNS resolution</dfn>: The user agent uses the Domain Name System [[RFC1034]] to resolve a domain name into an [=IP address=] of a <dfn data-cite="RFC9110#core.semantics" oldids="dfn-server">server</dfn> that can service HTTP [=requests=] to that domain.
 
-2. <dfn>Secure connection establishment</dfn>: The user agent opens a connection to the [=server=], and establishes a secure channel over this connection.
+2. <dfn oldids="dfn-secure-connection-establishment">Secure connection establishment</dfn>: The user agent opens a connection to the [=server=], and establishes a secure channel over this connection.
 
-3. <dfn>Transmission of request and response</dfn>: Once the secure channel is established, the user agent can transmit the HTTP [=request=], and receive the [=response=] from the [=server=].
+3. <dfn oldids="dfn-transmission-of-request-and-response">Transmission of request and response</dfn>: Once the secure channel is established, the user agent can transmit the HTTP [=request=], and receive the [=response=] from the [=server=].
 
 The only mandatory [=phase=] is the [=transmission of request and response=]; the other [=phases=] might not be needed for every [=network request=]. For instance, DNS results can be cached locally in the user agent, eliminating [=DNS resolution=] for future requests to the same domain. Similarly, HTTP persistent connections [[RFC9112]] allow open connections to be shared for multiple requests to the same [=network partition key=]. However, if multiple [=phases=] occur, they will occur in the above order.
 
 Issue: We would like to move the definition of these [=phases=] into [[FETCH]] so that they are more reusable.
 
-A [=network request=] is <dfn export lt="succeed|succeeded|successful">successful</dfn> if the user agent is able to receive a valid HTTP response from the server, and that response does not have a <dfn>4xx</dfn> or <dfn>5xx</dfn> status code.
+A [=network request=] is <dfn export lt="succeed|succeeded|successful" oldids="dfn-succeed">successful</dfn> if the user agent is able to receive a valid HTTP response from the server, and that response does not have a <dfn oldids="dfn-4xx">4xx</dfn> or <dfn oldids="dfn-5xx">5xx</dfn> status code.
 
-A [=network request=] is <dfn lt="fail|failures">failed</dfn> if it is not [=successful=].
+A [=network request=] is <dfn lt="fail|failures" oldids="dfn-fail">failed</dfn> if it is not [=successful=].
 
 Note: Note that HTTP error responses (i.e., those with a [=4xx=] or [=5xx=] status code) are considered [=failures=], so that they are subject to a [=NEL policy=]'s [=failure sampling rate=] instead of its [=successful sampling rate=].
 
 Network errors {#concept-network-errors}
 --------------
 
-A <dfn lt="network errors">network error</dfn> is the error condition that caused a [=network request=] to [=fail=].
+A <dfn lt="network errors" oldids="dfn-network-errors">network error</dfn> is the error condition that caused a [=network request=] to [=fail=].
 
-Each [=network error=] has a <dfn lt="types">type</dfn>, which is a string.
+Each [=network error=] has a <dfn lt="types" oldids="dfn-types">type</dfn>, which is a string.
 
-Each [=network error=] has a <dfn lt="type-phase">phase</dfn>, which describes which [=phase=] the error occurred in:
+Each [=network error=] has a <dfn lt="type-phase" oldids="dfn-type-phase">phase</dfn>, which describes which [=phase=] the error occurred in:
 
 : `dns`
 :: the error occurred during [=DNS resolution=]
@@ -175,7 +175,7 @@ There are several predefined [=network error=] [=types=] defined in [[#predefine
 Network error reports {#concept-network-error-reports}
 ---------------------
 
-A <dfn lt="network error reports">network error report</dfn> is a [[REPORTING]] [=report=] that describes a [=network error=].
+A <dfn lt="network error reports" oldids="dfn-network-error-reports">network error report</dfn> is a [[REPORTING]] [=report=] that describes a [=network error=].
 
 [=Network error reports=] have a [=report type=] of `network-error`.
 
@@ -186,37 +186,37 @@ Note: [=Network error reports=] are not [=visible to ReportingObservers=] becaus
 NEL policies {#concept-nel-policies}
 ------------
 
-A <dfn export lt="NEL policies|NEL policy">NEL policy</dfn> instructs a user agent whether to collect reports about [=network requests=] to an [=origin=], and if so, where to send them. [=NEL policies=] are delivered to the user agent via HTTP <dfn data-cite="RFC9110#fields">response headers</dfn>.
+A <dfn export lt="NEL policies|NEL policy" oldids="dfn-nel-policies">NEL policy</dfn> instructs a user agent whether to collect reports about [=network requests=] to an [=origin=], and if so, where to send them. [=NEL policies=] are delivered to the user agent via HTTP <dfn data-cite="RFC9110#fields" oldids="dfn-response-headers">response headers</dfn>.
 
-Each [=NEL policy=] has a <dfn>received IP address</dfn>, which is the [=IP address=] of the [=server=] that the user agent received this [=NEL policy=] from.
+Each [=NEL policy=] has a <dfn oldids="dfn-received-ip-address">received IP address</dfn>, which is the [=IP address=] of the [=server=] that the user agent received this [=NEL policy=] from.
 
-Each [=NEL policy=] has an <dfn lt="policy origin">origin</dfn>.
+Each [=NEL policy=] has an <dfn lt="policy origin" oldids="dfn-policy-origin">origin</dfn>.
 
-Each [=NEL policy=] has a <dfn>subdomains</dfn> flag, which is either `include` or `exclude`.
+Each [=NEL policy=] has a <dfn oldids="dfn-subdomains">subdomains</dfn> flag, which is either `include` or `exclude`.
 
-Each [=NEL policy=] has a <dfn>reporting group</dfn>, which is the name of the Reporting [=endpoint group=] that reports for this policy will be sent to.
+Each [=NEL policy=] has a <dfn oldids="dfn-reporting-group">reporting group</dfn>, which is the name of the Reporting [=endpoint group=] that reports for this policy will be sent to.
 
-Each [=NEL policy=] has a <dfn>ttl</dfn> representing the number of seconds the policy remains valid.
+Each [=NEL policy=] has a <dfn oldids="dfn-ttl">ttl</dfn> representing the number of seconds the policy remains valid.
 
-Each [=NEL policy=] has a <dfn>creation</dfn> which is the timestamp when the user agent received the policy.
+Each [=NEL policy=] has a <dfn oldids="dfn-creation">creation</dfn> which is the timestamp when the user agent received the policy.
 
-A [=NEL policy=] is <dfn>stale</dfn> if the [=duration from=] its [=creation=] to the [=wall clock=]'s [=unsafe current time=] is greater than 172800 seconds (48 hours).
+A [=NEL policy=] is <dfn oldids="dfn-stale">stale</dfn> if the [=duration from=] its [=creation=] to the [=wall clock=]'s [=unsafe current time=] is greater than 172800 seconds (48 hours).
 
-A [=NEL policy=] is <dfn>expired</dfn> if the [=duration from=] its [=creation=] to the [=wall clock=]'s [=unsafe current time=] is greater than its [=ttl=] (in seconds).
+A [=NEL policy=] is <dfn oldids="dfn-expired">expired</dfn> if the [=duration from=] its [=creation=] to the [=wall clock=]'s [=unsafe current time=] is greater than its [=ttl=] (in seconds).
 
 Sampling rates {#sampling-rates}
 --------------
 
-An [=origin=] that expects to serve a large volume of traffic might not be equipped to ingest NEL reports for every [=network request=] made to the origin. The origin can define <dfn lt="sampling rate">sampling rates</dfn> to limit the number of NEL reports that each user agent submits. Since [=successful=] requests should typically greatly outnumber [=failed=] requests, the origin can specify different sampling rates for each.
+An [=origin=] that expects to serve a large volume of traffic might not be equipped to ingest NEL reports for every [=network request=] made to the origin. The origin can define <dfn lt="sampling rate" oldids="dfn-sampling-rate">sampling rates</dfn> to limit the number of NEL reports that each user agent submits. Since [=successful=] requests should typically greatly outnumber [=failed=] requests, the origin can specify different sampling rates for each.
 
-Each [=NEL policy=] has a <dfn>successful sampling rate</dfn>, which is a number between 0.0 and 1.0 inclusive.
+Each [=NEL policy=] has a <dfn oldids="dfn-successful-sampling-rate">successful sampling rate</dfn>, which is a number between 0.0 and 1.0 inclusive.
 
-Each [=NEL policy=] has a <dfn>failure sampling rate</dfn>, which is a number between 0.0 and 1.0 inclusive.
+Each [=NEL policy=] has a <dfn oldids="dfn-failure-sampling-rate">failure sampling rate</dfn>, which is a number between 0.0 and 1.0 inclusive.
 
 Policy cache {#concept-policy-cache}
 ------------
 
-A conformant user agent MUST provide a <dfn>policy cache</dfn>, which is a storage mechanism that maintains a set of [=NEL policies=], keyed by ([=network partition key=], [=origin=]) tuples.
+A conformant user agent MUST provide a <dfn oldids="dfn-policy-cache">policy cache</dfn>, which is a storage mechanism that maintains a set of [=NEL policies=], keyed by ([=network partition key=], [=origin=]) tuples.
 
 This storage mechanism is opaque, vendor-specific, and not exposed to the web, but it MUST provide the following methods which will be used in the algorithms this document defines:
 
@@ -232,7 +232,7 @@ A [=server=] MAY define a [=NEL policy=] for an origin it controls via the [=NEL
 `NEL` response header {#nel-response-header}
 ---------------------
 
-The <dfn>`NEL`</dfn> [=response header=] is used to communicate an [=origin=]'s [=NEL policy=] to the user agent. The ABNF (Augmented Backus-Naur Form) [[RFC5234]] syntax for the [=NEL=] header is as follows:
+The <dfn oldids="dfn-nel">`NEL`</dfn> [=response header=] is used to communicate an [=origin=]'s [=NEL policy=] to the user agent. The ABNF (Augmented Backus-Naur Form) [[RFC5234]] syntax for the [=NEL=] header is as follows:
 
 ```
 NEL = json-field-value
@@ -246,33 +246,33 @@ The user agent MUST ignore the [=NEL=] header specified via a `meta` element to 
 
 Note: The restriction on `meta` element is consistent with the [[CSP]] specification, which restricts reporting registration to HTTP header fields only for the same reasons.
 
-### The `report_to` member ### {#report-to-member}
+<h4 id="report-to-member" oldids="the-report_to-member">The <code>report_to</code> member</h4>
 
-The <dfn>`report_to`</dfn> member specifies the [=endpoint group=] that reports for this [=NEL policy=] will be sent to. The [=report_to=] member is REQUIRED to register a [=NEL policy=], and OPTIONAL if the intent is to remove a previous registration – see [=max_age=]. If present, its value MUST be a string; any other type will result in a parse error.
+The <dfn oldids="dfn-report_to">`report_to`</dfn> member specifies the [=endpoint group=] that reports for this [=NEL policy=] will be sent to. The [=report_to=] member is REQUIRED to register a [=NEL policy=], and OPTIONAL if the intent is to remove a previous registration – see [=max_age=]. If present, its value MUST be a string; any other type will result in a parse error.
 
 Note: To improve delivery of NEL reports, the [=server=] should set `report_to` to an [=endpoint group=] containing at least one endpoint in an alternative origin whose infrastructure is not coupled with the origin from which the resource is being fetched — otherwise network errors cannot be reported until the problem is solved, if ever — and provide multiple endpoints to provide alternatives if some endpoints are unreachable.
 
-### The `max_age` member ### {#max-age-member}
+<h4 id="max-age-member" oldids="the-max_age-member">The <code>max_age</code> member</h4>
 
-The REQUIRED <dfn>`max_age`</dfn> member specifies the lifetime of this [=NEL policy=], as a non-negative integer number of seconds. Its value MUST be an non-negative integer; any other type will result in a parse error.
+The REQUIRED <dfn oldids="dfn-max_age">`max_age`</dfn> member specifies the lifetime of this [=NEL policy=], as a non-negative integer number of seconds. Its value MUST be an non-negative integer; any other type will result in a parse error.
 
 A value of `0` will cause any [=NEL policy=] for this [=origin=] to be removed from the [=policy cache=].
 
 Note: To ensure delivery of NEL reports, the [=server=] should ensure that the Reporting [=endpoint group=] is also configured with a sufficiently high `max_age`. If the Reporting policy expires, NEL reports will not be delivered, even if the NEL policy has not expired.
 
-### The `include_subdomains` member ### {#include-subdomains-member}
+<h4 id="include-subdomains-member" oldids="the-include_subdomains-member">The <code>include_subdomains</code> member</h4>
 
-The OPTIONAL <dfn>`include_subdomains`</dfn> member is a boolean that enables this [=NEL policy=] for all subdomains of this origin (to an unlimited subdomain depth), for `dns` [=type-phase|phase=] reports. If no member named `include_subdomains` is present in the object, its value is not `true`, or its [=type-phase|phase=] is not `dns`, the [=NEL policy=] will not be enabled for subdomains.
+The OPTIONAL <dfn oldids="dfn-include_subdomains">`include_subdomains`</dfn> member is a boolean that enables this [=NEL policy=] for all subdomains of this origin (to an unlimited subdomain depth), for `dns` [=type-phase|phase=] reports. If no member named `include_subdomains` is present in the object, its value is not `true`, or its [=type-phase|phase=] is not `dns`, the [=NEL policy=] will not be enabled for subdomains.
 
 Note: To ensure delivery of NEL reports for subdomains, the application should ensure that the Reporting [=endpoint group=] is also configured with `include_subdomains` enabled. If the Reporting policy is not, and there is not a separate Reporting policy for a given subdomain, NEL reports for that subdomain will not be delivered, even if the NEL policy includes the subdomain.
 
-### The `success_fraction` member ### {#success-fraction-member}
+<h4 id="success-fraction-member" oldids="the-success_fraction-member">The <code>success_fraction</code> member</h4>
 
-The OPTIONAL <dfn>`success_fraction`</dfn> member defines the [=sampling rate=] that should be applied to reports about [=successful=] [=network requests=] for this origin. If present, its value MUST be a number between `0.0` and `1.0`, inclusive; any other value will result in a parse error. If this member is not present, the user agent will *not* collect NEL reports about [=successful=] [=network requests=] for this origin.
+The OPTIONAL <dfn oldids="dfn-success_fraction">`success_fraction`</dfn> member defines the [=sampling rate=] that should be applied to reports about [=successful=] [=network requests=] for this origin. If present, its value MUST be a number between `0.0` and `1.0`, inclusive; any other value will result in a parse error. If this member is not present, the user agent will *not* collect NEL reports about [=successful=] [=network requests=] for this origin.
 
-### The `failure_fraction` member ### {#failure-fraction-member}
+<h4 id="failure-fraction-member" oldids="the-failure_fraction-member">The <code>failure_fraction</code> member</h4>
 
-The OPTIONAL <dfn>`failure_fraction`</dfn> member defines the [=sampling rate=] that should be applied to reports about [=failed=] [=network requests=] for this origin. If present, its value MUST be a number between `0.0` and `1.0`, inclusive; any other value will result in a parse error. If this member is not present, the user agent will collect NEL reports about *all* [=failed=] [=network requests=] for this origin.
+The OPTIONAL <dfn oldids="dfn-failure_fraction">`failure_fraction`</dfn> member defines the [=sampling rate=] that should be applied to reports about [=failed=] [=network requests=] for this origin. If present, its value MUST be a number between `0.0` and `1.0`, inclusive; any other value will result in a parse error. If this member is not present, the user agent will collect NEL reports about *all* [=failed=] [=network requests=] for this origin.
 
 Process policy headers {#process-policy-headers}
 ----------------------
@@ -356,8 +356,7 @@ Given a [=network request=] (|request|), this algorithm determines which [=NEL p
 
 5. Return `no policy`.
 
-Generate a network error report {#generate-a-network-error-report}
--------------------------------
+<h3 id="generate-a-network-error-report" oldids="generate-a-network-error-report-0"><dfn export id=dfn-generate-a-network-error-report>Generate a network error report</dfn></h3>
 
 Given a [=network request=] (|request|) and its corresponding [=response=] (|response|), this algorithm generates a report about |request| if instructed to by any matching [=NEL policy=], and returns the report and the NEL policy. Otherwise this algorithm returns null.
 
@@ -413,14 +412,13 @@ Given a [=network request=] (|request|) and its corresponding [=response=] (|res
     3. Clear |report body|'s `status_code`, and `elapsed_time` properties.
     4. Assert: All fields in |report body| that are derived from information not available during [=DNS resolution=] have been cleared.
 
-    Note: This step "downgrades" a NEL report if the IP addresses of the [=server=] and the [=NEL policy|policy=] don't match. This is a privacy protection, ensuring that NEL reports are only sent to the owner of the service that the report describes. If the IP addresses don't match, then the user agent can only verify that the [=NEL policy=] was sent by the owner of the [=origin=]'s <dfn data-cite="RFC1034#section-3.1">domain name</dfn>; it cannot verify that the policy was sent by the owner of the [=server=] this [=domain name=] resolves to. We therefore downgrade the report to only contain information about [=DNS resolution=]. See [[#privacy-considerations]] and [[#origins-with-multiple-ip-addresses]] for more details.
+    Note: This step "downgrades" a NEL report if the IP addresses of the [=server=] and the [=NEL policy|policy=] don't match. This is a privacy protection, ensuring that NEL reports are only sent to the owner of the service that the report describes. If the IP addresses don't match, then the user agent can only verify that the [=NEL policy=] was sent by the owner of the [=origin=]'s <dfn data-cite="RFC1034#section-3.1" oldids="dfn-domain-name">domain name</dfn>; it cannot verify that the policy was sent by the owner of the [=server=] this [=domain name=] resolves to. We therefore downgrade the report to only contain information about [=DNS resolution=]. See [[#privacy-considerations]] and [[#origins-with-multiple-ip-addresses]] for more details.
 
 11. If |policy| is [=stale=], then delete |policy| from the [=policy cache=].
 
 12. Return |report body| and |policy|.
 
-Deliver a network report {#deliver-a-network-report}
-------------------------
+<h3 id="deliver-a-network-report" oldids="deliver-a-network-report-0"><dfn export id=dfn-deliver-a-network-report>Deliver a network report</dfn></h3>
 
 Given a ECMAScript object (|report body|, usually returned from [[#generate-a-network-error-report]] and then augmented by the calling specification) and its matching [=NEL policy=] (|policy|) and [=network request=] (|request|), this algorithm queues the report for delivery.
 
@@ -506,8 +504,7 @@ All of the [=network errors=] in this section occur during [=secure connection e
 : `tls.failed`
 :: The TLS connection failed due to reasons not covered by previous errors
 
-Transmission of request and response errors {#transmission-errors}
--------------------------------------------
+<h3 id="transmission-errors" oldids="transmission-of-request-and-response-errors">Transmission of request and response errors</h3>
 
 All of the [=network errors=] in this section occur during the [=transmission of request and response=], and therefore have a [=type-phase|phase=] of `application`.
 
@@ -533,7 +530,7 @@ Examples {#examples}
 Sample Policy Definitions {#sample-policy-definitions}
 -------------------------
 
-<div class="example" highlight="http" id="example-nel-policy-registration">
+<div class="example" highlight="http" id="example-nel-policy-registration" oldids="example-1">
 <pre>
 &gt; GET / HTTP/1.1
 &gt; Host: example.com
@@ -550,7 +547,7 @@ This `NEL` header defines a [=NEL policy=], instructing the user agent to report
 
 Note that above registration will only succeed if the response is communicated from a [=potentially trustworthy origin=].
 
-<div class="example" highlight="http" id="example-nel-policy-removal">
+<div class="example" highlight="http" id="example-nel-policy-removal" oldids="example-2">
 <pre>
 &gt; GET / HTTP/1.1
 &gt; Host: example.com
@@ -568,7 +565,7 @@ Sample Network Error Reports {#sample-network-error-reports}
 
 This section contains example [=network error=] [=reports=] the user agent might queue when a network error is encountered for an [=origin=] with a registered [=NEL policy=]. We show the full report payload that would be created by the [[REPORTING]] API when uploading the report; the payload's `body` field contains the [=network error=] [=report/body|report body=].
 
-<div class="example" id="example-report-protocol-error">
+<div class="example" id="example-report-protocol-error" oldids="example-3">
 <pre highlight="json">
 {
   "age": 0,
@@ -591,7 +588,7 @@ This section contains example [=network error=] [=reports=] the user agent might
 
 This report indicates that the user agent attempted to navigate from `example.com` to `www.example.com`, which successfully resolved to `2001:DB8::42`. However, while the user agent received a 200 response from the server via the HTTP/2 (`h2`) protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. The user agent aborted the navigation 823 milliseconds after it started. Finally, the user agent sent this report immediately after the network error was encountered – i.e. the report age is 0.
 
-<div class="example" id="example-report-dns-failure">
+<div class="example" id="example-report-dns-failure" oldids="example-4">
 <pre highlight="json">
 {
   "age": 0,
@@ -617,7 +614,7 @@ The above report indicates that the user agent attempted to fetch `https://widge
 DNS misconfiguration {#dns-misconfiguration}
 --------------------
 
-<div class="example" id="example-nel-policy-subdomains">
+<div class="example" id="example-nel-policy-subdomains" oldids="example-5">
 <pre highlight="http">
 &gt; GET / HTTP/1.1
 &gt; Host: example.com
@@ -632,7 +629,7 @@ DNS misconfiguration {#dns-misconfiguration}
 
 This `NEL` header allows the owner of `example.com` to detect when they have misconfigured their DNS servers — for instance, when they have forgotten to add a new resource record resolving `new-subdomain.example.com` to an IP address. If a user agent tries to make a request to `new-subdomain.example.com`, it might generate the following report:
 
-<div class="example" id="example-report-subdomain-dns-failure">
+<div class="example" id="example-report-subdomain-dns-failure" oldids="example-6">
 <pre highlight="json">
 {
   "age": 0,
@@ -659,7 +656,7 @@ For [=origins=] whose [=domain name=] resolves to multiple IP addresses, NEL wil
 
 As an example, assume that `example.com` is handled by three [=servers=], each with a different IP address. The owner of the service configures DNS to resolve `example.com` to `192.0.2.1`, `192.0.2.2`, and `192.0.2.3`, and relies on user agents to balance their requests across these three IP addresses. The service owner delivers the following [=NEL policy=]:
 
-<div class="example" id="example-nel-policy-multi-ip">
+<div class="example" id="example-nel-policy-multi-ip" oldids="example-7">
 <pre highlight="http">
 &gt; GET / HTTP/1.1
 &gt; Host: example.com
@@ -677,7 +674,7 @@ Given the above, consider the following sequence of events:
 
 1. The user agent sends a [=request=] to `192.0.2.1`, and receives a successful [=response=] from the [=server=]. This response includes the above [=NEL policy=], and the user agent sets the policy's [=received IP address=] to `192.0.2.1`. Since the [=received IP address=] matches the [=server=]'s IP address (which it must for any successful request), it generates the following NEL report:
 
-    <div class="example" id="example-report-success-ip1">
+    <div class="example" id="example-report-success-ip1" oldids="example-8">
     <pre highlight="json">
     {
       "age": 0,
@@ -699,7 +696,7 @@ Given the above, consider the following sequence of events:
 
 2. The user agent sends a new [=request=] to `192.0.2.2`, and receives another successful [=response=]. This response also includes the [=NEL policy=], and the user agent updates the policy's [=received IP address=] to `192.0.2.2`. Since the [=received IP address=] matches the [=server=]'s IP address (which it must for any successful request), it generates the following NEL report:
 
-    <div class="example" id="example-report-success-ip2">
+    <div class="example" id="example-report-success-ip2" oldids="example-9">
     <pre highlight="json">
     {
       "age": 0,
@@ -721,7 +718,7 @@ Given the above, consider the following sequence of events:
 
 3. The user agent then tries to send a [=request=] to `192.0.2.3`, but isn't able to establish a connection to the server. The user agent still has the [=NEL policy=] in the [=policy cache=], and would ideally use this policy to generate a `tcp.timed_out` report about the [=failed=] [=network request=]. However, the because policy's [=received IP address=] (`192.0.2.2`) doesn't match the IP address that this [=request=] was sent to, the user agent cannot verify that the server at `192.0.2.3` is actually owned by the owners of `example.com`. The user agent must therefore downgrade the report to `dns.address_changed`:
 
-    <div class="example" id="example-report-downgrade-ip3">
+    <div class="example" id="example-report-downgrade-ip3" oldids="example-10">
     <pre highlight="json">
     {
       "age": 0,
@@ -743,7 +740,7 @@ Given the above, consider the following sequence of events:
 
 4. The user agent then tries to send another [=request=] to `192.0.2.1`, but once again isn't able to establish a connection to the server. Even though the user agent received the [=NEL policy=] from `192.0.2.1` at some point in the past, the policy's [=received IP address=] only records where it was *most recently* received from — in this case, `192.0.2.2`. The user agent must therefore downgrade the report to `dns.address_changed`:
 
-    <div class="example" id="example-report-downgrade-ip1">
+    <div class="example" id="example-report-downgrade-ip1" oldids="example-11">
     <pre highlight="json">
     {
       "age": 0,
@@ -766,22 +763,19 @@ Given the above, consider the following sequence of events:
 Use cases {#use-cases}
 =========
 
-Reporting of Navigation Failures {#reporting-navigation-failures}
---------------------------------
+<h3 id="reporting-navigation-failures" oldids="reporting-of-navigation-failures">Reporting of Navigation Failures</h3>
 
 A navigation request initiated by the user (e.g. via a click on a link, direct input via the location bar, script-initiated due to user interaction, etc.) may fail due any number of connectivity reasons: DNS failure, TCP error, TLS protocol violation, and so on. These errors may be caused by network misconfiguration, transient routing issues, server downtime, malware or other attacks against the user, etc.
 
 In such cases the destination host is often left unaware of the failed navigation since, by definition, it cannot see the request reach its infrastructure and it is unable to investigate the problem. To address this, the host can register an [=NEL policy=] with the user agent, which specifies where reports of such failures should be delivered such that they can be investigated.
 
-Reporting of First-party Subresource Fetch Failures {#reporting-first-party-subresource-failures}
-----------------------------------------------------
+<h3 id="reporting-first-party-subresource-failures" oldids="reporting-of-first-party-subresource-fetch-failures">Reporting of First-party Subresource Fetch Failures</h3>
 
 A typical application requires dozens of resources, the fetching of which is typically initiated via HTML, CSS, or JavaScript. The application requesting such resources can observe failures of most such fetches (e.g. via `onerror` callbacks), but it does not have access to the detailed network error report of why the failure has occurred - e.g. DNS failure, TCP error, TLS protocol violation, etc.
 
 To address this, the application can register relevant [=NEL policies=] with the user agent for the first-party hosts from which the subresources are being fetched. Then, if such a policy is present and a network error is encountered for a resource from an [=origin=] with a registered [=NEL policy=], the user agent will report the detailed network error report and enable the application developers to investigate the error.
 
-Reporting of Third-party Subresource Fetch Failures {#reporting-third-party-subresource-failures}
-----------------------------------------------------
+<h3 id="reporting-third-party-subresource-failures" oldids="reporting-of-third-party-subresource-fetch-failures">Reporting of Third-party Subresource Fetch Failures</h3>
 
 In the case where a resource is embedded by a third party, the provider of the resource is often unable to instrument and observe the failure. For example, if `example.com` embeds a `widget.com/thing.js` resource on its site, and the user visiting `example.com` fails to fetch such resource due to a network error, the `widget.com` host is both unaware of the failure and unable to detect it.
 
@@ -796,7 +790,7 @@ To mitigate some of the above risks, NEL registration is restricted to [=potenti
 
 Additionally, the NEL [=policy cache=] is partitioned using the [=network partition key=], so that a [=NEL policy=] stored for a site in one embedding context will not be used in a different context (for instance, when embedded by a different top-level site.)
 
-NEL is intended to augment existing server-side monitoring. NEL reports should only be sent to the owner of the service being requested. For errors that occur during [=DNS resolution=], NEL reports are only generated when the [=NEL policy=] was received from the owner of the <dfn data-cite="RFC1034#section-3.1">domain namespace tree</dfn> that contains the [=policy origin=]. For errors that occur during [=secure connection establishment=] or [=transmission of request and response=], NEL reports are only generated when the [=NEL policy=] was received from the owner of the [=server=] that the [=request=] was sent to.
+NEL is intended to augment existing server-side monitoring. NEL reports should only be sent to the owner of the service being requested. For errors that occur during [=DNS resolution=], NEL reports are only generated when the [=NEL policy=] was received from the owner of the <dfn data-cite="RFC1034#section-3.1" oldids="dfn-domain-namespace-tree">domain namespace tree</dfn> that contains the [=policy origin=]. For errors that occur during [=secure connection establishment=] or [=transmission of request and response=], NEL reports are only generated when the [=NEL policy=] was received from the owner of the [=server=] that the [=request=] was sent to.
 
 This rationale explains the treatment of the [=received IP address=] and [=subdomains=] flag of a [=NEL policy=]. By checking that the policy's [=received IP address=] matches the IP address of the [=server=], NEL extends the trust boundary of the policy to include not just the policy's [=policy origin=], but also the specific server that the user agent is communicating with. This helps prevent (for instance) DNS rebinding attacks, where an attacker delivers a long-lived [=NEL policy=] from a server that they own, and then changes their name servers to resolve the [=policy origin=] to a server they don't control. Without the [=received IP address=] verification, this would cause user agents to send reports about the second server to the attacker.
 
