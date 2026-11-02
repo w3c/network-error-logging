@@ -5,9 +5,9 @@
   <title>Network Error Logging</title>
   <meta content="WD" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-WD" rel="stylesheet">
-  <meta content="Bikeshed version 0ef803fdf, updated Tue Jan 6 11:59:39 2026 -0800" name="generator">
+  <meta content="Bikeshed version 49e9fdd4f, updated Tue Oct 13 14:27:53 2026 -0700" name="generator">
   <link href="https://www.w3.org/TR/network-error-logging/" rel="canonical">
-  <meta content="a796df55f975a921bada12f50b54ce4a9d4648fc" name="revision">
+  <meta content="58ed5d3264b58413f78153f0a95849211d1d47ff" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -309,7 +309,7 @@ pre .property::before, pre .property::after {
 </style>
 <style>/* Boilerplate: style-counters */
 body {
-    counter-reset: example figure issue;
+    counter-reset: example figure issue table;
 }
 .issue {
     counter-increment: issue;
@@ -334,6 +334,13 @@ figcaption {
 }
 figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
+}
+
+figure.table figcaption {
+    counter-increment: table;
+}
+figure.table figcaption:not(.no-marker)::before {
+    content: "Table " counter(table) " ";
 }
 </style>
 <style>/* Boilerplate: style-dfn-panel */
@@ -553,11 +560,10 @@ a[href].issue-return {
 	vertical-align: top;
 }
 .mdn-anno > .feature {
-	margin-top: 20px;
+	margin-top: 6px;
 }
 .mdn-anno > .feature:not(:first-of-type) {
 	border-top: 1px solid #999;
-	margin-top: 6px;
 	padding-top: 2px;
 }
 .mdn-anno > .feature > .less-than-two-engines-text {
@@ -915,6 +921,30 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
     c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
 }
+
+@media print {
+    /* Darken colors for print that would otherwise print too faintly */
+    c-[c]  { color: #555555 } /* Comment */
+    c-[d]  { color: #555555 } /* Comment.Multiline */
+    c-[cp] { color: #555555 } /* Comment.Preproc */
+    c-[c1] { color: #555555 } /* Comment.Single */
+    c-[cs] { color: #555555 } /* Comment.Special */
+    c-[o]  { color: #222222 } /* Operator */
+    c-[p]  { color: #222222 } /* Punctuation */
+    c-[ow] { color: #222222 } /* Operator.Word */
+    c-[s]  { color: #664400 } /* Literal.String */
+    c-[t]  { color: #664400 } /* Literal.String.Single */
+    c-[u]  { color: #664400 } /* Literal.String.Double */
+    c-[sb] { color: #664400 } /* Literal.String.Backtick */
+    c-[sc] { color: #664400 } /* Literal.String.Char */
+    c-[sd] { color: #664400 } /* Literal.String.Doc */
+    c-[se] { color: #664400 } /* Literal.String.Escape */
+    c-[sh] { color: #664400 } /* Literal.String.Heredoc */
+    c-[si] { color: #664400 } /* Literal.String.Interpol */
+    c-[sx] { color: #664400 } /* Literal.String.Other */
+    c-[sr] { color: #664400 } /* Literal.String.Regex */
+    c-[ss] { color: #664400 } /* Literal.String.Symbol */
+}
 </style>
  <body class="h-entry">
   <div class="head">
@@ -924,13 +954,13 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
 </p>
    <h1 class="no-ref p-name" id="title">Network Error Logging</h1>
    <p id="w3c-state"><a href="https://www.w3.org/standards/types/#WD">W3C Working Draft</a>,
-    <time class="dt-updated" datetime="2026-04-15">15 April 2026</time></p>
+    <time class="dt-updated" datetime="2026-11-02">2 November 2026</time></p>
    <details open>
     <summary>More details about this document</summary>
     <div data-fill-with="spec-metadata">
      <dl>
       <dt>This version:
-      <dd><a class="u-url" href="https://www.w3.org/TR/2026/WD-network-error-logging-1-20260415/">https://www.w3.org/TR/2026/WD-network-error-logging-1-20260415/</a>
+      <dd><a class="u-url" href="https://www.w3.org/TR/2026/WD-network-error-logging-1-20261102/">https://www.w3.org/TR/2026/WD-network-error-logging-1-20261102/</a>
       <dt>Latest published version:
       <dd><a href="https://www.w3.org/TR/network-error-logging/">https://www.w3.org/TR/network-error-logging/</a>
       <dt>Editor's Draft:
@@ -1043,8 +1073,8 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
      <a href="#report-delivery"><span class="secno">5</span> <span class="content">Report delivery</span></a>
      <ol class="toc">
       <li><a href="#choose-a-policy-for-a-request"><span class="secno">5.1</span> <span class="content">Choose a policy for a request</span></a>
-      <li><a href="#generate-a-network-error-report"><span class="secno">5.2</span> <span class="content">Generate a network error report</span></a>
-      <li><a href="#deliver-a-network-report"><span class="secno">5.3</span> <span class="content">Deliver a network report</span></a>
+      <li><a href="#generate-a-network-error-report"><span class="secno">5.2</span> <span class="content"><span>Generate a network error report</span></span></a>
+      <li><a href="#deliver-a-network-report"><span class="secno">5.3</span> <span class="content"><span>Deliver a network report</span></span></a>
      </ol>
     <li>
      <a href="#predefined-network-error-types"><span class="secno">6</span> <span class="content">Predefined network error types</span></a>
@@ -1091,7 +1121,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
      <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
      <ol class="toc">
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
-      <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
+      <li><a href="#informative"><span class="secno"></span> <span class="content">Non-Normative References</span></a>
      </ol>
     <li><a href="#issues-index"><span class="secno"></span> <span class="content">Issues Index</span></a>
    </ol>
@@ -1130,28 +1160,28 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p>Conformance requirements phrased as algorithms or specific steps may be implemented in any manner, so long as the end result is equivalent. (In particular, the algorithms defined in this specification are intended to be easy to follow, and not intended to be performant.)</p>
    <h2 class="heading settled" data-level="3" id="concepts"><span class="secno">3. </span><span class="content">Concepts</span><a class="self-link" href="#concepts"></a></h2>
    <h3 class="heading settled" data-level="3.1" id="network-requests"><span class="secno">3.1. </span><span class="content">Network requests</span><a class="self-link" href="#network-requests"></a></h3>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="network-request">network request</dfn> occurs when the <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#user-agent" id="ref-for-user-agent">user agent</a> attempts to <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#http-network-fetch" id="ref-for-http-network-fetch">HTTP-network fetch</a> a resource over the network for a given <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request">request</a>.</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="network-request"><span class="bs-old-id" id="dfn-network-requests"></span>network request</dfn> occurs when the <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#user-agent" id="ref-for-user-agent">user agent</a> attempts to <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#http-network-fetch" id="ref-for-http-network-fetch">HTTP-network fetch</a> a resource over the network for a given <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request">request</a>.</p>
    <p>A <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①">request</a> MUST NOT result in a <a data-link-type="dfn" href="#network-request" id="ref-for-network-request">network request</a> if the user agent is known to be offline (i.e., when <code>navigator.</code><code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/system-state.html#dom-navigator-online" id="ref-for-dom-navigator-online">onLine</a></code> returns <code>false</code>).</p>
    <p>A <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request②">request</a> MUST NOT result in a <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①">network request</a> if it is blocked due to <a data-link-type="dfn" href="https://w3c.github.io/webappsec-mixed-content/#mixed-content" id="ref-for-mixed-content">mixed content</a> or <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#cors-protocol" id="ref-for-cors-protocol">CORS</a> failures. Any <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#cors-preflight-request" id="ref-for-cors-preflight-request">CORS-preflight request</a> MUST result in its own <a data-link-type="dfn" href="#network-request" id="ref-for-network-request②">network request</a>.</p>
    <p class="note" role="note"><span class="marker">Note:</span> For user agents that service <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request③">requests</a> according to the <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[FETCH]</a> standard, a <a data-link-type="dfn" href="#network-request" id="ref-for-network-request③">network request</a> corresponds to one execution of the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#http-network-fetch" id="ref-for-http-network-fetch①">HTTP-network fetch</a> algorithm.</p>
-   <p>Regardless of which fetch algorithm and which underlying application and transport protocols are used, servicing a <a data-link-type="dfn" href="#network-request" id="ref-for-network-request④">network request</a> consists of the following <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="phase" data-noexport id="phase">phases</dfn>:</p>
+   <p>Regardless of which fetch algorithm and which underlying application and transport protocols are used, servicing a <a data-link-type="dfn" href="#network-request" id="ref-for-network-request④">network request</a> consists of the following <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="phase" data-noexport id="phase"><span class="bs-old-id" id="dfn-phase"></span>phases</dfn>:</p>
    <ol>
     <li data-md>
-     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="dns-resolution">DNS resolution</dfn>: The user agent uses the Domain Name System <a data-link-type="biblio" href="#biblio-rfc1034" title="Domain names - concepts and facilities">[RFC1034]</a> to resolve a domain name into an <a data-link-type="dfn" href="https://url.spec.whatwg.org/#ip-address" id="ref-for-ip-address">IP address</a> of a <dfn class="dfn-paneled" data-cite="RFC9110#core.semantics" data-dfn-type="dfn" data-noexport id="server">server</dfn> that can service HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request④">requests</a> to that domain.</p>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="dns-resolution"><span class="bs-old-id" id="dfn-dns-resolution"></span>DNS resolution</dfn>: The user agent uses the Domain Name System <a data-link-type="biblio" href="#biblio-rfc1034" title="Domain names - concepts and facilities">[RFC1034]</a> to resolve a domain name into an <a data-link-type="dfn" href="https://url.spec.whatwg.org/#ip-address" id="ref-for-ip-address">IP address</a> of a <dfn class="dfn-paneled" data-cite="RFC9110#core.semantics" data-dfn-type="dfn" data-noexport id="server"><span class="bs-old-id" id="dfn-server"></span>server</dfn> that can service HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request④">requests</a> to that domain.</p>
     <li data-md>
-     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="secure-connection-establishment">Secure connection establishment</dfn>: The user agent opens a connection to the <a data-link-type="dfn" href="#server" id="ref-for-server">server</a>, and establishes a secure channel over this connection.</p>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="secure-connection-establishment"><span class="bs-old-id" id="dfn-secure-connection-establishment"></span>Secure connection establishment</dfn>: The user agent opens a connection to the <a data-link-type="dfn" href="#server" id="ref-for-server">server</a>, and establishes a secure channel over this connection.</p>
     <li data-md>
-     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="transmission-of-request-and-response">Transmission of request and response</dfn>: Once the secure channel is established, the user agent can transmit the HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request⑤">request</a>, and receive the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response">response</a> from the <a data-link-type="dfn" href="#server" id="ref-for-server①">server</a>.</p>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="transmission-of-request-and-response"><span class="bs-old-id" id="dfn-transmission-of-request-and-response"></span>Transmission of request and response</dfn>: Once the secure channel is established, the user agent can transmit the HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request⑤">request</a>, and receive the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response">response</a> from the <a data-link-type="dfn" href="#server" id="ref-for-server①">server</a>.</p>
    </ol>
    <p>The only mandatory <a data-link-type="dfn" href="#phase" id="ref-for-phase">phase</a> is the <a data-link-type="dfn" href="#transmission-of-request-and-response" id="ref-for-transmission-of-request-and-response">transmission of request and response</a>; the other <a data-link-type="dfn" href="#phase" id="ref-for-phase①">phases</a> might not be needed for every <a data-link-type="dfn" href="#network-request" id="ref-for-network-request⑤">network request</a>. For instance, DNS results can be cached locally in the user agent, eliminating <a data-link-type="dfn" href="#dns-resolution" id="ref-for-dns-resolution">DNS resolution</a> for future requests to the same domain. Similarly, HTTP persistent connections <a data-link-type="biblio" href="#biblio-rfc9112" title="HTTP/1.1">[RFC9112]</a> allow open connections to be shared for multiple requests to the same <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#network-partition-key" id="ref-for-network-partition-key">network partition key</a>. However, if multiple <a data-link-type="dfn" href="#phase" id="ref-for-phase②">phases</a> occur, they will occur in the above order.</p>
    <p class="issue" id="issue-95f7f578"><a class="self-link" href="#issue-95f7f578"></a> We would like to move the definition of these <a data-link-type="dfn" href="#phase" id="ref-for-phase③">phases</a> into <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[FETCH]</a> so that they are more reusable.</p>
-   <p>A <a data-link-type="dfn" href="#network-request" id="ref-for-network-request⑥">network request</a> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-export data-lt="succeed|succeeded|successful" id="succeed">successful</dfn> if the user agent is able to receive a valid HTTP response from the server, and that response does not have a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="4xx">4xx</dfn> or <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="5xx">5xx</dfn> status code.</p>
-   <p>A <a data-link-type="dfn" href="#network-request" id="ref-for-network-request⑦">network request</a> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="fail|failures" data-noexport id="fail">failed</dfn> if it is not <a data-link-type="dfn" href="#succeed" id="ref-for-succeed">successful</a>.</p>
+   <p>A <a data-link-type="dfn" href="#network-request" id="ref-for-network-request⑥">network request</a> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-export data-lt="succeed|succeeded|successful" id="succeed"><span class="bs-old-id" id="dfn-succeed"></span>successful</dfn> if the user agent is able to receive a valid HTTP response from the server, and that response does not have a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="4xx"><span class="bs-old-id" id="dfn-4xx"></span>4xx</dfn> or <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="5xx"><span class="bs-old-id" id="dfn-5xx"></span>5xx</dfn> status code.</p>
+   <p>A <a data-link-type="dfn" href="#network-request" id="ref-for-network-request⑦">network request</a> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="fail|failures" data-noexport id="fail"><span class="bs-old-id" id="dfn-fail"></span>failed</dfn> if it is not <a data-link-type="dfn" href="#succeed" id="ref-for-succeed">successful</a>.</p>
    <p class="note" role="note"><span class="marker">Note:</span> Note that HTTP error responses (i.e., those with a <a data-link-type="dfn" href="#4xx" id="ref-for-4xx">4xx</a> or <a data-link-type="dfn" href="#5xx" id="ref-for-5xx">5xx</a> status code) are considered <a data-link-type="dfn" href="#fail" id="ref-for-fail">failures</a>, so that they are subject to a <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①">NEL policy</a>’s <a data-link-type="dfn" href="#failure-sampling-rate" id="ref-for-failure-sampling-rate">failure sampling rate</a> instead of its <a data-link-type="dfn" href="#successful-sampling-rate" id="ref-for-successful-sampling-rate">successful sampling rate</a>.</p>
    <h3 class="heading settled" data-level="3.2" id="concept-network-errors"><span class="secno">3.2. </span><span class="content">Network errors</span><a class="self-link" href="#concept-network-errors"></a></h3>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="network errors" data-noexport id="network-errors">network error</dfn> is the error condition that caused a <a data-link-type="dfn" href="#network-request" id="ref-for-network-request⑧">network request</a> to <a data-link-type="dfn" href="#fail" id="ref-for-fail①">fail</a>.</p>
-   <p>Each <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors">network error</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="types" data-noexport id="types">type</dfn>, which is a string.</p>
-   <p>Each <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors①">network error</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="type-phase" data-noexport id="type-phase">phase</dfn>, which describes which <a data-link-type="dfn" href="#phase" id="ref-for-phase④">phase</a> the error occurred in:</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="network errors" data-noexport id="network-errors"><span class="bs-old-id" id="dfn-network-errors"></span>network error</dfn> is the error condition that caused a <a data-link-type="dfn" href="#network-request" id="ref-for-network-request⑧">network request</a> to <a data-link-type="dfn" href="#fail" id="ref-for-fail①">fail</a>.</p>
+   <p>Each <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors">network error</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="types" data-noexport id="types"><span class="bs-old-id" id="dfn-types"></span>type</dfn>, which is a string.</p>
+   <p>Each <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors①">network error</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="type-phase" data-noexport id="type-phase"><span class="bs-old-id" id="dfn-type-phase"></span>phase</dfn>, which describes which <a data-link-type="dfn" href="#phase" id="ref-for-phase④">phase</a> the error occurred in:</p>
    <dl>
     <dt data-md><code>dns</code>
     <dd data-md>
@@ -1165,26 +1195,26 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    </dl>
    <p>There are several predefined <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors②">network error</a> <a data-link-type="dfn" href="#types" id="ref-for-types">types</a> defined in <a href="#predefined-network-error-types">§ 6 Predefined network error types</a>.</p>
    <h3 class="heading settled" data-level="3.3" id="concept-network-error-reports"><span class="secno">3.3. </span><span class="content">Network error reports</span><a class="self-link" href="#concept-network-error-reports"></a></h3>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="network error reports" data-noexport id="network-error-reports">network error report</dfn> is a <a data-link-type="biblio" href="#biblio-reporting" title="Reporting API">[REPORTING]</a> <a data-link-type="dfn" href="https://www.w3.org/TR/reporting-1/#report" id="ref-for-report">report</a> that describes a <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors③">network error</a>.</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="network error reports" data-noexport id="network-error-reports"><span class="bs-old-id" id="dfn-network-error-reports"></span>network error report</dfn> is a <a data-link-type="biblio" href="#biblio-reporting" title="Reporting API">[REPORTING]</a> <a data-link-type="dfn" href="https://www.w3.org/TR/reporting-1/#report" id="ref-for-report">report</a> that describes a <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors③">network error</a>.</p>
    <p><a data-link-type="dfn" href="#network-error-reports" id="ref-for-network-error-reports">Network error reports</a> have a <a data-link-type="dfn" href="https://www.w3.org/TR/reporting-1/#report-type" id="ref-for-report-type">report type</a> of <code>network-error</code>.</p>
    <p><a data-link-type="dfn" href="#network-error-reports" id="ref-for-network-error-reports①">Network error reports</a> are <strong>NOT</strong> <a data-link-type="dfn" href="https://www.w3.org/TR/reporting-1/#visible-to-reportingobservers" id="ref-for-visible-to-reportingobservers">visible to ReportingObservers</a>.</p>
    <p class="note" role="note"><span class="marker">Note:</span> <a data-link-type="dfn" href="#network-error-reports" id="ref-for-network-error-reports②">Network error reports</a> are not <a data-link-type="dfn" href="https://www.w3.org/TR/reporting-1/#visible-to-reportingobservers" id="ref-for-visible-to-reportingobservers①">visible to ReportingObservers</a> because they are only intended to be visible to the administrator or owner of the server <em>receiving</em> the requests. If they were <a data-link-type="dfn" href="https://www.w3.org/TR/reporting-1/#visible-to-reportingobservers" id="ref-for-visible-to-reportingobservers②">visible to ReportingObservers</a>, then the reports would also be visible to the <em>originator</em> of the request. For cross-origin requests, this could leak information about the server’s network configuration to parties outside of its control.</p>
    <h3 class="heading settled" data-level="3.4" id="concept-nel-policies"><span class="secno">3.4. </span><span class="content">NEL policies</span><a class="self-link" href="#concept-nel-policies"></a></h3>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-export data-lt="NEL policies|NEL policy" id="nel-policies">NEL policy</dfn> instructs a user agent whether to collect reports about <a data-link-type="dfn" href="#network-request" id="ref-for-network-request⑨">network requests</a> to an <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin">origin</a>, and if so, where to send them. <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②">NEL policies</a> are delivered to the user agent via HTTP <dfn class="dfn-paneled" data-cite="RFC9110#fields" data-dfn-type="dfn" data-noexport id="response-headers">response headers</dfn>.</p>
-   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies③">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="received-ip-address">received IP address</dfn>, which is the <a data-link-type="dfn" href="https://url.spec.whatwg.org/#ip-address" id="ref-for-ip-address①">IP address</a> of the <a data-link-type="dfn" href="#server" id="ref-for-server②">server</a> that the user agent received this <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④">NEL policy</a> from.</p>
-   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤">NEL policy</a> has an <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="policy origin" data-noexport id="policy-origin">origin</dfn>.</p>
-   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑥">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="subdomains">subdomains</dfn> flag, which is either <code>include</code> or <code>exclude</code>.</p>
-   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑦">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="reporting-group">reporting group</dfn>, which is the name of the Reporting <a data-link-type="dfn" href="https://w3c.github.io/reporting/network-reporting.html#endpoint-group" id="ref-for-endpoint-group">endpoint group</a> that reports for this policy will be sent to.</p>
-   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑧">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="ttl">ttl</dfn> representing the number of seconds the policy remains valid.</p>
-   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑨">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="creation">creation</dfn> which is the timestamp when the user agent received the policy.</p>
-   <p>A <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①⓪">NEL policy</a> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="stale">stale</dfn> if the <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#dfn-duration-from" id="ref-for-dfn-duration-from">duration from</a> its <a data-link-type="dfn" href="#creation" id="ref-for-creation">creation</a> to the <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#dfn-wall-clock" id="ref-for-dfn-wall-clock">wall clock</a>’s <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#wall-clock-unsafe-current-time" id="ref-for-wall-clock-unsafe-current-time">unsafe current time</a> is greater than 172800 seconds (48 hours).</p>
-   <p>A <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①①">NEL policy</a> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="expired">expired</dfn> if the <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#dfn-duration-from" id="ref-for-dfn-duration-from①">duration from</a> its <a data-link-type="dfn" href="#creation" id="ref-for-creation①">creation</a> to the <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#dfn-wall-clock" id="ref-for-dfn-wall-clock①">wall clock</a>’s <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#wall-clock-unsafe-current-time" id="ref-for-wall-clock-unsafe-current-time①">unsafe current time</a> is greater than its <a data-link-type="dfn" href="#ttl" id="ref-for-ttl">ttl</a> (in seconds).</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-export data-lt="NEL policies|NEL policy" id="nel-policies"><span class="bs-old-id" id="dfn-nel-policies"></span>NEL policy</dfn> instructs a user agent whether to collect reports about <a data-link-type="dfn" href="#network-request" id="ref-for-network-request⑨">network requests</a> to an <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin">origin</a>, and if so, where to send them. <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②">NEL policies</a> are delivered to the user agent via HTTP <dfn class="dfn-paneled" data-cite="RFC9110#fields" data-dfn-type="dfn" data-noexport id="response-headers"><span class="bs-old-id" id="dfn-response-headers"></span>response headers</dfn>.</p>
+   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies③">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="received-ip-address"><span class="bs-old-id" id="dfn-received-ip-address"></span>received IP address</dfn>, which is the <a data-link-type="dfn" href="https://url.spec.whatwg.org/#ip-address" id="ref-for-ip-address①">IP address</a> of the <a data-link-type="dfn" href="#server" id="ref-for-server②">server</a> that the user agent received this <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④">NEL policy</a> from.</p>
+   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤">NEL policy</a> has an <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="policy origin" data-noexport id="policy-origin"><span class="bs-old-id" id="dfn-policy-origin"></span>origin</dfn>.</p>
+   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑥">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="subdomains"><span class="bs-old-id" id="dfn-subdomains"></span>subdomains</dfn> flag, which is either <code>include</code> or <code>exclude</code>.</p>
+   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑦">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="reporting-group"><span class="bs-old-id" id="dfn-reporting-group"></span>reporting group</dfn>, which is the name of the Reporting <a data-link-type="dfn" href="https://w3c.github.io/reporting/network-reporting.html#endpoint-group" id="ref-for-endpoint-group">endpoint group</a> that reports for this policy will be sent to.</p>
+   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑧">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="ttl"><span class="bs-old-id" id="dfn-ttl"></span>ttl</dfn> representing the number of seconds the policy remains valid.</p>
+   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑨">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="creation"><span class="bs-old-id" id="dfn-creation"></span>creation</dfn> which is the timestamp when the user agent received the policy.</p>
+   <p>A <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①⓪">NEL policy</a> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="stale"><span class="bs-old-id" id="dfn-stale"></span>stale</dfn> if the <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#dfn-duration-from" id="ref-for-dfn-duration-from">duration from</a> its <a data-link-type="dfn" href="#creation" id="ref-for-creation">creation</a> to the <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#dfn-wall-clock" id="ref-for-dfn-wall-clock">wall clock</a>’s <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#wall-clock-unsafe-current-time" id="ref-for-wall-clock-unsafe-current-time">unsafe current time</a> is greater than 172800 seconds (48 hours).</p>
+   <p>A <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①①">NEL policy</a> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="expired"><span class="bs-old-id" id="dfn-expired"></span>expired</dfn> if the <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#dfn-duration-from" id="ref-for-dfn-duration-from①">duration from</a> its <a data-link-type="dfn" href="#creation" id="ref-for-creation①">creation</a> to the <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#dfn-wall-clock" id="ref-for-dfn-wall-clock①">wall clock</a>’s <a data-link-type="dfn" href="https://www.w3.org/TR/hr-time-3/#wall-clock-unsafe-current-time" id="ref-for-wall-clock-unsafe-current-time①">unsafe current time</a> is greater than its <a data-link-type="dfn" href="#ttl" id="ref-for-ttl">ttl</a> (in seconds).</p>
    <h3 class="heading settled" data-level="3.5" id="sampling-rates"><span class="secno">3.5. </span><span class="content">Sampling rates</span><a class="self-link" href="#sampling-rates"></a></h3>
-   <p>An <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin①">origin</a> that expects to serve a large volume of traffic might not be equipped to ingest NEL reports for every <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①⓪">network request</a> made to the origin. The origin can define <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="sampling rate" data-noexport id="sampling-rate">sampling rates</dfn> to limit the number of NEL reports that each user agent submits. Since <a data-link-type="dfn" href="#succeed" id="ref-for-succeed①">successful</a> requests should typically greatly outnumber <a data-link-type="dfn" href="#fail" id="ref-for-fail②">failed</a> requests, the origin can specify different sampling rates for each.</p>
-   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①②">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="successful-sampling-rate">successful sampling rate</dfn>, which is a number between 0.0 and 1.0 inclusive.</p>
-   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①③">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="failure-sampling-rate">failure sampling rate</dfn>, which is a number between 0.0 and 1.0 inclusive.</p>
+   <p>An <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin①">origin</a> that expects to serve a large volume of traffic might not be equipped to ingest NEL reports for every <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①⓪">network request</a> made to the origin. The origin can define <dfn class="dfn-paneled" data-dfn-type="dfn" data-lt="sampling rate" data-noexport id="sampling-rate"><span class="bs-old-id" id="dfn-sampling-rate"></span>sampling rates</dfn> to limit the number of NEL reports that each user agent submits. Since <a data-link-type="dfn" href="#succeed" id="ref-for-succeed①">successful</a> requests should typically greatly outnumber <a data-link-type="dfn" href="#fail" id="ref-for-fail②">failed</a> requests, the origin can specify different sampling rates for each.</p>
+   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①②">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="successful-sampling-rate"><span class="bs-old-id" id="dfn-successful-sampling-rate"></span>successful sampling rate</dfn>, which is a number between 0.0 and 1.0 inclusive.</p>
+   <p>Each <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①③">NEL policy</a> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="failure-sampling-rate"><span class="bs-old-id" id="dfn-failure-sampling-rate"></span>failure sampling rate</dfn>, which is a number between 0.0 and 1.0 inclusive.</p>
    <h3 class="heading settled" data-level="3.6" id="concept-policy-cache"><span class="secno">3.6. </span><span class="content">Policy cache</span><a class="self-link" href="#concept-policy-cache"></a></h3>
-   <p>A conformant user agent MUST provide a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="policy-cache">policy cache</dfn>, which is a storage mechanism that maintains a set of <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①④">NEL policies</a>, keyed by (<a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#network-partition-key" id="ref-for-network-partition-key①">network partition key</a>, <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin②">origin</a>) tuples.</p>
+   <p>A conformant user agent MUST provide a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="policy-cache"><span class="bs-old-id" id="dfn-policy-cache"></span>policy cache</dfn>, which is a storage mechanism that maintains a set of <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①④">NEL policies</a>, keyed by (<a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#network-partition-key" id="ref-for-network-partition-key①">network partition key</a>, <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin②">origin</a>) tuples.</p>
    <p>This storage mechanism is opaque, vendor-specific, and not exposed to the web, but it MUST provide the following methods which will be used in the algorithms this document defines:</p>
    <ul>
     <li data-md>
@@ -1197,27 +1227,27 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <h2 class="heading settled" data-level="4" id="policy-delivery"><span class="secno">4. </span><span class="content">Policy delivery</span><a class="self-link" href="#policy-delivery"></a></h2>
    <p>A <a data-link-type="dfn" href="#server" id="ref-for-server③">server</a> MAY define a <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①⑦">NEL policy</a> for an origin it controls via the <a data-link-type="dfn" href="#nel" id="ref-for-nel①">NEL</a> HTTP <a data-link-type="dfn" href="#response-headers" id="ref-for-response-headers">response header</a>.</p>
    <h3 class="heading settled" data-level="4.1" id="nel-response-header"><span class="secno">4.1. </span><span class="content"><code>NEL</code> response header</span><a class="self-link" href="#nel-response-header"></a></h3>
-   <p>The <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="nel"><code>NEL</code></dfn> <a data-link-type="dfn" href="#response-headers" id="ref-for-response-headers①">response header</a> is used to communicate an <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin④">origin</a>’s <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①⑧">NEL policy</a> to the user agent. The ABNF (Augmented Backus-Naur Form) <a data-link-type="biblio" href="#biblio-rfc5234" title="Augmented BNF for Syntax Specifications: ABNF">[RFC5234]</a> syntax for the <a data-link-type="dfn" href="#nel" id="ref-for-nel②">NEL</a> header is as follows:</p>
+   <p>The <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="nel"><span class="bs-old-id" id="dfn-nel"></span><code>NEL</code></dfn> <a data-link-type="dfn" href="#response-headers" id="ref-for-response-headers①">response header</a> is used to communicate an <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin④">origin</a>’s <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①⑧">NEL policy</a> to the user agent. The ABNF (Augmented Backus-Naur Form) <a data-link-type="biblio" href="#biblio-rfc5234" title="Augmented BNF for Syntax Specifications: ABNF">[RFC5234]</a> syntax for the <a data-link-type="dfn" href="#nel" id="ref-for-nel②">NEL</a> header is as follows:</p>
 <pre>NEL = json-field-value
 </pre>
    <p>The header’s value is interpreted as an array of JSON objects, as defined by <a data-link-type="biblio" href="#biblio-rfc9651" title="Structured Field Values for HTTP">[RFC9651]</a>. Each object in the array defines an <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies①⑨">NEL policy</a> for the origin. The user agent MUST process the first valid policy in the array and ignore any additional policies in the array.</p>
    <p>User agents MUST ignore any unknown or invalid field(s) or value(s) that do not conform to the syntax defined in this specification. A valid <a data-link-type="dfn" href="#nel" id="ref-for-nel③">NEL</a> header field MUST, at a minimum, contain one object with all of the "REQUIRED" fields defined in this specification.</p>
    <p>The user agent MUST ignore the <a data-link-type="dfn" href="#nel" id="ref-for-nel④">NEL</a> header specified via a <code>meta</code> element to mitigate hijacking of error reporting via scripting attacks. The <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②⓪">NEL policy</a> MUST be delivered via the <a data-link-type="dfn" href="#nel" id="ref-for-nel⑤">NEL</a> <a data-link-type="dfn" href="#response-headers" id="ref-for-response-headers②">response header</a>.</p>
    <p class="note" role="note"><span class="marker">Note:</span> The restriction on <code>meta</code> element is consistent with the <a data-link-type="biblio" href="#biblio-csp" title="Content Security Policy Level 3">[CSP]</a> specification, which restricts reporting registration to HTTP header fields only for the same reasons.</p>
-   <h4 class="heading settled" data-level="4.1.1" id="report-to-member"><span class="secno">4.1.1. </span><span class="content">The <code>report_to</code> member</span><a class="self-link" href="#report-to-member"></a></h4>
-   <p>The <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="report_to"><code>report_to</code></dfn> member specifies the <a data-link-type="dfn" href="https://w3c.github.io/reporting/network-reporting.html#endpoint-group" id="ref-for-endpoint-group①">endpoint group</a> that reports for this <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②①">NEL policy</a> will be sent to. The <a data-link-type="dfn" href="#report_to" id="ref-for-report_to①">report_to</a> member is REQUIRED to register a <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②②">NEL policy</a>, and OPTIONAL if the intent is to remove a previous registration – see <a data-link-type="dfn" href="#max_age" id="ref-for-max_age">max_age</a>. If present, its value MUST be a string; any other type will result in a parse error.</p>
+   <h4 class="heading settled" data-level="4.1.1" id="report-to-member"><span class="secno">4.1.1. </span><span class="bs-old-id" id="the-report_to-member"></span><span class="content">The <code>report_to</code> member</span><a class="self-link" href="#report-to-member"></a></h4>
+   <p>The <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="report_to"><span class="bs-old-id" id="dfn-report_to"></span><code>report_to</code></dfn> member specifies the <a data-link-type="dfn" href="https://w3c.github.io/reporting/network-reporting.html#endpoint-group" id="ref-for-endpoint-group①">endpoint group</a> that reports for this <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②①">NEL policy</a> will be sent to. The <a data-link-type="dfn" href="#report_to" id="ref-for-report_to①">report_to</a> member is REQUIRED to register a <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②②">NEL policy</a>, and OPTIONAL if the intent is to remove a previous registration – see <a data-link-type="dfn" href="#max_age" id="ref-for-max_age">max_age</a>. If present, its value MUST be a string; any other type will result in a parse error.</p>
    <p class="note" role="note"><span class="marker">Note:</span> To improve delivery of NEL reports, the <a data-link-type="dfn" href="#server" id="ref-for-server④">server</a> should set <code>report_to</code> to an <a data-link-type="dfn" href="https://w3c.github.io/reporting/network-reporting.html#endpoint-group" id="ref-for-endpoint-group②">endpoint group</a> containing at least one endpoint in an alternative origin whose infrastructure is not coupled with the origin from which the resource is being fetched — otherwise network errors cannot be reported until the problem is solved, if ever — and provide multiple endpoints to provide alternatives if some endpoints are unreachable.</p>
-   <h4 class="heading settled" data-level="4.1.2" id="max-age-member"><span class="secno">4.1.2. </span><span class="content">The <code>max_age</code> member</span><a class="self-link" href="#max-age-member"></a></h4>
-   <p>The REQUIRED <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="max_age"><code>max_age</code></dfn> member specifies the lifetime of this <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②③">NEL policy</a>, as a non-negative integer number of seconds. Its value MUST be an non-negative integer; any other type will result in a parse error.</p>
+   <h4 class="heading settled" data-level="4.1.2" id="max-age-member"><span class="secno">4.1.2. </span><span class="bs-old-id" id="the-max_age-member"></span><span class="content">The <code>max_age</code> member</span><a class="self-link" href="#max-age-member"></a></h4>
+   <p>The REQUIRED <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="max_age"><span class="bs-old-id" id="dfn-max_age"></span><code>max_age</code></dfn> member specifies the lifetime of this <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②③">NEL policy</a>, as a non-negative integer number of seconds. Its value MUST be an non-negative integer; any other type will result in a parse error.</p>
    <p>A value of <code>0</code> will cause any <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②④">NEL policy</a> for this <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin⑤">origin</a> to be removed from the <a data-link-type="dfn" href="#policy-cache" id="ref-for-policy-cache">policy cache</a>.</p>
    <p class="note" role="note"><span class="marker">Note:</span> To ensure delivery of NEL reports, the <a data-link-type="dfn" href="#server" id="ref-for-server⑤">server</a> should ensure that the Reporting <a data-link-type="dfn" href="https://w3c.github.io/reporting/network-reporting.html#endpoint-group" id="ref-for-endpoint-group③">endpoint group</a> is also configured with a sufficiently high <code>max_age</code>. If the Reporting policy expires, NEL reports will not be delivered, even if the NEL policy has not expired.</p>
-   <h4 class="heading settled" data-level="4.1.3" id="include-subdomains-member"><span class="secno">4.1.3. </span><span class="content">The <code>include_subdomains</code> member</span><a class="self-link" href="#include-subdomains-member"></a></h4>
-   <p>The OPTIONAL <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="include_subdomains"><code>include_subdomains</code></dfn> member is a boolean that enables this <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②⑤">NEL policy</a> for all subdomains of this origin (to an unlimited subdomain depth), for <code>dns</code> <a data-link-type="dfn" href="#type-phase" id="ref-for-type-phase">phase</a> reports. If no member named <code>include_subdomains</code> is present in the object, its value is not <code>true</code>, or its <a data-link-type="dfn" href="#type-phase" id="ref-for-type-phase①">phase</a> is not <code>dns</code>, the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②⑥">NEL policy</a> will not be enabled for subdomains.</p>
+   <h4 class="heading settled" data-level="4.1.3" id="include-subdomains-member"><span class="secno">4.1.3. </span><span class="bs-old-id" id="the-include_subdomains-member"></span><span class="content">The <code>include_subdomains</code> member</span><a class="self-link" href="#include-subdomains-member"></a></h4>
+   <p>The OPTIONAL <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="include_subdomains"><span class="bs-old-id" id="dfn-include_subdomains"></span><code>include_subdomains</code></dfn> member is a boolean that enables this <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②⑤">NEL policy</a> for all subdomains of this origin (to an unlimited subdomain depth), for <code>dns</code> <a data-link-type="dfn" href="#type-phase" id="ref-for-type-phase">phase</a> reports. If no member named <code>include_subdomains</code> is present in the object, its value is not <code>true</code>, or its <a data-link-type="dfn" href="#type-phase" id="ref-for-type-phase①">phase</a> is not <code>dns</code>, the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②⑥">NEL policy</a> will not be enabled for subdomains.</p>
    <p class="note" role="note"><span class="marker">Note:</span> To ensure delivery of NEL reports for subdomains, the application should ensure that the Reporting <a data-link-type="dfn" href="https://w3c.github.io/reporting/network-reporting.html#endpoint-group" id="ref-for-endpoint-group④">endpoint group</a> is also configured with <code>include_subdomains</code> enabled. If the Reporting policy is not, and there is not a separate Reporting policy for a given subdomain, NEL reports for that subdomain will not be delivered, even if the NEL policy includes the subdomain.</p>
-   <h4 class="heading settled" data-level="4.1.4" id="success-fraction-member"><span class="secno">4.1.4. </span><span class="content">The <code>success_fraction</code> member</span><a class="self-link" href="#success-fraction-member"></a></h4>
-   <p>The OPTIONAL <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="success_fraction"><code>success_fraction</code></dfn> member defines the <a data-link-type="dfn" href="#sampling-rate" id="ref-for-sampling-rate">sampling rate</a> that should be applied to reports about <a data-link-type="dfn" href="#succeed" id="ref-for-succeed②">successful</a> <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①①">network requests</a> for this origin. If present, its value MUST be a number between <code>0.0</code> and <code>1.0</code>, inclusive; any other value will result in a parse error. If this member is not present, the user agent will <em>not</em> collect NEL reports about <a data-link-type="dfn" href="#succeed" id="ref-for-succeed③">successful</a> <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①②">network requests</a> for this origin.</p>
-   <h4 class="heading settled" data-level="4.1.5" id="failure-fraction-member"><span class="secno">4.1.5. </span><span class="content">The <code>failure_fraction</code> member</span><a class="self-link" href="#failure-fraction-member"></a></h4>
-   <p>The OPTIONAL <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="failure_fraction"><code>failure_fraction</code></dfn> member defines the <a data-link-type="dfn" href="#sampling-rate" id="ref-for-sampling-rate①">sampling rate</a> that should be applied to reports about <a data-link-type="dfn" href="#fail" id="ref-for-fail③">failed</a> <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①③">network requests</a> for this origin. If present, its value MUST be a number between <code>0.0</code> and <code>1.0</code>, inclusive; any other value will result in a parse error. If this member is not present, the user agent will collect NEL reports about <em>all</em> <a data-link-type="dfn" href="#fail" id="ref-for-fail④">failed</a> <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①④">network requests</a> for this origin.</p>
+   <h4 class="heading settled" data-level="4.1.4" id="success-fraction-member"><span class="secno">4.1.4. </span><span class="bs-old-id" id="the-success_fraction-member"></span><span class="content">The <code>success_fraction</code> member</span><a class="self-link" href="#success-fraction-member"></a></h4>
+   <p>The OPTIONAL <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="success_fraction"><span class="bs-old-id" id="dfn-success_fraction"></span><code>success_fraction</code></dfn> member defines the <a data-link-type="dfn" href="#sampling-rate" id="ref-for-sampling-rate">sampling rate</a> that should be applied to reports about <a data-link-type="dfn" href="#succeed" id="ref-for-succeed②">successful</a> <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①①">network requests</a> for this origin. If present, its value MUST be a number between <code>0.0</code> and <code>1.0</code>, inclusive; any other value will result in a parse error. If this member is not present, the user agent will <em>not</em> collect NEL reports about <a data-link-type="dfn" href="#succeed" id="ref-for-succeed③">successful</a> <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①②">network requests</a> for this origin.</p>
+   <h4 class="heading settled" data-level="4.1.5" id="failure-fraction-member"><span class="secno">4.1.5. </span><span class="bs-old-id" id="the-failure_fraction-member"></span><span class="content">The <code>failure_fraction</code> member</span><a class="self-link" href="#failure-fraction-member"></a></h4>
+   <p>The OPTIONAL <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="failure_fraction"><span class="bs-old-id" id="dfn-failure_fraction"></span><code>failure_fraction</code></dfn> member defines the <a data-link-type="dfn" href="#sampling-rate" id="ref-for-sampling-rate①">sampling rate</a> that should be applied to reports about <a data-link-type="dfn" href="#fail" id="ref-for-fail③">failed</a> <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①③">network requests</a> for this origin. If present, its value MUST be a number between <code>0.0</code> and <code>1.0</code>, inclusive; any other value will result in a parse error. If this member is not present, the user agent will collect NEL reports about <em>all</em> <a data-link-type="dfn" href="#fail" id="ref-for-fail④">failed</a> <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①④">network requests</a> for this origin.</p>
    <h3 class="heading settled" data-level="4.2" id="process-policy-headers"><span class="secno">4.2. </span><span class="content">Process policy headers</span><a class="self-link" href="#process-policy-headers"></a></h3>
    <p>Given a <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①⑤">network request</a> (<var>request</var>) and its corresponding <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response①">response</a> (<var>response</var>), this algorithm extracts a <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies②⑦">NEL policy</a> for <var>request</var>’s <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin⑥">origin</a>, and updates the <a data-link-type="dfn" href="#policy-cache" id="ref-for-policy-cache①">policy cache</a> accordingly.</p>
    <ol>
@@ -1312,7 +1342,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     <li data-md>
      <p>Return <code>no policy</code>.</p>
    </ol>
-   <h3 class="heading settled" data-level="5.2" id="generate-a-network-error-report"><span class="secno">5.2. </span><span class="content">Generate a network error report</span><a class="self-link" href="#generate-a-network-error-report"></a></h3>
+   <h3 class="heading settled" data-level="5.2" id="generate-a-network-error-report"><span class="secno">5.2. </span><span class="bs-old-id" id="generate-a-network-error-report-0"></span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="dfn-generate-a-network-error-report">Generate a network error report</dfn></span><a class="self-link" href="#generate-a-network-error-report"></a></h3>
    <p>Given a <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①⑧">network request</a> (<var>request</var>) and its corresponding <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response②">response</a> (<var>response</var>), this algorithm generates a report about <var>request</var> if instructed to by any matching <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies③①">NEL policy</a>, and returns the report and the NEL policy. Otherwise this algorithm returns null.</p>
    <ol>
     <li data-md>
@@ -1391,13 +1421,13 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <li data-md>
        <p class="assertion">Assert: All fields in <var>report body</var> that are derived from information not available during <a data-link-type="dfn" href="#dns-resolution" id="ref-for-dns-resolution③">DNS resolution</a> have been cleared.</p>
      </ol>
-     <p class="note" role="note"><span class="marker">Note:</span> This step "downgrades" a NEL report if the IP addresses of the <a data-link-type="dfn" href="#server" id="ref-for-server⑧">server</a> and the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies③③">policy</a> don’t match. This is a privacy protection, ensuring that NEL reports are only sent to the owner of the service that the report describes. If the IP addresses don’t match, then the user agent can only verify that the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies③④">NEL policy</a> was sent by the owner of the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin①③">origin</a>’s <dfn class="dfn-paneled" data-cite="RFC1034#section-3.1" data-dfn-type="dfn" data-noexport id="domain-name">domain name</dfn>; it cannot verify that the policy was sent by the owner of the <a data-link-type="dfn" href="#server" id="ref-for-server⑨">server</a> this <a data-link-type="dfn" href="#domain-name" id="ref-for-domain-name">domain name</a> resolves to. We therefore downgrade the report to only contain information about <a data-link-type="dfn" href="#dns-resolution" id="ref-for-dns-resolution④">DNS resolution</a>. See <a href="#privacy-considerations">§ 9 Privacy Considerations</a> and <a href="#origins-with-multiple-ip-addresses">§ 7.4 Origins with multiple IP addresses</a> for more details.</p>
+     <p class="note" role="note"><span class="marker">Note:</span> This step "downgrades" a NEL report if the IP addresses of the <a data-link-type="dfn" href="#server" id="ref-for-server⑧">server</a> and the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies③③">policy</a> don’t match. This is a privacy protection, ensuring that NEL reports are only sent to the owner of the service that the report describes. If the IP addresses don’t match, then the user agent can only verify that the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies③④">NEL policy</a> was sent by the owner of the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin①③">origin</a>’s <dfn class="dfn-paneled" data-cite="RFC1034#section-3.1" data-dfn-type="dfn" data-noexport id="domain-name"><span class="bs-old-id" id="dfn-domain-name"></span>domain name</dfn>; it cannot verify that the policy was sent by the owner of the <a data-link-type="dfn" href="#server" id="ref-for-server⑨">server</a> this <a data-link-type="dfn" href="#domain-name" id="ref-for-domain-name">domain name</a> resolves to. We therefore downgrade the report to only contain information about <a data-link-type="dfn" href="#dns-resolution" id="ref-for-dns-resolution④">DNS resolution</a>. See <a href="#privacy-considerations">§ 9 Privacy Considerations</a> and <a href="#origins-with-multiple-ip-addresses">§ 7.4 Origins with multiple IP addresses</a> for more details.</p>
     <li data-md>
      <p>If <var>policy</var> is <a data-link-type="dfn" href="#stale" id="ref-for-stale">stale</a>, then delete <var>policy</var> from the <a data-link-type="dfn" href="#policy-cache" id="ref-for-policy-cache⑧">policy cache</a>.</p>
     <li data-md>
      <p>Return <var>report body</var> and <var>policy</var>.</p>
    </ol>
-   <h3 class="heading settled" data-level="5.3" id="deliver-a-network-report"><span class="secno">5.3. </span><span class="content">Deliver a network report</span><a class="self-link" href="#deliver-a-network-report"></a></h3>
+   <h3 class="heading settled" data-level="5.3" id="deliver-a-network-report"><span class="secno">5.3. </span><span class="bs-old-id" id="deliver-a-network-report-0"></span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="dfn-deliver-a-network-report">Deliver a network report</dfn></span><a class="self-link" href="#deliver-a-network-report"></a></h3>
    <p>Given a ECMAScript object (<var>report body</var>, usually returned from <a href="#generate-a-network-error-report">§ 5.2 Generate a network error report</a> and then augmented by the calling specification) and its matching <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies③⑤">NEL policy</a> (<var>policy</var>) and <a data-link-type="dfn" href="#network-request" id="ref-for-network-request①⑨">network request</a> (<var>request</var>), this algorithm queues the report for delivery.</p>
    <ol>
     <li data-md>
@@ -1504,7 +1534,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     <dd data-md>
      <p>The TLS connection failed due to reasons not covered by previous errors</p>
    </dl>
-   <h3 class="heading settled" data-level="6.3" id="transmission-errors"><span class="secno">6.3. </span><span class="content">Transmission of request and response errors</span><a class="self-link" href="#transmission-errors"></a></h3>
+   <h3 class="heading settled" data-level="6.3" id="transmission-errors"><span class="secno">6.3. </span><span class="bs-old-id" id="transmission-of-request-and-response-errors"></span><span class="content">Transmission of request and response errors</span><a class="self-link" href="#transmission-errors"></a></h3>
    <p>All of the <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors①⓪">network errors</a> in this section occur during the <a data-link-type="dfn" href="#transmission-of-request-and-response" id="ref-for-transmission-of-request-and-response②">transmission of request and response</a>, and therefore have a <a data-link-type="dfn" href="#type-phase" id="ref-for-type-phase⑤">phase</a> of <code>application</code>.</p>
    <dl>
     <dt data-md><code>http.error</code>
@@ -1532,7 +1562,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <h2 class="heading settled" data-level="7" id="examples"><span class="secno">7. </span><span class="content">Examples</span><a class="self-link" href="#examples"></a></h2>
    <h3 class="heading settled" data-level="7.1" id="sample-policy-definitions"><span class="secno">7.1. </span><span class="content">Sample Policy Definitions</span><a class="self-link" href="#sample-policy-definitions"></a></h3>
    <div class="example" id="example-nel-policy-registration">
-    <a class="self-link" href="#example-nel-policy-registration"></a>
+    <a class="self-link" href="#example-nel-policy-registration"></a><span class="bs-old-id" id="example-1"></span>
 
 <pre class="highlight">> <c- nf>GET</c-> <c- nn>/</c-> <c- kr>HTTP</c-><c- o>/</c-><c- m>1.1</c->
 > <c- l>Host: example.com</c->
@@ -1547,7 +1577,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p>This <code>NEL</code> header defines a <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies③⑦">NEL policy</a>, instructing the user agent to report network errors about <code>example.com</code> to the <a data-link-type="dfn" href="https://w3c.github.io/reporting/network-reporting.html#endpoint-group" id="ref-for-endpoint-group⑤">endpoint group</a> named <code>network-errors</code>. The policy applies for 2592000 seconds (30 days).</p>
    <p>Note that above registration will only succeed if the response is communicated from a <a data-link-type="dfn" href="https://www.w3.org/TR/secure-contexts/#potentially-trustworthy-origin" id="ref-for-potentially-trustworthy-origin">potentially trustworthy origin</a>.</p>
    <div class="example" id="example-nel-policy-removal">
-    <a class="self-link" href="#example-nel-policy-removal"></a>
+    <a class="self-link" href="#example-nel-policy-removal"></a><span class="bs-old-id" id="example-2"></span>
 
 <pre class="highlight">> <c- nf>GET</c-> <c- nn>/</c-> <c- kr>HTTP</c-><c- o>/</c-><c- m>1.1</c->
 > <c- l>Host: example.com</c->
@@ -1561,7 +1591,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <h3 class="heading settled" data-level="7.2" id="sample-network-error-reports"><span class="secno">7.2. </span><span class="content">Sample Network Error Reports</span><a class="self-link" href="#sample-network-error-reports"></a></h3>
    <p>This section contains example <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors①①">network error</a> <a data-link-type="dfn" href="https://www.w3.org/TR/reporting-1/#report" id="ref-for-report①">reports</a> the user agent might queue when a network error is encountered for an <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin①⑤">origin</a> with a registered <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies③⑨">NEL policy</a>. We show the full report payload that would be created by the <a data-link-type="biblio" href="#biblio-reporting" title="Reporting API">[REPORTING]</a> API when uploading the report; the payload’s <code>body</code> field contains the <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors①②">network error</a> <a data-link-type="dfn" href="https://www.w3.org/TR/reporting-1/#report-body" id="ref-for-report-body">report body</a>.</p>
    <div class="example" id="example-report-protocol-error">
-    <a class="self-link" href="#example-report-protocol-error"></a>
+    <a class="self-link" href="#example-report-protocol-error"></a><span class="bs-old-id" id="example-3"></span>
 
 <pre class="highlight"><c- p>{</c->
   <c- f>"age"</c-><c- p>:</c-> <c- mi>0</c-><c- p>,</c->
@@ -1583,7 +1613,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    </div>
    <p>This report indicates that the user agent attempted to navigate from <code>example.com</code> to <code>www.example.com</code>, which successfully resolved to <code>2001:DB8::42</code>. However, while the user agent received a 200 response from the server via the HTTP/2 (<code>h2</code>) protocol, it encountered a protocol error in the exchange and was forced to abandon the navigation. The user agent aborted the navigation 823 milliseconds after it started. Finally, the user agent sent this report immediately after the network error was encountered – i.e. the report age is 0.</p>
    <div class="example" id="example-report-dns-failure">
-    <a class="self-link" href="#example-report-dns-failure"></a>
+    <a class="self-link" href="#example-report-dns-failure"></a><span class="bs-old-id" id="example-4"></span>
 
 <pre class="highlight"><c- p>{</c->
   <c- f>"age"</c-><c- p>:</c-> <c- mi>0</c-><c- p>,</c->
@@ -1606,7 +1636,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p>The above report indicates that the user agent attempted to fetch <code>https://widget.com/thing.js</code> from <code>https://www.example.com/</code>. However, the user agent was unable to resolve the DNS name (<code>widget.com</code>) and the request was aborted by the user agent after 143 milliseconds. Because a previous request to <code>widget.com</code> delivered a valid <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④⓪">NEL policy</a>, the user agent generates a <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors①③">network error</a> <a data-link-type="dfn" href="https://www.w3.org/TR/reporting-1/#report" id="ref-for-report②">report</a> for this request. The report was uploaded immediately after the <a data-link-type="dfn" href="#network-errors" id="ref-for-network-errors①④">network error</a> was encountered – i.e. the report age is 0.</p>
    <h3 class="heading settled" data-level="7.3" id="dns-misconfiguration"><span class="secno">7.3. </span><span class="content">DNS misconfiguration</span><a class="self-link" href="#dns-misconfiguration"></a></h3>
    <div class="example" id="example-nel-policy-subdomains">
-    <a class="self-link" href="#example-nel-policy-subdomains"></a>
+    <a class="self-link" href="#example-nel-policy-subdomains"></a><span class="bs-old-id" id="example-5"></span>
 
 <pre class="highlight">> <c- nf>GET</c-> <c- nn>/</c-> <c- kr>HTTP</c-><c- o>/</c-><c- m>1.1</c->
 > <c- l>Host: example.com</c->
@@ -1620,7 +1650,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    </div>
    <p>This <code>NEL</code> header allows the owner of <code>example.com</code> to detect when they have misconfigured their DNS servers — for instance, when they have forgotten to add a new resource record resolving <code>new-subdomain.example.com</code> to an IP address. If a user agent tries to make a request to <code>new-subdomain.example.com</code>, it might generate the following report:</p>
    <div class="example" id="example-report-subdomain-dns-failure">
-    <a class="self-link" href="#example-report-subdomain-dns-failure"></a>
+    <a class="self-link" href="#example-report-subdomain-dns-failure"></a><span class="bs-old-id" id="example-6"></span>
 
 <pre class="highlight"><c- p>{</c->
   <c- f>"age"</c-><c- p>:</c-> <c- mi>0</c-><c- p>,</c->
@@ -1643,7 +1673,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p>For <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin①⑥">origins</a> whose <a data-link-type="dfn" href="#domain-name" id="ref-for-domain-name①">domain name</a> resolves to multiple IP addresses, NEL will sometimes "downgrade" an error report, providing less information about the cause of the error, since it cannot verify that the owner of the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin①⑦">origin</a> is the same as the owner of the <a data-link-type="dfn" href="#server" id="ref-for-server①⓪">server</a> handling the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request⑦">request</a>.</p>
    <p>As an example, assume that <code>example.com</code> is handled by three <a data-link-type="dfn" href="#server" id="ref-for-server①①">servers</a>, each with a different IP address. The owner of the service configures DNS to resolve <code>example.com</code> to <code>192.0.2.1</code>, <code>192.0.2.2</code>, and <code>192.0.2.3</code>, and relies on user agents to balance their requests across these three IP addresses. The service owner delivers the following <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④①">NEL policy</a>:</p>
    <div class="example" id="example-nel-policy-multi-ip">
-    <a class="self-link" href="#example-nel-policy-multi-ip"></a>
+    <a class="self-link" href="#example-nel-policy-multi-ip"></a><span class="bs-old-id" id="example-7"></span>
 
 <pre class="highlight">> <c- nf>GET</c-> <c- nn>/</c-> <c- kr>HTTP</c-><c- o>/</c-><c- m>1.1</c->
 > <c- l>Host: example.com</c->
@@ -1661,7 +1691,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     <li data-md>
      <p>The user agent sends a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request⑧">request</a> to <code>192.0.2.1</code>, and receives a successful <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response③">response</a> from the <a data-link-type="dfn" href="#server" id="ref-for-server①②">server</a>. This response includes the above <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④②">NEL policy</a>, and the user agent sets the policy’s <a data-link-type="dfn" href="#received-ip-address" id="ref-for-received-ip-address②">received IP address</a> to <code>192.0.2.1</code>. Since the <a data-link-type="dfn" href="#received-ip-address" id="ref-for-received-ip-address③">received IP address</a> matches the <a data-link-type="dfn" href="#server" id="ref-for-server①③">server</a>’s IP address (which it must for any successful request), it generates the following NEL report:</p>
      <div class="example" id="example-report-success-ip1">
-      <a class="self-link" href="#example-report-success-ip1"></a>
+      <a class="self-link" href="#example-report-success-ip1"></a><span class="bs-old-id" id="example-8"></span>
 
 <pre class="highlight"><c- p>{</c->
   <c- f>"age"</c-><c- p>:</c-> <c- mi>0</c-><c- p>,</c->
@@ -1683,7 +1713,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     <li data-md>
      <p>The user agent sends a new <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request⑨">request</a> to <code>192.0.2.2</code>, and receives another successful <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response④">response</a>. This response also includes the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④③">NEL policy</a>, and the user agent updates the policy’s <a data-link-type="dfn" href="#received-ip-address" id="ref-for-received-ip-address④">received IP address</a> to <code>192.0.2.2</code>. Since the <a data-link-type="dfn" href="#received-ip-address" id="ref-for-received-ip-address⑤">received IP address</a> matches the <a data-link-type="dfn" href="#server" id="ref-for-server①④">server</a>’s IP address (which it must for any successful request), it generates the following NEL report:</p>
      <div class="example" id="example-report-success-ip2">
-      <a class="self-link" href="#example-report-success-ip2"></a>
+      <a class="self-link" href="#example-report-success-ip2"></a><span class="bs-old-id" id="example-9"></span>
 
 <pre class="highlight"><c- p>{</c->
   <c- f>"age"</c-><c- p>:</c-> <c- mi>0</c-><c- p>,</c->
@@ -1705,7 +1735,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     <li data-md>
      <p>The user agent then tries to send a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①⓪">request</a> to <code>192.0.2.3</code>, but isn’t able to establish a connection to the server. The user agent still has the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④④">NEL policy</a> in the <a data-link-type="dfn" href="#policy-cache" id="ref-for-policy-cache⑨">policy cache</a>, and would ideally use this policy to generate a <code>tcp.timed_out</code> report about the <a data-link-type="dfn" href="#fail" id="ref-for-fail⑧">failed</a> <a data-link-type="dfn" href="#network-request" id="ref-for-network-request②⓪">network request</a>. However, the because policy’s <a data-link-type="dfn" href="#received-ip-address" id="ref-for-received-ip-address⑥">received IP address</a> (<code>192.0.2.2</code>) doesn’t match the IP address that this <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①①">request</a> was sent to, the user agent cannot verify that the server at <code>192.0.2.3</code> is actually owned by the owners of <code>example.com</code>. The user agent must therefore downgrade the report to <code>dns.address_changed</code>:</p>
      <div class="example" id="example-report-downgrade-ip3">
-      <a class="self-link" href="#example-report-downgrade-ip3"></a>
+      <a class="self-link" href="#example-report-downgrade-ip3"></a><span class="bs-old-id" id="example-10"></span>
 
 <pre class="highlight"><c- p>{</c->
   <c- f>"age"</c-><c- p>:</c-> <c- mi>0</c-><c- p>,</c->
@@ -1727,7 +1757,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     <li data-md>
      <p>The user agent then tries to send another <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①②">request</a> to <code>192.0.2.1</code>, but once again isn’t able to establish a connection to the server. Even though the user agent received the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④⑤">NEL policy</a> from <code>192.0.2.1</code> at some point in the past, the policy’s <a data-link-type="dfn" href="#received-ip-address" id="ref-for-received-ip-address⑦">received IP address</a> only records where it was <em>most recently</em> received from — in this case, <code>192.0.2.2</code>. The user agent must therefore downgrade the report to <code>dns.address_changed</code>:</p>
      <div class="example" id="example-report-downgrade-ip1">
-      <a class="self-link" href="#example-report-downgrade-ip1"></a>
+      <a class="self-link" href="#example-report-downgrade-ip1"></a><span class="bs-old-id" id="example-11"></span>
 
 <pre class="highlight"><c- p>{</c->
   <c- f>"age"</c-><c- p>:</c-> <c- mi>0</c-><c- p>,</c->
@@ -1748,20 +1778,20 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
      </div>
    </ol>
    <h2 class="heading settled" data-level="8" id="use-cases"><span class="secno">8. </span><span class="content">Use cases</span><a class="self-link" href="#use-cases"></a></h2>
-   <h3 class="heading settled" data-level="8.1" id="reporting-navigation-failures"><span class="secno">8.1. </span><span class="content">Reporting of Navigation Failures</span><a class="self-link" href="#reporting-navigation-failures"></a></h3>
+   <h3 class="heading settled" data-level="8.1" id="reporting-navigation-failures"><span class="secno">8.1. </span><span class="bs-old-id" id="reporting-of-navigation-failures"></span><span class="content">Reporting of Navigation Failures</span><a class="self-link" href="#reporting-navigation-failures"></a></h3>
    <p>A navigation request initiated by the user (e.g. via a click on a link, direct input via the location bar, script-initiated due to user interaction, etc.) may fail due any number of connectivity reasons: DNS failure, TCP error, TLS protocol violation, and so on. These errors may be caused by network misconfiguration, transient routing issues, server downtime, malware or other attacks against the user, etc.</p>
    <p>In such cases the destination host is often left unaware of the failed navigation since, by definition, it cannot see the request reach its infrastructure and it is unable to investigate the problem. To address this, the host can register an <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④⑥">NEL policy</a> with the user agent, which specifies where reports of such failures should be delivered such that they can be investigated.</p>
-   <h3 class="heading settled" data-level="8.2" id="reporting-first-party-subresource-failures"><span class="secno">8.2. </span><span class="content">Reporting of First-party Subresource Fetch Failures</span><a class="self-link" href="#reporting-first-party-subresource-failures"></a></h3>
+   <h3 class="heading settled" data-level="8.2" id="reporting-first-party-subresource-failures"><span class="secno">8.2. </span><span class="bs-old-id" id="reporting-of-first-party-subresource-fetch-failures"></span><span class="content">Reporting of First-party Subresource Fetch Failures</span><a class="self-link" href="#reporting-first-party-subresource-failures"></a></h3>
    <p>A typical application requires dozens of resources, the fetching of which is typically initiated via HTML, CSS, or JavaScript. The application requesting such resources can observe failures of most such fetches (e.g. via <code>onerror</code> callbacks), but it does not have access to the detailed network error report of why the failure has occurred - e.g. DNS failure, TCP error, TLS protocol violation, etc.</p>
    <p>To address this, the application can register relevant <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④⑦">NEL policies</a> with the user agent for the first-party hosts from which the subresources are being fetched. Then, if such a policy is present and a network error is encountered for a resource from an <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin①⑧">origin</a> with a registered <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④⑧">NEL policy</a>, the user agent will report the detailed network error report and enable the application developers to investigate the error.</p>
-   <h3 class="heading settled" data-level="8.3" id="reporting-third-party-subresource-failures"><span class="secno">8.3. </span><span class="content">Reporting of Third-party Subresource Fetch Failures</span><a class="self-link" href="#reporting-third-party-subresource-failures"></a></h3>
+   <h3 class="heading settled" data-level="8.3" id="reporting-third-party-subresource-failures"><span class="secno">8.3. </span><span class="bs-old-id" id="reporting-of-third-party-subresource-fetch-failures"></span><span class="content">Reporting of Third-party Subresource Fetch Failures</span><a class="self-link" href="#reporting-third-party-subresource-failures"></a></h3>
    <p>In the case where a resource is embedded by a third party, the provider of the resource is often unable to instrument and observe the failure. For example, if <code>example.com</code> embeds a <code>widget.com/thing.js</code> resource on its site, and the user visiting <code>example.com</code> fails to fetch such resource due to a network error, the <code>widget.com</code> host is both unaware of the failure and unable to detect it.</p>
    <p>To address this, <code>widget.com</code> can register an NEL policy for its host. Then, if such policy is present and a network error is encountered while fetching a resource — regardless of whether it is being requested from a first-party or third-party origin — from the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin①⑨">origin</a> with a registered <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies④⑨">NEL policy</a>, the user agent will report the network error and enable the provider to investigate the error.</p>
    <h2 class="heading settled" data-level="9" id="privacy-considerations"><span class="secno">9. </span><span class="content">Privacy Considerations</span><a class="self-link" href="#privacy-considerations"></a></h2>
    <p>NEL provides network error reports that could expose new information about the user’s network configuration. For example, an attacker could abuse NEL reporting to probe the user’s network configuration, or to scan for servers on the user’s internal network. Also, similar to HSTS, HPKP, and pinned CSP policies, the stored <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤⓪">NEL policy</a> could be used as a "supercookie" by setting a distinct policy with a custom (per-user) reporting URI to act as an identifier in combination with (or instead of) HTTP cookies.</p>
    <p>To mitigate some of the above risks, NEL registration is restricted to <a data-link-type="dfn" href="https://www.w3.org/TR/secure-contexts/#potentially-trustworthy-origin" id="ref-for-potentially-trustworthy-origin①">potentially trustworthy origins</a>, and delivery of network error reports is similarly restricted to <a data-link-type="dfn" href="https://www.w3.org/TR/secure-contexts/#potentially-trustworthy-origin" id="ref-for-potentially-trustworthy-origin②">potentially trustworthy origins</a>. This disallows a transient HTTP MITM from trivially abusing NEL as a persistent tracker.</p>
    <p>Additionally, the NEL <a data-link-type="dfn" href="#policy-cache" id="ref-for-policy-cache①⓪">policy cache</a> is partitioned using the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#network-partition-key" id="ref-for-network-partition-key③">network partition key</a>, so that a <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤①">NEL policy</a> stored for a site in one embedding context will not be used in a different context (for instance, when embedded by a different top-level site.)</p>
-   <p>NEL is intended to augment existing server-side monitoring. NEL reports should only be sent to the owner of the service being requested. For errors that occur during <a data-link-type="dfn" href="#dns-resolution" id="ref-for-dns-resolution⑥">DNS resolution</a>, NEL reports are only generated when the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤②">NEL policy</a> was received from the owner of the <dfn class="dfn-paneled" data-cite="RFC1034#section-3.1" data-dfn-type="dfn" data-noexport id="domain-namespace-tree">domain namespace tree</dfn> that contains the <a data-link-type="dfn" href="#policy-origin" id="ref-for-policy-origin③">policy origin</a>. For errors that occur during <a data-link-type="dfn" href="#secure-connection-establishment" id="ref-for-secure-connection-establishment②">secure connection establishment</a> or <a data-link-type="dfn" href="#transmission-of-request-and-response" id="ref-for-transmission-of-request-and-response③">transmission of request and response</a>, NEL reports are only generated when the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤③">NEL policy</a> was received from the owner of the <a data-link-type="dfn" href="#server" id="ref-for-server①⑤">server</a> that the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①③">request</a> was sent to.</p>
+   <p>NEL is intended to augment existing server-side monitoring. NEL reports should only be sent to the owner of the service being requested. For errors that occur during <a data-link-type="dfn" href="#dns-resolution" id="ref-for-dns-resolution⑥">DNS resolution</a>, NEL reports are only generated when the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤②">NEL policy</a> was received from the owner of the <dfn class="dfn-paneled" data-cite="RFC1034#section-3.1" data-dfn-type="dfn" data-noexport id="domain-namespace-tree"><span class="bs-old-id" id="dfn-domain-namespace-tree"></span>domain namespace tree</dfn> that contains the <a data-link-type="dfn" href="#policy-origin" id="ref-for-policy-origin③">policy origin</a>. For errors that occur during <a data-link-type="dfn" href="#secure-connection-establishment" id="ref-for-secure-connection-establishment②">secure connection establishment</a> or <a data-link-type="dfn" href="#transmission-of-request-and-response" id="ref-for-transmission-of-request-and-response③">transmission of request and response</a>, NEL reports are only generated when the <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤③">NEL policy</a> was received from the owner of the <a data-link-type="dfn" href="#server" id="ref-for-server①⑤">server</a> that the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①③">request</a> was sent to.</p>
    <p>This rationale explains the treatment of the <a data-link-type="dfn" href="#received-ip-address" id="ref-for-received-ip-address⑧">received IP address</a> and <a data-link-type="dfn" href="#subdomains" id="ref-for-subdomains④">subdomains</a> flag of a <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤④">NEL policy</a>. By checking that the policy’s <a data-link-type="dfn" href="#received-ip-address" id="ref-for-received-ip-address⑨">received IP address</a> matches the IP address of the <a data-link-type="dfn" href="#server" id="ref-for-server①⑥">server</a>, NEL extends the trust boundary of the policy to include not just the policy’s <a data-link-type="dfn" href="#policy-origin" id="ref-for-policy-origin④">policy origin</a>, but also the specific server that the user agent is communicating with. This helps prevent (for instance) DNS rebinding attacks, where an attacker delivers a long-lived <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤⑤">NEL policy</a> from a server that they own, and then changes their name servers to resolve the <a data-link-type="dfn" href="#policy-origin" id="ref-for-policy-origin⑤">policy origin</a> to a server they don’t control. Without the <a data-link-type="dfn" href="#received-ip-address" id="ref-for-received-ip-address①⓪">received IP address</a> verification, this would cause user agents to send reports about the second server to the attacker.</p>
    <p>Similarly, <a data-link-type="dfn" href="#subdomains" id="ref-for-subdomains⑤">subdomain</a> <a data-link-type="dfn" href="#nel-policies" id="ref-for-nel-policies⑤⑥">NEL policies</a> are limited, and can only be used to generate reports about subdomains of the <a data-link-type="dfn" href="#policy-origin" id="ref-for-policy-origin⑥">policy origin</a> during the <a data-link-type="dfn" href="#dns-resolution" id="ref-for-dns-resolution⑦">DNS resolution</a> <a data-link-type="dfn" href="#phase" id="ref-for-phase⑥">phase</a> of a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①④">request</a>. During this <a data-link-type="dfn" href="#phase" id="ref-for-phase⑦">phase</a>, there is no <a data-link-type="dfn" href="#server" id="ref-for-server①⑦">server</a> to verify ownership of, and the fact that the policy was received from a superdomain of the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①⑤">request</a>’s <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-origin" id="ref-for-concept-request-origin②⓪">origin</a> is enough to establish ownership of the error. This allows the owners of a particular portion of the <a data-link-type="dfn" href="#domain-namespace-tree" id="ref-for-domain-namespace-tree">domain namespace tree</a> to use NEL to detect <a href="#dns-misconfiguration">§ 7.3 DNS misconfiguration</a> errors, while preventing them from using malicious DNS entries to collect information about servers they don’t control.</p>
    <p>To prevent information leakage, NEL reports about a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①⑥">request</a> do not contain any information that is not visible to the <a data-link-type="dfn" href="#server" id="ref-for-server①⑧">server</a> when processing the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①⑦">request</a>. For errors during <a data-link-type="dfn" href="#dns-resolution" id="ref-for-dns-resolution⑧">DNS resolution</a>, a NEL report only contains information available from DNS itself. This prevents <a data-link-type="dfn" href="#server" id="ref-for-server①⑨">servers</a> from abusing NEL to collect more information about their users than they already have access to. Note that NEL reports will include a web site’s public IP address in the <a data-link-type="dfn" href="https://www.w3.org/TR/reporting-1/#report-body" id="ref-for-report-body①">report body</a>’s <code>server_ip</code> field, which may not always be known to the service which generates the NEL header, for example if it is behind a load balancer or other transparent MitM proxy.</p>
@@ -1860,6 +1890,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <li><a href="#4xx">4xx</a><span>, in § 3.1</span>
    <li><a href="#5xx">5xx</a><span>, in § 3.1</span>
    <li><a href="#creation">creation</a><span>, in § 3.4</span>
+   <li><a href="#dfn-deliver-a-network-report">Deliver a network report</a><span>, in § 5.3</span>
    <li><a href="#dns-resolution">DNS resolution</a><span>, in § 3.1</span>
    <li><a href="#domain-name">domain name</a><span>, in § 5.2</span>
    <li><a href="#domain-namespace-tree">domain namespace tree</a><span>, in § 9</span>
@@ -1868,6 +1899,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <li><a href="#failure_fraction">failure_fraction</a><span>, in § 4.1.5</span>
    <li><a href="#fail">failures</a><span>, in § 3.1</span>
    <li><a href="#failure-sampling-rate">failure sampling rate</a><span>, in § 3.5</span>
+   <li><a href="#dfn-generate-a-network-error-report">Generate a network error report</a><span>, in § 5.2</span>
    <li><a href="#include_subdomains">include_subdomains</a><span>, in § 4.1.3</span>
    <li><a href="#max_age">max_age</a><span>, in § 4.1.2</span>
    <li><a href="#nel">NEL</a><span>, in § 4.1</span>
@@ -1973,7 +2005,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <dt id="biblio-fetch">[FETCH]
    <dd>Anne van Kesteren. <a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
    <dt id="biblio-hr-time-3">[HR-TIME-3]
-   <dd>Yoav Weiss. <a href="https://www.w3.org/TR/hr-time-3/"><cite>High Resolution Time</cite></a>. 24 March 2026. WD. URL: <a href="https://www.w3.org/TR/hr-time-3/">https://www.w3.org/TR/hr-time-3/</a>
+   <dd>Yoav Weiss. <a href="https://www.w3.org/TR/hr-time-3/"><cite>High Resolution Time</cite></a>. 1 September 2026. WD. URL: <a href="https://www.w3.org/TR/hr-time-3/">https://www.w3.org/TR/hr-time-3/</a>
    <dt id="biblio-html">[HTML]
    <dd>Anne van Kesteren; et al. <a href="https://html.spec.whatwg.org/multipage/"><cite>HTML Standard</cite></a>. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a>
    <dt id="biblio-infra">[INFRA]
@@ -1987,61 +2019,48 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <dt id="biblio-secure-contexts">[SECURE-CONTEXTS]
    <dd>Mike West. <a href="https://www.w3.org/TR/secure-contexts/"><cite>Secure Contexts</cite></a>. 10 November 2023. CRD. URL: <a href="https://www.w3.org/TR/secure-contexts/">https://www.w3.org/TR/secure-contexts/</a>
    <dt id="biblio-svg2">[SVG2]
-   <dd>Amelia Bellamy-Royds; et al. <a href="https://www.w3.org/TR/SVG2/"><cite>Scalable Vector Graphics (SVG) 2</cite></a>. 4 October 2018. CR. URL: <a href="https://www.w3.org/TR/SVG2/">https://www.w3.org/TR/SVG2/</a>
+   <dd>Karl Dubost; et al. <a href="https://www.w3.org/TR/SVG2/"><cite>Scalable Vector Graphics (SVG) 2</cite></a>. 6 October 2026. CR. URL: <a href="https://www.w3.org/TR/SVG2/">https://www.w3.org/TR/SVG2/</a>
    <dt id="biblio-url">[URL]
    <dd>Anne van Kesteren. <a href="https://url.spec.whatwg.org/"><cite>URL Standard</cite></a>. Living Standard. URL: <a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>
   </dl>
-  <h3 class="heading no-num no-ref settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+  <h3 class="heading no-num no-ref settled" id="informative"><span class="content">Non-Normative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-capability-urls">[CAPABILITY-URLS]
    <dd>Jeni Tennison. <a href="https://www.w3.org/TR/capability-urls/"><cite>Good Practices for Capability URLs</cite></a>. 18 February 2014. FPWD. URL: <a href="https://www.w3.org/TR/capability-urls/">https://www.w3.org/TR/capability-urls/</a>
    <dt id="biblio-csp">[CSP]
-   <dd>Mike West; Antonio Sartori. <a href="https://www.w3.org/TR/CSP3/"><cite>Content Security Policy Level 3</cite></a>. 1 April 2026. WD. URL: <a href="https://www.w3.org/TR/CSP3/">https://www.w3.org/TR/CSP3/</a>
+   <dd>Mike West; Antonio Sartori. <a href="https://www.w3.org/TR/CSP3/"><cite>Content Security Policy Level 3</cite></a>. 27 October 2026. WD. URL: <a href="https://www.w3.org/TR/CSP3/">https://www.w3.org/TR/CSP3/</a>
    <dt id="biblio-ecma-262">[ECMA-262]
    <dd><a href="https://tc39.es/ecma262/multipage/"><cite>ECMAScript Language Specification</cite></a>. URL: <a href="https://tc39.es/ecma262/multipage/">https://tc39.es/ecma262/multipage/</a>
    <dt id="biblio-http-jfv">[HTTP-JFV]
    <dd>J. Reschke. <a href="https://datatracker.ietf.org/doc/html/draft-reschke-http-jfv"><cite>A JSON Encoding for HTTP Header Field Values</cite></a>. 24 October 2017. Active Internet-Draft. URL: <a href="https://datatracker.ietf.org/doc/html/draft-reschke-http-jfv">https://datatracker.ietf.org/doc/html/draft-reschke-http-jfv</a>
    <dt id="biblio-resource-timing-2">[RESOURCE-TIMING-2]
-   <dd>Yoav Weiss; Noam Rosenthal. <a href="https://www.w3.org/TR/resource-timing/"><cite>Resource Timing</cite></a>. 23 March 2026. CRD. URL: <a href="https://www.w3.org/TR/resource-timing/">https://www.w3.org/TR/resource-timing/</a>
+   <dd>Yoav Weiss; Noam Rosenthal. <a href="https://www.w3.org/TR/resource-timing/"><cite>Resource Timing</cite></a>. 1 September 2026. CRD. URL: <a href="https://www.w3.org/TR/resource-timing/">https://www.w3.org/TR/resource-timing/</a>
    <dt id="biblio-rfc1034">[RFC1034]
-   <dd>P. Mockapetris. <a href="https://www.rfc-editor.org/rfc/rfc1034"><cite>Domain names - concepts and facilities</cite></a>. November 1987. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc1034">https://www.rfc-editor.org/rfc/rfc1034</a>
+   <dd>P. Mockapetris. <a href="https://www.rfc-editor.org/info/rfc1034/"><cite>Domain names - concepts and facilities</cite></a>. November 1987. Internet Standard. URL: <a href="https://www.rfc-editor.org/info/rfc1034/">https://www.rfc-editor.org/info/rfc1034/</a>
    <dt id="biblio-rfc1123">[RFC1123]
-   <dd>R. Braden, Ed.. <a href="https://www.rfc-editor.org/rfc/rfc1123"><cite>Requirements for Internet Hosts - Application and Support</cite></a>. October 1989. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc1123">https://www.rfc-editor.org/rfc/rfc1123</a>
+   <dd>R. Braden, Ed.. <a href="https://www.rfc-editor.org/info/rfc1123/"><cite>Requirements for Internet Hosts - Application and Support</cite></a>. October 1989. Internet Standard. URL: <a href="https://www.rfc-editor.org/info/rfc1123/">https://www.rfc-editor.org/info/rfc1123/</a>
    <dt id="biblio-rfc3864">[RFC3864]
-   <dd>G. Klyne; M. Nottingham; J. Mogul. <a href="https://www.rfc-editor.org/rfc/rfc3864"><cite>Registration Procedures for Message Header Fields</cite></a>. September 2004. Best Current Practice. URL: <a href="https://www.rfc-editor.org/rfc/rfc3864">https://www.rfc-editor.org/rfc/rfc3864</a>
+   <dd>G. Klyne; M. Nottingham; J. Mogul. <a href="https://www.rfc-editor.org/info/rfc3864/"><cite>Registration Procedures for Message Header Fields</cite></a>. September 2004. Best Current Practice. URL: <a href="https://www.rfc-editor.org/info/rfc3864/">https://www.rfc-editor.org/info/rfc3864/</a>
    <dt id="biblio-rfc4291">[RFC4291]
-   <dd>R. Hinden; S. Deering. <a href="https://www.rfc-editor.org/rfc/rfc4291"><cite>IP Version 6 Addressing Architecture</cite></a>. February 2006. Draft Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4291">https://www.rfc-editor.org/rfc/rfc4291</a>
+   <dd>R. Hinden; S. Deering. <a href="https://www.rfc-editor.org/info/rfc4291/"><cite>IP Version 6 Addressing Architecture</cite></a>. February 2006. Draft Standard. URL: <a href="https://www.rfc-editor.org/info/rfc4291/">https://www.rfc-editor.org/info/rfc4291/</a>
    <dt id="biblio-rfc5234">[RFC5234]
-   <dd>D. Crocker, Ed.; P. Overell. <a href="https://www.rfc-editor.org/rfc/rfc5234"><cite>Augmented BNF for Syntax Specifications: ABNF</cite></a>. January 2008. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc5234">https://www.rfc-editor.org/rfc/rfc5234</a>
+   <dd>D. Crocker, Ed.; P. Overell. <a href="https://www.rfc-editor.org/info/rfc5234/"><cite>Augmented BNF for Syntax Specifications: ABNF</cite></a>. January 2008. Internet Standard. URL: <a href="https://www.rfc-editor.org/info/rfc5234/">https://www.rfc-editor.org/info/rfc5234/</a>
    <dt id="biblio-rfc6797">[RFC6797]
-   <dd>J. Hodges; C. Jackson; A. Barth. <a href="https://www.rfc-editor.org/rfc/rfc6797"><cite>HTTP Strict Transport Security (HSTS)</cite></a>. November 2012. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc6797">https://www.rfc-editor.org/rfc/rfc6797</a>
+   <dd>J. Hodges; C. Jackson; A. Barth. <a href="https://www.rfc-editor.org/info/rfc6797/"><cite>HTTP Strict Transport Security (HSTS)</cite></a>. November 2012. Proposed Standard. URL: <a href="https://www.rfc-editor.org/info/rfc6797/">https://www.rfc-editor.org/info/rfc6797/</a>
    <dt id="biblio-rfc9110">[RFC9110]
    <dd>R. Fielding, Ed.; M. Nottingham, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc9110.html"><cite>HTTP Semantics</cite></a>. June 2022. Internet Standard. URL: <a href="https://httpwg.org/specs/rfc9110.html">https://httpwg.org/specs/rfc9110.html</a>
    <dt id="biblio-rfc9112">[RFC9112]
    <dd>R. Fielding, Ed.; M. Nottingham, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc9112.html"><cite>HTTP/1.1</cite></a>. June 2022. Internet Standard. URL: <a href="https://httpwg.org/specs/rfc9112.html">https://httpwg.org/specs/rfc9112.html</a>
    <dt id="biblio-rfc9651">[RFC9651]
-   <dd>M. Nottingham; P-H. Kamp. <a href="https://www.rfc-editor.org/rfc/rfc9651"><cite>Structured Field Values for HTTP</cite></a>. September 2024. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc9651">https://www.rfc-editor.org/rfc/rfc9651</a>
+   <dd>M. Nottingham; P-H. Kamp. <a href="https://www.rfc-editor.org/info/rfc9651/"><cite>Structured Field Values for HTTP</cite></a>. September 2024. Proposed Standard. URL: <a href="https://www.rfc-editor.org/info/rfc9651/">https://www.rfc-editor.org/info/rfc9651/</a>
   </dl>
   <h2 class="heading no-num no-ref settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
   <div style="counter-reset:issue">
    <div class="issue"> We would like to move the definition of these <a data-link-type="dfn" href="#phase">phases</a> into <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[FETCH]</a> so that they are more reusable. <a class="issue-return" href="#issue-95f7f578" title="Jump to section">↵</a></div>
    <div class="issue"> Plumb this through more explicitly in <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[FETCH]</a>. <a class="issue-return" href="#issue-b2720c5c" title="Jump to section">↵</a></div>
   </div>
-  <details class="mdn-anno unpositioned" data-anno-for="nel-response-header">
+  <details class="mdn-anno unpositioned" data-anno-for="nel-response-header" data-mdn="v1|HTTP/Headers/NEL|1|-,-,71,@!,79,@?,-,@-,@-,@!,@!,10.2,@!,">
    <summary><b class="less-than-two-engines-flag" title="This feature is in less than two current engines.">⚠</b><span>MDN</span></summary>
-   <div class="feature">
-    <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/NEL" title="The HTTP NEL response header is used to configure network request logging.">Headers/NEL</a></p>
-    <p class="less-than-two-engines-text">In only one current engine.</p>
-    <div class="support">
-     <span class="firefox no"><span>Firefox</span><span>None</span></span><span class="no safari"><span>Safari</span><span>None</span></span><span class="chrome yes"><span>Chrome</span><span>71+</span></span>
-     <hr>
-     <span class="no opera"><span>Opera</span><span>?</span></span><span class="edge_blink yes"><span>Edge</span><span>79+</span></span>
-     <hr>
-     <span class="edge no"><span>Edge (Legacy)</span><span>?</span></span><span class="ie no"><span>IE</span><span>None</span></span>
-     <hr>
-     <span class="firefox_android no"><span>Firefox for Android</span><span>?</span></span><span class="no safari_ios"><span>iOS Safari</span><span>?</span></span><span class="chrome_android no"><span>Chrome for Android</span><span>?</span></span><span class="no webview_android"><span>Android WebView</span><span>?</span></span><span class="samsunginternet_android yes"><span>Samsung Internet</span><span>10.2+</span></span><span class="no opera_android"><span>Opera Mobile</span><span>?</span></span>
-    </div>
-   </div>
   </details>
 <script>/* Boilerplate: script-dom-helper */
 "use strict";
@@ -2273,6 +2292,8 @@ let dfnPanelData = {
 "c0868016": {"dfnID":"c0868016","dfnText":"path","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-url-path"}],"title":"5.3. Deliver a network report"}],"url":"https://url.spec.whatwg.org/#concept-url-path"},
 "cefde22f": {"dfnID":"cefde22f","dfnText":"body","external":true,"refSections":[{"refs":[{"id":"ref-for-report-body"}],"title":"7.2. Sample Network Error Reports"},{"refs":[{"id":"ref-for-report-body\u2460"}],"title":"9. Privacy Considerations"}],"url":"https://www.w3.org/TR/reporting-1/#report-body"},
 "creation": {"dfnID":"creation","dfnText":"creation","external":false,"refSections":[{"refs":[{"id":"ref-for-creation"},{"id":"ref-for-creation\u2460"}],"title":"3.4. NEL policies"},{"refs":[{"id":"ref-for-creation\u2461"}],"title":"4.2. Process policy headers"}],"url":"#creation"},
+"dfn-deliver-a-network-report": {"dfnID":"dfn-deliver-a-network-report","dfnText":"Deliver a network report","external":false,"refSections":[],"url":"#dfn-deliver-a-network-report"},
+"dfn-generate-a-network-error-report": {"dfnID":"dfn-generate-a-network-error-report","dfnText":"Generate a network error report","external":false,"refSections":[],"url":"#dfn-generate-a-network-error-report"},
 "dns-resolution": {"dfnID":"dns-resolution","dfnText":"DNS resolution","external":false,"refSections":[{"refs":[{"id":"ref-for-dns-resolution"}],"title":"3.1. Network requests"},{"refs":[{"id":"ref-for-dns-resolution\u2460"}],"title":"3.2. Network errors"},{"refs":[{"id":"ref-for-dns-resolution\u2461"},{"id":"ref-for-dns-resolution\u2462"},{"id":"ref-for-dns-resolution\u2463"}],"title":"5.2. Generate a network error report"},{"refs":[{"id":"ref-for-dns-resolution\u2464"}],"title":"6.1. DNS resolution errors"},{"refs":[{"id":"ref-for-dns-resolution\u2465"},{"id":"ref-for-dns-resolution\u2466"},{"id":"ref-for-dns-resolution\u2467"}],"title":"9. Privacy Considerations"}],"url":"#dns-resolution"},
 "domain-name": {"dfnID":"domain-name","dfnText":"domain name","external":false,"refSections":[{"refs":[{"id":"ref-for-domain-name"}],"title":"5.2. Generate a network error report"},{"refs":[{"id":"ref-for-domain-name\u2460"}],"title":"7.4. Origins with multiple IP addresses"},{"refs":[{"id":"ref-for-domain-name\u2461"}],"title":"9. Privacy Considerations"}],"url":"#domain-name"},
 "domain-namespace-tree": {"dfnID":"domain-namespace-tree","dfnText":"domain namespace tree","external":false,"refSections":[{"refs":[{"id":"ref-for-domain-namespace-tree"}],"title":"9. Privacy Considerations"}],"url":"#domain-namespace-tree"},
@@ -2691,6 +2712,213 @@ function genLinkingSyntaxes(dfn) {
         )
     ];
 }
+}
+</script>
+<script>/* Boilerplate: script-mdn-anno */
+"use strict";
+{
+'use strict';
+// File copied from https://github.com/whatwg/whatwg.org/blob/main/resources.whatwg.org/standard-mdn-annos.js
+
+// Builds MDN annotation panels on demand from the compact `data-mdn` attribute written by
+// the spec generator (wattsi's EncodeMDNAnnotations; Bikeshed's mdnspeclinks.py builds its
+// panels eagerly for now). Only the wire format is shared: the browser labels, the
+// engine-support strings and the render grouping all live here.
+//
+// Archived commit snapshots load this file forever, so every format version this script
+// has ever understood has to keep working. Evolve the format by adding a branch in
+// `hydrate`, never by redefining a version that has already shipped.
+
+const MDN_URL = 'https://developer.mozilla.org/en-US/docs/Web/';
+const CANIUSE_URL = 'https://caniuse.com/#feat=';
+
+// Render groups, in the order they appear in a panel, separated by <hr>.
+const CURRENT_ENGINES = 0;
+const BORROWED_ENGINES = 1;
+const RETIRED_ENGINES = 2;
+const MOBILE = 3;
+const NON_BROWSER = 4;
+const GROUP_COUNT = 5;
+
+// Cell slots, in the order they appear in `data-mdn`. APPEND-ONLY: a new browser goes at
+// the end and is never inserted, so that old data still lines up and old copies of this
+// script can keep ignoring the cells they don't know about. `group` is what decides where
+// a row is rendered, so appending to this list doesn't constrain where the row shows up.
+const SLOTS = [
+  { id: 'firefox', label: 'Firefox', group: CURRENT_ENGINES },
+  { id: 'safari', label: 'Safari', group: CURRENT_ENGINES },
+  { id: 'chrome', label: 'Chrome', group: CURRENT_ENGINES },
+  { id: 'opera', label: 'Opera', group: BORROWED_ENGINES, mirrors: 'Chrome' },
+  { id: 'edge_blink', label: 'Edge', group: BORROWED_ENGINES },
+  { id: 'edge', label: 'Edge (Legacy)', group: RETIRED_ENGINES },
+  { id: 'ie', label: 'IE', group: RETIRED_ENGINES },
+  { id: 'firefox_android', label: 'Firefox for Android', group: MOBILE, mirrors: 'Firefox' },
+  { id: 'safari_ios', label: 'iOS Safari', group: MOBILE, mirrors: 'Safari' },
+  { id: 'chrome_android', label: 'Chrome for Android', group: MOBILE, mirrors: 'Chrome' },
+  { id: 'webview_android', label: 'Android WebView', group: MOBILE, mirrors: 'Chrome' },
+  { id: 'samsunginternet_android', label: 'Samsung Internet', group: MOBILE, mirrors: 'Chrome' },
+  { id: 'opera_android', label: 'Opera Mobile', group: MOBILE, mirrors: 'Chrome' },
+  { id: 'nodejs', label: 'Node.js', group: NON_BROWSER },
+];
+
+// One mnemonic character per engine-support note.
+const LEVELS = {
+  '0': { class: 'less-than-two-engines-text', text: 'In no current engines.' },
+  '1': { class: 'less-than-two-engines-text', text: 'In only one current engine.' },
+  '9': { class: 'all-engines-text', text: 'In all current engines.' },
+  's': { class: 'less-than-two-engines-text', text: 'Support in one engine under other name.' },
+  'S': { class: 'less-than-two-engines-text', text: 'Support in some engines under other name.' },
+  'v': { class: 'less-than-two-engines-text', text: 'Prefixed support in one engine.' },
+  'V': { class: 'less-than-two-engines-text', text: 'Prefixed support in some engines.' },
+  'p': { class: 'less-than-two-engines-text', text: 'Partial support in one engine.' },
+  'P': { class: 'less-than-two-engines-text', text: 'Partial support in some engines.' },
+};
+
+// Leading character of a cell, qualifying how the version after it should be read. `flag`
+// is whether to mark the version with 🔰 as well as explaining it in a tooltip.
+const CAVEATS = {
+  '*': { flag: true, title: () => 'Partial implementation.' },
+  '^': { flag: true, title: () => 'Requires setting a user preference or runtime flag.' },
+  '$': { flag: true, title: () => 'Requires a prefix or alternative name.' },
+  // Mirrored support is far too common to flag every occurrence; the tooltip is enough.
+  '@': { flag: false, title: (slot) => `Support is mirrored from ${slot.mirrors ?? 'the upstream browser'}.` },
+};
+
+const FLAG = '\u{1F530}'; // 🔰, marks a version that comes with a caveat
+const EN_DASH = '–';
+
+function element(name, attributes, ...children) {
+  const node = document.createElement(name);
+  for (const [attribute, value] of Object.entries(attributes)) {
+    if (value !== undefined) {
+      node.setAttribute(attribute, value);
+    }
+  }
+  node.append(...children);
+  return node;
+}
+
+function splitOnce(string, separator) {
+  const at = string.indexOf(separator);
+  return at === -1 ? [string, undefined] : [string.slice(0, at), string.slice(at + 1)];
+}
+
+// A version body says both whether the browser supports the feature and since when.
+function readVersion(body) {
+  if (body === '?') {
+    return { state: 'unknown', version: '?' };
+  }
+  if (body === '-') {
+    return { state: 'no', version: 'None' };
+  }
+  if (body === '!') {
+    return { state: 'yes', version: 'Yes' };
+  }
+  if (body.startsWith('=')) {
+    // A version that will never be superseded, so no trailing "+".
+    return { state: 'yes', version: body.slice(1) };
+  }
+  const [added, removed] = body.split('-');
+  if (removed !== undefined) {
+    return { state: 'no', version: added + EN_DASH + removed };
+  }
+  return { state: 'yes', version: added + '+' };
+}
+
+function readCell(cell, slot) {
+  const caveat = CAVEATS[cell[0]];
+  const { state, version } = readVersion(caveat ? cell.slice(1) : cell);
+  return {
+    state,
+    version: caveat?.flag ? `${FLAG} ${version}` : version,
+    title: caveat?.title(slot),
+  };
+}
+
+// A browser row is the browser's name in one cell and its version in the next. The logo
+// comes from CSS, keyed off the browser id in the row's class.
+function browserRow(slot, cell) {
+  const { state, version, title } = readCell(cell, slot);
+  return element('span', { class: `${slot.id} ${state}` },
+    element('span', {}, slot.label),
+    element('span', { title }, version));
+}
+
+// The caniuse row has a single cell instead, since its logo needs no label beside it.
+function caniuseRow(field) {
+  const [feature, title] = splitOnce(field, ',');
+  const link = element('a', { href: CANIUSE_URL + feature, title }, 'caniuse.com table');
+  return element('span', { class: 'caniuse' }, element('span', {}, link));
+}
+
+function supportTable(cells, caniuse) {
+  const groups = Array.from({ length: GROUP_COUNT }, () => []);
+  SLOTS.forEach((slot, slotIndex) => {
+    // An empty cell means this browser gets no row at all. Cells beyond SLOTS are
+    // browsers added after this copy of the script was written; ignore them.
+    if (cells[slotIndex]) {
+      groups[slot.group].push(browserRow(slot, cells[slotIndex]));
+    }
+  });
+  if (caniuse !== undefined) {
+    groups.push([caniuseRow(caniuse)]);
+  }
+
+  const table = element('div', { class: 'support' });
+  for (const rows of groups.filter((rows) => rows.length > 0)) {
+    if (table.hasChildNodes()) {
+      table.append(element('hr', {}));
+    }
+    table.append(...rows);
+  }
+  return table;
+}
+
+function featurePanel(record) {
+  const [slug, level, cells, caniuse] = record.split('|');
+
+  const article = element('a', { href: MDN_URL + slug }, slug.slice(slug.indexOf('/') + 1));
+  const panel = element('div', { class: 'feature' }, element('p', {}, article));
+
+  if (level in LEVELS) {
+    panel.append(element('p', { class: LEVELS[level].class }, LEVELS[level].text));
+  }
+  if (cells) {
+    panel.append(supportTable(cells.split(','), caniuse));
+  }
+  return panel;
+}
+
+function hydrate(anno) {
+  const [version, features] = splitOnce(anno.dataset.mdn, '|');
+  delete anno.dataset.mdn; // Only ever hydrate a panel once.
+
+  if (version !== 'v1') {
+    console.warn(`Unsupported MDN annotation data version "${version}".`, anno);
+    return;
+  }
+  anno.append(...features.split('~').map(featurePanel));
+}
+
+function hydrateIfNeeded(node) {
+  if (node instanceof Element && node.matches('.mdn-anno[data-mdn]')) {
+    hydrate(node);
+  }
+}
+
+// A click on the summary arrives before the browser opens the <details>, so hydrating
+// from it means the panel never flashes empty. That covers pointers and the keyboard,
+// since activating a summary dispatches a click either way.
+document.addEventListener('click', (event) => {
+  if (event.target instanceof Element) {
+    hydrateIfNeeded(event.target.closest('summary')?.parentElement);
+  }
+}, true);
+
+// And `toggle` is the catch-all for a panel opened some other way, such as find-in-page
+// or a fragment navigation into it. It fires a task after the state has already changed,
+// and it doesn't bubble, so it has to be a capture listener.
+document.addEventListener('toggle', (event) => hydrateIfNeeded(event.target), true);
 }
 </script>
 <script>/* Boilerplate: script-position-annos */
